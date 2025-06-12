@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Create & Cash: The AI Stock Blueprint</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+
+<!-- Chosen Palette: "Modern Teal" - Background: very light gray (#F8F9FA), Main Text: dark gray (#333333), Accent: deep teal (#008080) for active states, buttons, and key highlights. Secondary backgrounds: subtle light gray/teal shades. -->
+<!-- Application Structure Plan: A clean, multi-section single-page app with a sticky top navigation. Each section (Intro, Steps 1-8, CTA) is distinct and visually uncluttered. The core flow (Niche/Keyword Discovery, Prompt Generation) is highly integrated and interactive, minimizing text and maximizing user action. This design prioritizes scannability, modern aesthetics, and direct engagement. -->
+<!-- Visualization & Content Choices:
+- Report Info: Comprehensive guide on earning from Adobe Stock, emphasizing AI generation, with integrated niche and keyword discovery. Goal: Provide detailed, easy-to-understand, and interactive instructions with unique keyword and niche tracking.
+- Section 1 (Intro): Short, punchy sentences.
+- Section 2 (Toolkit & Setup): Very brief bullet points for gear and setup.
+- Section 3 (Organic Creation): Condensed key niches and quality points.
+- Section 4 (Niche & Keyword Discovery):
+- Stage 1: Clean grid of sub-niche cards (only name). Clicking generates keywords.
+- Stage 2: Clean grid of keyword chips. Clicking pre-fills prompt input and navigates to Step 5.
+- Focus on visual separation and click-driven progression.
+- Section 5 (AI Tools Overview): Concise benefits/tools.
+- Section 6 (Prompt Crafting): Streamlined prompts, clear copy-to-clipboard function.
+- Section 7 (Leonardo AI Walkthrough): Short, numbered steps.
+- Section 8 (Tagging & Upload): Simplified titles/CSV concepts. AI Title Generator remains.
+- Section 9 (Analyze & Scale): Charts for visual data. Brief bullet points for advice.
+- Section 10 (Final CTA).
+- Library/Method: Vanilla JS for all logic and interactivity (including localStorage for history). Chart.js for all charts on Canvas. Gemini API for AI-powered keyword, prompt, niche, and title generation.
+-->
+<!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+<style>
+body {
+font-family: 'Inter', sans-serif;
+background-color: #F8F9FA; /* Very light gray */
+color: #333333; /* Dark gray for main text */
+}
+.nav-btn {
+transition: all 0.2s ease-in-out;
+border-bottom: 3px solid transparent;
+padding-bottom: 0.75rem;
+color: #666666; /* Lighter gray for inactive nav */
+}
+.nav-btn.active {
+color: #008080; /* Deep Teal for active nav */
+border-bottom-color: #008080;
+}
+.step-content { display: none; }
+.step-content.active { display: block; }
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.fade-in { animation: fadeIn 0.5s ease-out forwards; }
+
+.chart-container { position: relative; width: 100%; max-width: 500px; margin-left: auto; margin-right: auto; height: 300px; max-height: 350px; }
+@media (min-width: 768px) { .chart-container { height: 350px; } }
+
+.loading-spinner {
+border: 4px solid #e0e0e0; /* Light gray */
+border-top: 4px solid #008080; /* Deep Teal */
+border-radius: 50%;
+width: 30px;
+height: 30px;
+animation: spin 1s linear infinite;
+margin: 1rem auto;
+}
+@keyframes spin {
+0% { transform: rotate(0deg); }
+100% { transform: rotate(360deg); }
+}
+
+.niche-card {
+cursor: pointer;
+transition: transform 0.2s, box-shadow 0.2s, background-color 0.2s, border-color 0.2s;
+border-width: 1px; /* Add border for cleaner look */
+border-color: #e5e7eb; /* gray-200 */
+}
+.niche-card:hover {
+transform: translateY(-3px);
+box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+.niche-card.selected {
+border-color: #008080;
+background-color: #E0F2F2; /* Lighter Teal */
+font-weight: 600;
+color: #004d4d; /* Darker Teal text */
+}
+.keyword-chip, .prompt-chip-item {
+cursor: pointer;
+transition: background-color 0.1s;
+}
+.keyword-chip:hover, .prompt-chip-item:hover {
+background-color: #E0F2F2; /* Lighter Teal */
+}
+
+/* Message Box for Copy/Paste Instruction */
+.message-box {
+position: fixed;
+bottom: 20px;
+left: 50%;
+transform: translateX(-50%);
+background-color: #008080; /* Deep Teal */
+color: white;
+padding: 12px 20px;
+border-radius: 8px;
+box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+z-index: 1000;
+display: none; /* Hidden by default */
+font-size: 0.9rem;
+animation: slideInUp 0.3s forwards, fadeOut 0.5s 4s forwards;
+white-space: nowrap; /* Prevent text wrapping */
+}
+
+@keyframes slideInUp {
+from { transform: translateX(-50%) translateY(50px); opacity: 0; }
+to { transform: translateX(-50%) translateY(0); opacity: 1; }
+}
+
+@keyframes fadeOut {
+from { opacity: 1; }
+to { opacity: 0; display: none; } /* Ensure it becomes display:none after animation */
+}
+</style>
+</head>
+<body class="antialiased">
+
+<header class="bg-white shadow-sm">
+<div class="container mx-auto px-4 py-6 text-center">
+<h1 class="text-4xl md:text-5xl font-black tracking-tighter text-gray-900">Create & Cash</h1>
+<p class="text-lg md:text-xl font-semibold text-teal-600">The AI Stock Blueprint</p>
+</div>
+</header>
+
+<nav id="main-nav" class="sticky top-0 bg-white/90 backdrop-blur-sm z-50 shadow-md">
+<div class="container mx-auto px-4">
+<div class="flex justify-center items-center font-bold text-gray-500 overflow-x-auto text-sm md:text-base">
+<button data-step="0" class="nav-btn active py-3 px-2 md:px-4">Intro</button>
+<button data-step="1" class="nav-btn py-3 px-2 md:px-4">1. Toolkit & Setup</button>
+<button data-step="2" class="nav-btn py-3 px-2 md:px-4">2. Organic Creation</button>
+<button data-step="3" class="nav-btn py-3 px-2 md:px-4">3. Niche & Keyword Discovery</button>
+<button data-step="4" class="nav-btn py-3 px-2 md:px-4">4. AI Tools</button>
+<button data-step="5" class="nav-btn py-3 px-2 md:px-4">5. AI Prompts</button>
+<button data-step="6" class="nav-btn py-3 px-2 md:px-4">6. Generate Images</button>
+<button data-step="7" class="nav-btn py-3 px-2 md:px-4">7. Tagging & Upload</button>
+<button data-step="8" class="nav-btn py-3 px-2 md:px-4">8. Scale & Grow</button>
+<button data-step="9" class="nav-btn py-3 px-2 md:px-4">Start Now</button>
+</div>
+</div>
+</nav>
+
+<main class="container mx-auto p-4 md:p-8">
+<!-- Intro -->
+<section id="step-content-0" class="step-content active fade-in">
+<div class="bg-white p-6 md:p-8 rounded-xl shadow-lg text-center">
+<h2 class="text-2xl md:text-3xl font-bold mb-4">Stop Scrolling, Start Earning.</h2>
+<p class="max-w-3xl mx-auto text-gray-700 mb-8">This is your direct guide to earning with visuals on Adobe Stock. No fluff, no low-pay gigs. Just actionable steps to monetize your creativity, heavily leveraging AI for rapid content creation.</p>
+<div class="grid md:grid-cols-3 gap-6 text-left">
+<div class="bg-gray-50 p-6 rounded-lg border-l-4 border-teal-600">
+<h3 class="font-bold text-lg mb-2">Passive Income Engine</h3>
+<p class="text-sm text-gray-600">Create once, earn 24/7. Your visuals become assets that work for you.</p>
+</div>
+<div class="bg-gray-50 p-6 rounded-lg border-l-4 border-teal-600">
+<h3 class="font-bold text-lg mb-2">AI-Powered Creation</h3>
+<p class="text-sm text-gray-600">Generate stunning images efficiently, saving time and scaling your output effortlessly.</p>
+</div>
+<div class="bg-gray-50 p-6 rounded-lg border-l-4 border-teal-600">
+<h3 class="font-bold text-lg mb-2">Global Marketplace</h3>
+<p class="text-sm text-gray-600">Access millions of buyers worldwide directly through Adobe apps. Unmatched visibility.</p>
+</div>
+</div>
+</div>
+</section>
+
+<!-- Step 1: Toolkit & Setup -->
+<section id="step-content-1" class="step-content fade-in">
+<div class="bg-white p-6 md:p-8 rounded-xl shadow-lg">
+<h2 class="text-2xl md:text-3xl font-bold mb-6 text-center">Step 1: Your Essential Toolkit & Setup</h2>
+<p class="max-w-3xl mx-auto text-gray-700 mb-8">Gather your basic gear and set up your Adobe Stock account. You likely have most of what you need already!</p>
+<div class="grid md:grid-cols-2 gap-8 items-start">
+<div class="bg-gray-50 p-6 rounded-lg">
+<h3 class="font-bold text-xl mb-4 text-teal-600">Your Battle Gear: Minimal & Mighty</h3>
+<ul class="space-y-3 text-base">
+<li class="flex items-start"><span class="text-teal-600 font-bold mr-2">✓</span><div><b>Laptop/Phone/Camera:</b> Any device capable of basic Chrome browsing and file management is a start.</div></li>
+<li class="flex items-start"><span class="text-teal-600 font-bold mr-2">✓</span><div><b>Reliable Internet:</b> Essential for smooth uploads and accessing online tools.</div></li>
+<li class="flex items-start"><span class="text-teal-600 font-bold mr-2">✓</span><div><b>A Keen Eye:</b> Develop an intuition for commercially viable visuals and market trends.</div></li>
+<li class="flex items-start"><span class="text-teal-600 font-bold mr-2">✓</span><div><b>Dedication:</b> Consistently committing 2 hours daily can build a significant income stream in months.</div></li>
+</ul>
+</div>
+<div class="bg-gray-50 p-6 rounded-lg">
+<h3 class="font-bold text-xl mb-4 text-teal-600">The Quick Setup: Get Your VIP Pass</h3>
+<ol class="list-decimal list-inside space-y-3 text-base">
+<li><b>Sign Up:</b> Visit the <a href="https://contributor.stock.adobe.com/en?isa0=1" target="_blank" class="font-semibold text-teal-600 hover:underline">Adobe Stock Contributor portal</a>. Create or use your Adobe ID.</li>
+<li><b>Verify:</b> Complete one-time identity verification and tax information for legal payouts.</li>
+<li><b>Go Live:</b> Once approved, your account is active! Adobe handles sales, licensing, and customer service.</li>
+</ol>
+<div class="mt-4 p-3 bg-amber-50 rounded-lg border border-amber-200">
+<p class="font-bold text-amber-800">Pro Tip:</p>
+<p class="text-sm text-amber-700">Choose your country of residence carefully during sign-up; it's difficult to change later.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- Step 2: Organic Creation -->
+<section id="step-content-2" class="step-content fade-in">
+<div class="bg-white p-6 md:p-8 rounded-xl shadow-lg">
+<h2 class="text-2xl md:text-3xl font-bold mb-6 text-center">Step 2: The Art of Organic Creation</h2>
+<p class="max-w-3xl mx-auto text-gray-700 mb-8 text-center">While AI is powerful, creating your own unique photos and videos offers authenticity that always has demand. This section covers best practices for capturing compelling organic content.</p>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<div class="bg-gray-50 p-5 rounded-lg border">
+<h3 class="font-bold text-lg mb-2 text-teal-600">Key Organic Niches:</h3>
+<p class="text-sm text-gray-700 mb-3">Focus on themes with consistent buyer demand:</p>
+<ul class="list-disc list-inside text-sm text-gray-700 space-y-1">
+<li>**Authentic Lifestyle:** Real, unposed human moments, diverse groups, remote work, mental wellness.</li>
+<li>**Modern Tech Use:** People interacting with devices, clean interfaces, innovative tech concepts.</li>
+<li>**Diversity & Inclusion:** Genuinely representing various ages, ethnicities, body types, and abilities.</li>
+<li>**Conceptual Imagery:** Visually representing abstract ideas like "growth," "connection," "innovation."</li>
+<li>**Vertical Video:** Short, engaging, and well-lit clips optimized for social media stories and reels.</li>
+<li>**Sustainable Living:** Eco-conscious practices, recycling, urban gardening, renewable energy.</li>
+<li>**Remote Work Productivity:** Beyond desk setups – work from cafes, parks, travel.</li>
+<li>**Authentic Mental Wellness:** Self-care, mindfulness, digital detox.</li>
+<li>**Generational Collaboration:** Multiple generations interacting naturally in various settings.</li>
+<li>**Digital Nomads/Van Life:** Freedom, minimalist lifestyle, connectivity on the go.</li>
+</ul>
+</div>
+<div class="bg-gray-50 p-5 rounded-lg border">
+<h3 class="font-bold text-lg mb-2 text-teal-600">Quality is Paramount:</h3>
+<p class="text-sm text-gray-700 mb-3">Meeting Adobe's standards is crucial for acceptance and future sales.</p>
+<ul class="list-disc list-inside text-sm text-gray-700 space-y-1">
+<li>**Sharpness & Focus:** Absolutely no blur. Your subject must be crystal clear and in focus.</li>
+<li>**Lighting:** Use good, natural light. Avoid harsh shadows, overexposure, or visible light sources.</li>
+<li>**Composition:** Frame your shots well (e.g., Rule of Thirds). Leave ample "copy space" for designers to add text.</li>
+<li>**Cleanliness:** **CRITICAL:** Ensure **NO** visible brand logos, trademarks, or copyrighted material. Clean up everything!</li>
+<li>**Technical Specs:** Always check Adobe's minimum resolution requirements (e.g., 4MP for photos).</li>
+</ul>
+</div>
+<div class="bg-gray-50 p-5 rounded-lg border">
+<h3 class="font-bold text-lg mb-2 text-teal-600">Legal Essentials: Stay Safe & Sell</h3>
+<p class="text-sm text-gray-700 mb-3">These protect you and make your content commercially viable.</p>
+<ul class="list-disc list-inside text-sm text-gray-700 space-y-1">
+<li>**Model Releases:** **MANDATORY** if any recognizable person (even a blurred face) appears. Adobe provides templates and digital signing.</li>
+<li>**Property Releases:** REQUIRED for recognizable private property (e.g., unique buildings, copyrighted art, private interiors).</li>
+<li><p class="text-xs text-amber-700 mt-2">Skipping releases leads to rejections and missed income.</p></li>
+</ul>
+</div>
+</div>
+<div class="mt-8 p-4 bg-emerald-50 rounded-lg border border-emerald-200">
+<p class="font-bold text-emerald-800">Action Item:</p>
+<p class="text-sm text-emerald-700">Practice! Take 5-10 high-quality photos or short videos focusing on a hot niche using your phone or camera today. Focus on composition and lighting.</p>
+</div>
+</div>
+</section>
+
+<!-- Step 3: Niche & Keyword Discovery (NEW SECTION) -->
+<section id="step-content-3" class="step-content fade-in">
+<div class="bg-white p-6 md:p-8 rounded-xl shadow-lg">
+<h2 class="text-2xl md:text-3xl font-bold mb-6 text-center">Step 3: Niche & Keyword Discovery</h2>
+<p class="max-w-3xl mx-auto text-gray-700 mb-8 text-center">This powerful two-stage tool helps you pinpoint highly selective, high-demand niches and then grab relevant keywords for those niches. Start by exploring broad categories, then dive deep into specific content opportunities.</p>
+
+<!-- Stage 1: Niche Category Selection & Generation -->
+<div id="niche-generation-section" class="bg-gray-50 p-6 rounded-lg border mb-8">
+<h3 class="font-bold text-xl mb-4 text-center text-teal-600">Stage 1: Discover Unique Niches</h3>
+<p class="text-sm text-center text-gray-700 mb-4">Select a category. Our AI will generate 15-20 specific, low-competition niche ideas. **Click any niche card to automatically grab 100 keywords for it below!**</p>
+<div class="max-w-md mx-auto">
+<select id="niche-category-select" class="w-full p-2 border border-gray-300 rounded-md mb-4 focus:ring-teal-600 focus:border-teal-600">
+<option value="">-- Select a Niche Category --</option>
+<option value="Emerging Technologies">Emerging Technologies</option>
+<option value="Subculture & Niche Lifestyles">Subculture & Niche Lifestyles</option>
+<option value="Future of Work & Education">Future of Work & Education</option>
+<option value="Abstract & Conceptual Visuals">Abstract & Conceptual Visuals</option>
+<option value="Sustainable & Eco-Conscious Living">Sustainable & Eco-Conscious Living</option>
+<option value="Authentic Diversity & Inclusivity">Authentic Diversity & Inclusation</option>
+<option value="Micro-moments & Everyday Life">Micro-moments & Everyday Life</option>
+<option value="Global Cultural Celebrations (Untraditional)">Global Cultural Celebrations (Untraditional)</option>
+<option value="Health & Wellness Beyond Fitness">Health & Wellness Beyond Fitness</option>
+<option value="AI & Robotics in Daily Life">AI & Robotics in Daily Life</option>
+<option value="Urban Exploration & Architecture Details">Urban Exploration & Architecture Details</option>
+<option value="Mindful Living & Digital Detox">Mindful Living & Digital Detox</option>
+<option value="Sensory Experiences (Texture, Sound Vis.)">Sensory Experiences (Texture, Sound Vis.)</option>
+<option value="Retro Futurism & Nostalgia">Retro Futurism & Nostalgia</option>
+<option value="Financial Literacy & Investing (Visualized)">Financial Literacy & Investing (Visualized)</option>
+<option value="Community Building & Local Events">Community Building & Local Events</option>
+<option value="Home Automation & Smart Living">Home Automation & Smart Living</option>
+<option value="Artisanal Crafts & Handmade Goods">Artisanal Crafts & Handmade Goods</option>
+<option value="Space Exploration & Astronomy (Conceptual)">Space Exploration & Astronomy (Conceptual)</option>
+<option value="Generational Dynamics (Specific Interactions)">Generational Dynamics (Specific Interactions)</option>
+</select>
+<button id="generate-niches-btn" class="w-full bg-teal-600 text-white font-bold px-6 py-2 rounded-lg hover:bg-teal-700 transition">Generate Niches</button>
+<button id="clear-niche-generator-history-btn" class="w-full bg-red-500 text-white font-bold px-6 py-2 rounded-lg hover:bg-red-600 transition mt-2 text-sm">Clear Niche History</button>
+</div>
+
+<div id="niche-generator-loading" class="hidden loading-spinner"></div>
+<div id="niche-generator-error" class="hidden mt-4 text-center text-red-600 font-semibold"></div>
+<div id="niche-generator-output" class="mt-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 text-sm max-h-96 overflow-y-auto p-2 border border-gray-200 rounded-md bg-white">
+<!-- Generated niches will appear here -->
+</div>
+<p class="text-xs text-gray-500 mt-4 text-center">**Note:** Newly generated niches are unique per category session. Click a niche to get its keywords!</p>
+</div>
+
+<!-- Stage 2: Keyword Generation for Selected Niche -->
+<div id="keyword-generation-section" class="bg-gray-50 p-6 rounded-lg border hidden">
+<h3 class="font-bold text-xl mb-4 text-center text-teal-600">Stage 2: Keywords for <b id="selected-niche-display" class="text-teal-700"></b></h3>
+<p class="text-sm text-center text-gray-700 mb-4">Here are 100 high-demand keywords generated for your selected niche. **Click any keyword to automatically populate it in the 'AI Prompts' section (Step 5)!**</p>
+
+<button id="clear-subniche-keywords-btn" class="w-full bg-red-500 text-white font-bold px-6 py-2 rounded-lg hover:bg-red-600 transition mt-2 text-sm max-w-md mx-auto block">Clear Keywords History for this Niche</button>
+
+<div id="keyword-grabber-loading" class="hidden loading-spinner"></div>
+<div id="keyword-grabber-error" class="hidden mt-4 text-center text-red-600 font-semibold"></div>
+<div id="keyword-grabber-output" class="mt-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 text-sm max-h-96 overflow-y-auto p-2 border border-gray-200 rounded-md bg-white">
+<!-- Keywords will appear here -->
+</div>
+<p class="text-xs text-gray-500 mt-4 text-center">**Pro Tip:** Click any keyword to jump to Step 5 and start generating AI prompts!</p>
+</div>
+</div>
+</section>
+
+<!-- Step 4: AI Tools Overview -->
+<section id="step-content-4" class="step-content fade-in">
+<div class="bg-white p-6 md:p-8 rounded-xl shadow-lg">
+<h2 class="text-2xl md:text-3xl font-bold mb-6 text-center">Step 4: AI Image Generation Unleashed</h2>
+<p class="max-w-3xl mx-auto text-gray-700 mb-8 text-center">AI tools empower you to create stunning, unique stock images at scale. Focus on efficiency and leveraging AI for maximum output.</p>
+<div class="grid md:grid-cols-2 gap-6 items-center">
+<div class="bg-gray-50 p-6 rounded-lg border">
+<h3 class="font-bold text-xl mb-4 text-teal-600">Why Use AI for Stock?</h3>
+<ul class="list-disc list-inside text-base text-gray-700 space-y-2">
+<li>**Speed:** Generate dozens of unique images in minutes.</li>
+<li>**Scale:** Produce high volume without models or locations.</li>
+<li>**Versatility:** Create abstract or specific scenarios easily.</li>
+<li>**Cost-Effective:** Drastically reduces production costs.</li>
+</ul>
+</div>
+<div class="bg-gray-50 p-6 rounded-lg border">
+<h3 class="font-bold text-xl mb-4 text-teal-600">Your AI Arsenal: Top Tools</h3>
+<p class="text-sm text-gray-700 mb-3">Leading platforms for AI image generation:</p>
+<ul class="list-disc list-inside text-base text-gray-700 space-y-2">
+<li>**Leonardo AI:** User-friendly, excellent for photorealistic & stylized images (free tiers often available).</li>
+<li>**Midjourney:** Known for artistic and high-quality outputs (Discord-based).</li>
+<li>**DALL-E (OpenAI):** Powerful and versatile.</li>
+</ul>
+<p class="text-sm text-amber-700 mt-4">This guide primarily references **Leonardo AI** for examples.</p>
+</div>
+</div>
+<div class="mt-8 p-4 bg-emerald-50 rounded-lg border border-emerald-200">
+<p class="font-bold text-emerald-800">Key Idea:</p>
+<p class="text-sm text-emerald-700">The quality of your AI-generated image depends entirely on your "prompt" – the text description you give the AI. Learn to craft perfect prompts here!</p>
+</div>
+</div>
+</section>
+
+<!-- Step 5: AI Prompt Crafting Masterclass -->
+<section id="step-content-5" class="step-content fade-in">
+<div class="bg-white p-6 md:p-8 rounded-xl shadow-lg">
+<h2 class="text-2xl md:text-3xl font-bold mb-6 text-center">Step 5: AI Prompt Crafting Masterclass</h2>
+<p class="max-w-3xl mx-auto text-gray-700 mb-8 text-center">Turn a simple keyword into a powerful command for the AI. A well-crafted prompt ensures you get the exact image quality and style needed for Adobe Stock. We'll generate 10 unique prompts from a single keyword.</p>
+
+<div class="bg-gray-50 p-6 rounded-lg border">
+<h3 class="font-bold text-lg mb-4 text-center">Turn a Keyword into 10 Amazing Prompts:</h3>
+<p class="text-sm text-center text-gray-700 mb-4">Enter a single keyword (e.g., "startup team", "forest stream"). Our AI generates 10 unique, detailed prompts. **Click any generated prompt to copy it and open Leonardo AI!**</p>
+<div class="flex flex-col sm:flex-row gap-2 max-w-xl mx-auto">
+<input id="prompt-keyword-input" type="text" placeholder="Enter a keyword here (e.g., 'German dog')" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-teal-600 focus:border-teal-600">
+<button id="generate-prompts-btn" class="w-full sm:w-auto bg-teal-600 text-white font-bold px-6 py-2 rounded-lg hover:bg-teal-700 transition">Generate 10 Prompts</button>
+</div>
+<p id="prompt-keyword-history-note" class="text-xs text-orange-600 mt-2 hidden text-center">Note: This keyword has been used before for prompt generation.</p>
+<button id="clear-prompt-keywords-btn" class="w-full bg-red-500 text-white font-bold px-6 py-2 rounded-lg hover:bg-red-600 transition mt-2 text-sm max-w-xl mx-auto block">Clear Prompt Keyword History</button>
+
+<div id="prompts-loading" class="hidden loading-spinner"></div>
+<div id="prompts-error" class="hidden mt-4 text-center text-red-600 font-semibold"></div>
+<div id="prompts-output" class="mt-6 space-y-4 text-base bg-white p-4 rounded-md border max-h-96 overflow-y-auto">
+<!-- Prompts will appear here -->
+</div>
+<div id="prompt-copy-message" class="message-box">Prompt copied! Now switch to the new tab and paste it into the prompt input field.</div>
+</div>
+<div class="mt-8 p-4 bg-emerald-50 rounded-lg border border-emerald-200">
+<p class="font-bold text-emerald-800">Pro Prompt Structure Tip:</p>
+<p class="text-sm text-emerald-700">A good prompt includes: **Subject + Action + Setting + Style + Technical Details** (e.g., 8K, pure white background, no shadows). Aim for clarity and detail!</p>
+</div>
+</div>
+</section>
+
+<!-- Step 6: From Prompts to Pixels (Leonardo AI Deep Dive) -->
+<section id="step-content-6" class="step-content fade-in">
+<div class="bg-white p-6 md:p-8 rounded-xl shadow-lg">
+<h2 class="text-2xl md:text-3xl font-bold mb-6 text-center">Step 6: From Prompts to Pixels (Using Leonardo AI)</h2>
+<p class="max-w-3xl mx-auto text-gray-700 mb-8 text-center">Now, turn your perfect prompts into high-quality stock images with Leonardo AI. It's powerful and straightforward!</p>
+
+<div class="bg-gray-50 p-6 rounded-lg border mb-6">
+<h3 class="font-bold text-xl mb-4 text-teal-600">Leonardo AI Walkthrough:</h3>
+<ol class="list-decimal list-inside space-y-4 text-base">
+<li><b>Login & Access:</b> Go to <a href="https://leonardo.ai" target="_blank" class="font-semibold text-teal-600 hover:underline">leonardo.ai</a> and log in. Navigate to the "AI Image Generation" section.</li>
+<li><b>Choose Your Model:</b> On the left sidebar, select an AI model. For photorealistic stock images, "Leonardo Diffusion" or "Absolute Reality" are great starting points.</li>
+<li><b>Input Your Prompt:</b> Copy one of the detailed prompts you generated in the previous step and paste it into the main prompt input box.</li>
+<li><b>Add Negative Prompts:</b> This is crucial for stock! In the "Negative Prompt" box, add terms like: <code class="bg-gray-200 p-1 rounded-sm text-xs">ugly, deformed, blurry, low resolution, bad anatomy, watermark, text, signature, cartoon, unrealistic</code>.</li>
+<li><b>Adjust Settings:</b>
+<ul class="list-disc list-inside ml-4 mt-2 text-sm text-gray-700">
+<li><b>Image Dimensions/Aspect Ratio:</b> Aim for 3:2, 4:3, or 16:9. Ensure images meet 4MP minimum (e.g., 2048x1365 for 3:2 to meet 4MP minimum).</li>
+<li><b>Number of Images:</b> Start with 4-8 images per prompt to get variations.</li>
+<li><b>Tiling:</b> Keep OFF unless you're specifically generating patterns.</li>
+</ul>
+</li>
+<li><b>Generate!</b> Click the "Generate" button. Leonardo AI will create your images.</li>
+<li><b>Review & Refine:</b> Examine the generated images. Download the best ones. If they're not quite right, tweak your prompt or negative prompt and re-generate.</li>
+</ol>
+</div>
+<div class="mt-8 p-4 bg-emerald-50 rounded-lg border border-emerald-200">
+<p class="font-bold text-emerald-800">Quality Check Reminder:</p>
+<p class="text-sm text-emerald-700">Even with AI, quality matters. Look for crispness, correct anatomy, natural lighting, and commercial appeal. Only upload your absolute best.</p>
+</div>
+</div>
+</section>
+
+<!-- Step 7: Tagging & Upload -->
+<section id="step-content-7" class="step-content fade-in">
+<div class="bg-white p-6 md:p-8 rounded-xl shadow-lg">
+<h2 class="text-2xl md:text-3xl font-bold mb-6 text-center">Step 7: Tagging & Upload (The Automation Hack)</h2>
+<p class="max-w-3xl mx-auto text-gray-700 mb-8 text-center">Boost efficiency and profitability by smart metadata. Generate titles with AI, then batch process keywords for rapid uploads.</p>
+
+<div class="bg-gray-50 p-6 rounded-lg border mb-6">
+<h3 class="font-bold text-xl mb-4 text-center">✨ AI Image Title Generator ✨</h3>
+<p class="text-sm text-center text-gray-700 mb-4">Enter a brief description or key keywords for your image. Our AI will generate 5 compelling and SEO-friendly titles for Adobe Stock.</p>
+<div class="flex flex-col sm:flex-row gap-2 max-w-xl mx-auto">
+<input id="title-input" type="text" placeholder="e.g., 'German dog on white background'" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-teal-600 focus:border-teal-600">
+<button id="generate-titles-btn" class="w-full sm:w-auto bg-teal-600 text-white font-bold px-6 py-2 rounded-lg hover:bg-teal-700 transition">Generate Titles</button>
+</div>
+<div id="title-loading" class="hidden loading-spinner"></div>
+<div id="title-error" class="hidden mt-4 text-center text-red-600 font-semibold"></div>
+<div id="title-output" class="mt-4 space-y-2 text-base bg-white p-4 rounded-md border max-h-48 overflow-y-auto">
+<!-- Titles will appear here -->
+</div>
+</div>
+
+<div class="bg-gray-50 p-6 rounded-lg border mb-6">
+<h3 class="font-bold text-xl mb-4 text-teal-600">Automate Metadata with CSV (Concept):</h3>
+<p class="text-sm text-gray-700 mb-4">Batch processing metadata is critical for scale. Streamline titles and keywords for many images.</p>
+<ol class="list-decimal list-inside space-y-3 text-base">
+<li><b>Organize Files:</b> Keep your generated images well-named (e.g., `forest_stream_01.jpg`, `urban_cityscape_day_02.jpg`).</li>
+<li><b>Generate Metadata:</b>
+<ul class="list-disc list-inside ml-4 mt-2 text-sm text-gray-700">
+<li>Use the **AI Keyword Assistant** (from Step 6) for each core image concept to get a strong keyword list.</li>
+<li>Use the **AI Image Title Generator** (above) to craft compelling titles.</li>
+<li>For *batches* of very similar images (e.g., 10 variations of the same prompt), you can reuse keywords and titles with slight modifications.</li>
+</ul>
+</li>
+<li><b>Prepare Your CSV:</b> Adobe Stock allows uploading a CSV file containing metadata for multiple images. This CSV needs columns for filename, title, and keywords. (You'd typically use a spreadsheet program or a dedicated stock contributor tool for this.)</li>
+<li><b>Match & Upload:</b> Ensure the filenames in your CSV exactly match the filenames of the images you're uploading.</li>
+</ol>
+</div>
+
+<div class="bg-gray-50 p-6 rounded-lg border">
+<h3 class="font-bold text-xl mb-4 text-teal-600">The Adobe Stock Upload Process:</h3>
+<p class="text-sm text-gray-700 mb-4">Streamlined steps once your images and metadata are ready.</p>
+<ol class="list-decimal list-inside space-y-3 text-base">
+<li><b>Log In:</b> Access your <a href="https://contributor.stock.adobe.com/en?isa0=1" target="_blank" class="font-semibold text-teal-600 hover:underline">Adobe Stock Contributor dashboard</a>.</li>
+<li><b>Drag & Drop:</b> Upload your image files (even hundreds at once).</li>
+<li><b>Attach Releases:</b> Mandatory for recognizable people/property.</li>
+<li><b>Apply Metadata:</b> Manually review/refine, or upload your prepared CSV file (the power move!).</li>
+<li><b>Submit for Review:</b> Final step before your content goes live.</li>
+</ol>
+</div>
+</div>
+</section>
+
+<!-- Step 8: Analyze & Scale -->
+<section id="step-content-8" class="step-content fade-in">
+<div class="bg-white p-6 md:p-8 rounded-xl shadow-lg">
+<h2 class="text-2xl md:text-3xl font-bold mb-6 text-center">Step 8: Analyze, Adapt & Scale for Growth</h2>
+<p class="max-w-3xl mx-auto text-gray-700 mb-8 text-center">Monitor performance, learn from data, and strategically scale your portfolio for long-term income growth. Optimize your profit machine!</p>
+<div class="grid md:grid-cols-2 gap-8">
+<div class="bg-gray-50 p-6 rounded-lg border">
+<h3 class="font-bold text-lg mb-2 text-center text-teal-600">Illustrative Earning Potential</h3>
+<p class="text-sm text-gray-600 mb-4 text-center">Consistent uploads lead to exponential growth. This chart shows a typical trajectory.</p>
+<div class="chart-container">
+<canvas id="growthChart"></canvas>
+</div>
+</div>
+<div class="bg-gray-50 p-6 rounded-lg border">
+<h3 class="font-bold text-lg mb-2 text-center text-teal-600">Strategic Portfolio Mix</h3>
+<p class="text-sm text-gray-600 mb-4 text-center">Diversify content types to tap into more buyer segments and maximize earnings.</p>
+<div class="chart-container">
+<canvas id="mixChart"></canvas>
+</div>
+</div>
+</div>
+<div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="bg-gray-50 p-6 rounded-lg border">
+<h3 class="font-bold text-lg mb-2 text-teal-600">Analyze & Adapt: Your Dashboard is Gold</h3>
+<ul class="list-disc list-inside text-base text-gray-700 space-y-2">
+<li><b>Monitor Sales:</b> Regularly check your Adobe Stock Contributor dashboard. See what sells best.</li>
+<li><b>Create More:</b> Double down on best-performing content categories.</li>
+<li><b>Learn from Rejections:</b> Use feedback to refine skills or adapt strategy.</li>
+</ul>
+</div>
+<div class="bg-gray-50 p-6 rounded-lg border">
+<h3 class="font-bold text-lg mb-2 text-teal-600">Reinvest & Stay Current: Future-Proof Income</h3>
+<ul class="list-disc list-inside text-base text-gray-700 space-y-2">
+<li><b>Smart Reinvestment:</b> Use earnings to upgrade AI subscriptions, software, or advanced courses.</li>
+<li><b>Stay Trend-Savvy:</b> Markets evolve. Keep an eye on global trends and new tech.</li>
+<li><b>Consistency is Power:</b> Regular, high-quality uploads build long-term passive income.</li>
+</ul>
+</div>
+</div>
+</div>
+</section>
+
+<!-- Step 9: Final CTA -->
+<section id="step-content-9" class="step-content fade-in">
+<div class="bg-teal-600 text-white p-8 md:p-12 rounded-xl shadow-lg text-center">
+<h2 class="text-3xl md:text-4xl font-black mb-4">Your Money Move. Today.</h2>
+<p class="text-lg text-teal-100 max-w-2xl mx-auto mb-8">You now have the complete blueprint to create and monetize stunning visuals on Adobe Stock, with a powerful edge from AI. Stop waiting for "someday." The time to build a genuine, flexible income stream is now.</p>
+<a href="https://contributor.stock.adobe.com/en?isa0=1" target="_blank" class="inline-block bg-white text-teal-600 font-bold text-lg px-10 py-4 rounded-lg hover:bg-gray-100 transition-transform transform hover:scale-105 shadow-lg">
+Start Your Adobe Stock Journey Now!
+</a>
+</div>
+</section>
+</main>
+
+<!-- Message Box for Copy/Paste Instruction -->
+<div id="prompt-copy-message" class="message-box">Prompt copied! Now switch to the new tab and paste it into the prompt input field.</div>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+const navButtons = document.querySelectorAll('.nav-btn');
+const stepContents = document.querySelectorAll('.step-content');
+
+// --- History Management Functions ---
+const getHistory = (key) => {
+try {
+return JSON.parse(localStorage.getItem(key)) || [];
+} catch (e) {
+console.error('Error parsing localStorage for key', key, e);
+return [];
+}
+};
+
+const saveHistory = (key, history) => {
+localStorage.setItem(key, JSON.stringify(history));
+};
+
+const addKeywordToHistory = (key, keyword) => {
+let history = getHistory(key);
+const lowerKeyword = keyword.toLowerCase(); // Store in lowercase for case-insensitive check
+if (!history.includes(lowerKeyword)) {
+history.push(lowerKeyword);
+saveHistory(key, history);
+}
+};
+
+const isKeywordInHistory = (key, keyword) => {
+const history = getHistory(key);
+return history.includes(keyword.toLowerCase()); // Check in lowercase
+};
+
+const clearHistory = (key) => {
+localStorage.removeItem(key);
+};
+// --- End History Management Functions ---
+
+
+// Main navigation
+const navigateToStep = (stepIndex) => {
+navButtons.forEach(btn => btn.classList.remove('active'));
+navButtons[stepIndex].classList.add('active');
+stepContents.forEach((content, index) => {
+content.classList.remove('active', 'fade-in');
+if (index === stepIndex) {
+content.classList.add('active');
+setTimeout(() => content.classList.add('fade-in'), 10);
+content.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+});
+};
+
+navButtons.forEach(button => {
+button.addEventListener('click', () => {
+const targetStep = parseInt(button.getAttribute('data-step'));
+navigateToStep(targetStep);
+});
+});
+
+// Step 3: Niche & Keyword Discovery - Stage 1 (Niche Generation)
+const nicheCategorySelect = document.getElementById('niche-category-select');
+const generateNichesBtn = document.getElementById('generate-niches-btn');
+const nicheGeneratorOutput = document.getElementById('niche-generator-output');
+const nicheGeneratorLoading = document.getElementById('niche-generator-loading');
+const nicheGeneratorError = document.getElementById('niche-generator-error');
+const clearNicheGeneratorHistoryBtn = document.getElementById('clear-niche-generator-history-btn');
+
+const keywordGenerationSection = document.getElementById('keyword-generation-section');
+const selectedNicheDisplay = document.getElementById('selected-niche-display');
+
+clearNicheGeneratorHistoryBtn.addEventListener('click', () => {
+clearHistory('generatedNicheCategories');
+nicheGeneratorOutput.innerHTML = '<p class="text-gray-500">Generated niche category history cleared. New ideas will appear next time.</p>';
+keywordGenerationSection.classList.add('hidden'); // Hide keyword section if niches are cleared
+clearHistory('usedSubNicheKeywords'); // Also clear sub-niche keywords
+document.getElementById('keyword-grabber-output').innerHTML = ''; // Clear keyword display
+});
+
+generateNichesBtn.addEventListener('click', async () => {
+const selectedCategory = nicheCategorySelect.value;
+if (!selectedCategory) {
+nicheGeneratorError.textContent = 'Please select a niche category.';
+nicheGeneratorError.classList.remove('hidden');
+return;
+}
+
+nicheGeneratorOutput.innerHTML = '';
+nicheGeneratorError.classList.add('hidden');
+nicheGeneratorLoading.classList.remove('hidden');
+generateNichesBtn.disabled = true;
+
+const hasBeenExplored = isKeywordInHistory('generatedNicheCategories', selectedCategory);
+if (hasBeenExplored) {
+nicheGeneratorOutput.innerHTML += `<p class="text-orange-600 font-semibold mb-2">Note: You've explored '${selectedCategory}' before. Try clearing history or selecting another category for fresh ideas!</p>`;
+}
+
+try {
+const prompt = `Generate 15 highly selective, high-demand, and relatively low-competition stock photo/video sub-niches within the '${selectedCategory}' category. For each niche, provide only the niche name (without numbering or description). Present as a comma-separated list.`;
+const payload = { contents: [{ role: "user", parts: [{ text: prompt }] }] };
+const apiKey = "";
+const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+const response = await fetch(apiUrl, {
+method: 'POST',
+headers: { 'Content-Type': 'application/json' },
+body: JSON.stringify(payload)
+});
+
+if (!response.ok) {
+throw new Error(`API error: ${response.statusText}`);
+}
+
+const result = await response.json();
+if (result.candidates && result.candidates[0]?.content?.parts[0]?.text) {
+const text = result.candidates[0].content.parts[0].text;
+const niches = text.split(',').map(n => n.trim()).filter(Boolean);
+
+// Add niches to display, and make them clickable
+nicheGeneratorOutput.innerHTML += niches.map(nicheText => {
+return `<div class="niche-card bg-white p-3 rounded-md shadow-sm text-base text-center" data-niche-name="${nicheText}">${nicheText}</div>`;
+}).join('');
+
+// Add generated category to history
+addKeywordToHistory('generatedNicheCategories', selectedCategory);
+
+// Add event listeners to newly generated niche cards
+document.querySelectorAll('#niche-generator-output .niche-card').forEach(card => {
+card.addEventListener('click', async (event) => {
+document.querySelectorAll('#niche-generator-output .niche-card').forEach(c => c.classList.remove('selected'));
+event.currentTarget.classList.add('selected');
+const nicheName = event.currentTarget.getAttribute('data-niche-name');
+selectedNicheDisplay.textContent = nicheName;
+keywordGenerationSection.classList.remove('hidden'); // Show Stage 2
+localStorage.setItem('currentSelectedSubNiche', nicheName); // Store selected niche
+
+// --- Automatically trigger keyword generation for the selected niche ---
+keywordGrabberOutput.innerHTML = '';
+keywordGrabberError.classList.add('hidden');
+keywordGrabberLoading.classList.remove('hidden');
+
+try {
+const keywordPrompt = `Generate 100 diverse, commercially viable, and specific keywords for stock content related to the niche: '${nicheName}'. Focus on terms buyers would search for on Adobe Stock. Provide only the keywords, separated by commas, with no additional text, numbering, or explanations.`;
+const keywordPayload = { contents: [{ role: "user", parts: [{ text: keywordPrompt }] }] };
+const keywordApiKey = "";
+const keywordApiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${keywordApiKey}`;
+
+const keywordResponse = await fetch(keywordApiUrl, {
+method: 'POST',
+headers: { 'Content-Type': 'application/json' },
+body: JSON.stringify(keywordPayload)
+});
+
+if (!keywordResponse.ok) {
+throw new Error(`API error: ${keywordResponse.statusText}`);
+}
+
+const keywordResult = await keywordResponse.json();
+if (keywordResult.candidates && keywordResult.candidates[0]?.content?.parts[0]?.text) {
+const text = keywordResult.candidates[0].content.parts[0].text;
+let keywords = text.split(',').map(k => k.trim()).filter(Boolean);
+
+// Filter out already used keywords for this specific sub-niche
+const usedKeywordsForNiche = getHistory('usedSubNicheKeywords').filter(kw => kw.startsWith(nicheName.toLowerCase() + '::'));
+const uniqueKeywords = keywords.filter(k => !usedKeywordsForNiche.includes(nicheName.toLowerCase() + '::' + k.toLowerCase()));
+
+if (uniqueKeywords.length === 0 && keywords.length > 0) {
+keywordGrabberOutput.innerHTML = '<p class="text-gray-500">All generated keywords for this niche have been previously used. Try clearing history for this niche or selecting another.</p>';
+} else if (uniqueKeywords.length === 0 && keywords.length === 0) {
+keywordGrabberOutput.innerHTML = '<p class="text-gray-500">No keywords could be generated for this niche.</p>';
+} else {
+keywordGrabberOutput.innerHTML = uniqueKeywords.map(s => `<div class="keyword-chip bg-white p-2 rounded-md border text-center shadow-sm">${s}</div>`).join('');
+// Add newly displayed unique keywords to history, prefixed with niche name
+uniqueKeywords.forEach(k => addKeywordToHistory('usedSubNicheKeywords', nicheName + '::' + k));
+
+// Add event listeners to newly generated keyword chips
+document.querySelectorAll('#keyword-grabber-output .keyword-chip').forEach(chip => {
+chip.addEventListener('click', (k_event) => {
+const selectedKeyword = k_event.currentTarget.textContent;
+promptKeywordInput.value = selectedKeyword; // Populate prompt input
+navigateToStep(5); // Navigate to AI Prompts step (index 5)
+});
+});
+}
+
+} else {
+throw new Error('Unexpected API response format for keywords.');
+}
+} catch (kw_error) {
+console.error('Error generating keywords:', kw_error);
+keywordGrabberError.textContent = 'Failed to generate keywords for this niche. Please try again.';
+keywordGrabberError.classList.remove('hidden');
+} finally {
+keywordGrabberLoading.classList.add('hidden');
+}
+// --- End automatic keyword generation ---
+});
+});
+
+} else {
+throw new Error('Unexpected API response format for niches.');
+}
+} catch (error) {
+console.error('Error generating niches:', error);
+nicheGeneratorError.textContent = 'Failed to generate niches. Please try again.';
+nicheGeneratorError.classList.remove('hidden');
+} finally {
+nicheGeneratorLoading.classList.add('hidden');
+generateNichesBtn.disabled = false;
+}
+});
+
+
+// Step 3: Niche & Keyword Discovery - Stage 2 (Keyword Generation) - This section's grabKeywordsBtn is now removed as it's triggered by niche-card click
+const grabKeywordsBtn = document.getElementById('grab-keywords-btn'); /* This button is now effectively unused visually */
+const keywordGrabberOutput = document.getElementById('keyword-grabber-output');
+const keywordGrabberLoading = document.getElementById('keyword-grabber-loading');
+const keywordGrabberError = document.getElementById('keyword-grabber-error');
+const clearSubNicheKeywordsBtn = document.getElementById('clear-subniche-keywords-btn');
+
+clearSubNicheKeywordsBtn.addEventListener('click', () => {
+const currentNiche = localStorage.getItem('currentSelectedSubNiche');
+if (currentNiche) {
+let allUsedKeywords = getHistory('usedSubNicheKeywords');
+allUsedKeywords = allUsedKeywords.filter(kw => !kw.startsWith(currentNiche.toLowerCase() + '::')); // Filter case-insensitively
+saveHistory('usedSubNicheKeywords', allUsedKeywords);
+keywordGrabberOutput.innerHTML = `<p class="text-gray-500">Keywords history for '${currentNiche}' cleared.</p>`;
+} else {
+keywordGrabberOutput.innerHTML = '<p class="text-gray-500">No niche selected to clear history for.</p>';
+}
+});
+
+// AI Prompt Crafting Masterclass (Step 5)
+const promptKeywordInput = document.getElementById('prompt-keyword-input');
+const generatePromptsBtn = document.getElementById('generate-prompts-btn');
+const promptsOutput = document.getElementById('prompts-output');
+const promptsLoading = document.getElementById('prompts-loading');
+const promptsError = document.getElementById('prompts-error');
+const promptKeywordHistoryNote = document.getElementById('prompt-keyword-history-note');
+const clearPromptKeywordsBtn = document.getElementById('clear-prompt-keywords-btn');
+const promptCopyMessage = document.getElementById('prompt-copy-message');
+
+promptKeywordInput.addEventListener('input', () => {
+const keyword = promptKeywordInput.value.trim();
+if (isKeywordInHistory('usedPromptKeywords', keyword)) {
+promptKeywordHistoryNote.classList.remove('hidden');
+} else {
+promptKeywordHistoryNote.classList.add('hidden');
+}
+});
+
+clearPromptKeywordsBtn.addEventListener('click', () => {
+clearHistory('usedPromptKeywords');
+promptKeywordHistoryNote.classList.add('hidden');
+promptsOutput.innerHTML = '<p class="text-gray-500">Prompt keyword history cleared.</p>';
+});
+
+generatePromptsBtn.addEventListener('click', async () => {
+const keyword = promptKeywordInput.value.trim();
+if (!keyword) {
+promptsError.textContent = 'Please enter a keyword.';
+promptsError.classList.remove('hidden');
+return;
+}
+
+promptsOutput.innerHTML = '';
+promptsError.classList.add('hidden');
+promptsLoading.classList.remove('hidden');
+generatePromptsBtn.disabled = true;
+promptKeywordHistoryNote.classList.add('hidden'); // Hide note during generation
+
+try {
+const prompt = `Generate 10 highly detailed and unique image prompts for a stock image generation tool (like Leonardo AI or Midjourney) based on the keyword "${keyword}". Each prompt should be photorealistic, high-quality, suitable for commercial use, and specify:
+1. Subject + Action + Setting
+2. Specific style/details (e.g., textures, expressions)
+3. Technical details (e.g., "ultra-sharp 8K resolution," "pure white background," "no shadows," "evenly lit").
+Present each prompt as a numbered list item.`;
+const payload = { contents: [{ role: "user", parts: [{ text: prompt }] }] };
+const apiKey = "";
+const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+const response = await fetch(apiUrl, {
+method: 'POST',
+headers: { 'Content-Type': 'application/json' },
+body: JSON.stringify(payload)
+});
+
+if (!response.ok) {
+throw new Error(`API error: ${response.statusText}`);
+}
+
+const result = await response.json();
+if (result.candidates && result.candidates[0]?.content?.parts[0]?.text) {
+const text = result.candidates[0].content.parts[0].text;
+const promptLines = text.split('\n').filter(line => line.trim().match(/^\d+\./)); // Filters for numbered list items
+promptsOutput.innerHTML = promptLines.map(s => `<p class="prompt-chip-item bg-gray-50 p-3 rounded-md border text-sm">${s}</p>`).join('');
+addKeywordToHistory('usedPromptKeywords', keyword); // Add to history after successful generation
+
+// Add event listener to each generated prompt for copying
+document.querySelectorAll('.prompt-chip-item').forEach(item => {
+item.addEventListener('click', (p_event) => {
+const promptText = p_event.currentTarget.textContent;
+navigator.clipboard.writeText(promptText).then(() => {
+promptCopyMessage.style.display = 'block';
+promptCopyMessage.classList.remove('fadeOut'); // Reset animation
+promptCopyMessage.classList.add('slideInUp');
+setTimeout(() => {
+promptCopyMessage.classList.remove('slideInUp');
+promptCopyMessage.classList.add('fadeOut');
+}, 4000); // Display for 4 seconds
+window.open('https://leonardo.ai/ai-image-generation', '_blank'); // Open Leonardo AI in new tab
+}).catch(err => {
+console.error('Failed to copy prompt: ', err);
+// Fallback for user if copy fails
+promptCopyMessage.textContent = 'Failed to copy prompt. Please copy manually and paste into Leonardo AI.';
+promptCopyMessage.style.backgroundColor = '#dc2626'; /* red-600 */
+promptCopyMessage.style.display = 'block';
+promptCopyMessage.classList.remove('fadeOut');
+promptCopyMessage.classList.add('slideInUp');
+});
+});
+});
+
+
+} else {
+throw new Error('Unexpected API response format.');
+}
+} catch (error) {
+console.error('Error generating prompts:', error);
+promptsError.textContent = 'Failed to generate prompts. Please try again.';
+promptsError.classList.remove('hidden');
+} finally {
+promptsLoading.classList.add('hidden');
+generatePromptsBtn.disabled = false;
+}
+});
+
+// AI Image Title Generator (Step 8)
+const titleInput = document.getElementById('title-input');
+const generateTitlesBtn = document.getElementById('generate-titles-btn');
+const titleOutput = document.getElementById('title-output');
+const titleLoading = document.getElementById('title-loading');
+const titleError = document.getElementById('title-error');
+
+generateTitlesBtn.addEventListener('click', async () => {
+const description = titleInput.value.trim();
+if (!description) {
+titleError.textContent = 'Please enter a description or keywords for your image.';
+titleError.classList.remove('hidden');
+return;
+}
+
+titleOutput.innerHTML = '';
+titleError.classList.add('hidden');
+titleLoading.classList.remove('hidden');
+generateTitlesBtn.disabled = true;
+
+try {
+const prompt = `Generate 5 compelling, SEO-friendly titles for a stock image described by these keywords/description: "${description}". Titles should be concise, descriptive, and suitable for commercial stock platforms. Provide only the titles, each on a new line, with no additional text or numbering.`;
+const payload = { contents: [{ role: "user", parts: [{ text: prompt }] }] };
+const apiKey = "";
+const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+const response = await fetch(apiUrl, {
+method: 'POST',
+headers: { 'Content-Type': 'application/json' },
+body: JSON.stringify(payload)
+});
+
+if (!response.ok) {
+throw new Error(`API error: ${response.statusText}`);
+}
+
+const result = await response.json();
+if (result.candidates && result.candidates[0]?.content?.parts[0]?.text) {
+const text = result.candidates[0].content.parts[0].text;
+const titles = text.split('\n').map(t => t.trim()).filter(Boolean);
+titleOutput.innerHTML = titles.map(s => `<p class="bg-gray-50 p-2 rounded-md border text-sm">${s}</p>`).join('');
+} else {
+throw new Error('Unexpected API response format.');
+}
+} catch (error) {
+console.error('Error generating titles:', error);
+titleError.textContent = 'Failed to generate titles. Please try again.';
+titleError.classList.remove('hidden');
+} finally {
+titleLoading.classList.add('hidden');
+generateTitlesBtn.disabled = false;
+}
+});
+
+
+// Charts (Step 9)
+new Chart(document.getElementById('growthChart').getContext('2d'), {
+type: 'line',
+data: {
+labels: ['Month 1', 'Month 3', 'Month 6', 'Month 9', 'Month 12'],
+datasets: [{
+label: 'Potential Earnings (Illustrative)',
+data: [25, 75, 250, 500, 1000],
+backgroundColor: 'rgba(5, 150, 105, 0.2)',
+borderColor: '#059669',
+tension: 0.3,
+fill: true
+}]
+},
+options: {
+responsive: true,
+maintainAspectRatio: false,
+plugins: { legend: { display: false } },
+scales: {
+y: { beginAtZero: true, title: { display: true, text: 'Earnings ($)' } },
+x: { title: { display: true, text: 'Time' } }
+}
+}
+});
+
+new Chart(document.getElementById('mixChart').getContext('2d'), {
+type: 'doughnut',
+data: {
+labels: ['Organic Photos', 'AI Images', 'Videos'],
+datasets: [{
+data: [50, 40, 10],
+backgroundColor: ['#059669', '#047857', '#065f46'],
+hoverOffset: 4
+}]
+},
+options: {
+responsive: true,
+maintainAspectRatio: false,
+plugins: { legend: { position: 'bottom' } }
+}
+});
+});
+</script>
+</body>
+</html>
