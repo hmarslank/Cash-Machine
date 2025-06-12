@@ -211,7 +211,7 @@
                         <h3 class="font-bold text-lg mb-2 text-teal-600">Key Niches</h3>
                         <p class="text-sm text-gray-700 mb-3">Focus on themes with consistent buyer demand:</p>
                         <ul class="list-disc list-inside text-sm text-gray-700 space-y-1">
-                            <li>**Authentic Lifestyle:** Unposed moments, diverse groups, remote work, mental wellness.</li>
+                            <li>**Authentic Lifestyle:** Real, unposed human moments, diverse groups, remote work, mental wellness.</li>
                             <li>**Modern Tech Use:** People interacting with devices, clean interfaces, innovative tech concepts.</li>
                             <li>**Diversity & Inclusion:** Genuinely representing various ages, ethnicities, body types, and abilities.</li>
                             <li>**Conceptual Imagery:** Visually representing abstract ideas like "growth," "connection," "innovation."</li>
@@ -387,7 +387,7 @@
                             </ul>
                         </li>
                         <li><b>Generate!</b> Click.</li>
-                        <li><b>Review & Refine:</b> Download best images. Tweak prompt/negative prompt if needed.</li>
+                        <li><b>Review & Refine:</b> Examine the generated images. Download the best ones. If they're not quite right, tweak your prompt or negative prompt and re-generate.</li>
                     </ol>
                 </div>
                 <p class="mt-8 p-4 bg-emerald-50 rounded-lg border border-emerald-200 font-bold text-emerald-800 text-sm">Quality matters. Look for crispness, correct anatomy, natural lighting, and commercial appeal. Only upload your absolute best.</p>
@@ -477,15 +477,15 @@
                     </div>
                     <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="bg-gray-50 p-6 rounded-lg border">
-                            <h3 class="font-bold text-lg mb-2 text-teal-600">Analyze & Adapt</h3>
+                            <h3 class="font-bold text-lg mb-2 text-teal-600">Analyze & Adapt: Your Dashboard is Gold</h3>
                             <ul class="list-disc list-inside text-base text-gray-700 space-y-2">
-                                <li><b>Monitor Sales:</b> Check Adobe Stock dashboard.</li>
-                                <li><b>Create More:</b> Focus on best-performing content.</li>
+                                <li><b>Monitor Sales:</b> Regularly check your Adobe Stock Contributor dashboard. See what sells best.</li>
+                                <li><b>Create More:</b> Double down on best-performing content categories.</li>
                                 <li><b>Learn:</b> Use rejection feedback to improve.</li>
                             </ul>
                         </div>
                         <div class="bg-gray-50 p-6 rounded-lg border">
-                            <h3 class="font-bold text-lg mb-2 text-teal-600">Reinvest & Stay Current</h3>
+                            <h3 class="font-bold text-lg mb-2 text-teal-600">Reinvest & Stay Current: Future-Proof Income</h3>
                             <ul class="list-disc list-inside text-base text-gray-700 space-y-2">
                                 <li><b>Smart Reinvestment:</b> Use earnings to upgrade AI subscriptions, software, or advanced courses.</li>
                                 <li><b>Stay Savvy:</b> Follow market trends & new tech.</li>
@@ -518,193 +518,196 @@
         // Get your key from: https://aistudio.google.com/app/apikey
         const GEMINI_API_KEY = "YOUR_GEMINI_API_KEY_HERE"; // <<< REPLACE THIS WITH YOUR ACTUAL KEY!
 
-        // --- Core App Logic ---
-        const navButtons = document.querySelectorAll('.nav-btn');
-        const stepContents = document.querySelectorAll('.step-content');
-        
-        // --- History Management Functions ---
-        const getHistory = (key) => {
-            try {
-                return JSON.parse(localStorage.getItem(key)) || [];
-            } catch (e) {
-                console.error('Error parsing localStorage for key', key, e);
-                return [];
-            }
-        };
+        // Firebase SDKs are removed for this simplified version.
+        // Firebase configuration, authentication, and Firestore logic are also removed.
 
-        const saveHistory = (key, history) => {
-            localStorage.setItem(key, JSON.stringify(history));
-        };
-
-        const addKeywordToHistory = (key, keyword) => {
-            let history = getHistory(key);
-            const lowerKeyword = keyword.toLowerCase(); // Store in lowercase for case-insensitive check
-            if (!history.includes(lowerKeyword)) {
-                history.push(lowerKeyword);
-                saveHistory(key, history);
-            }
-        };
-
-        const isKeywordInHistory = (key, keyword) => {
-            const history = getHistory(key);
-            return history.includes(keyword.toLowerCase()); // Check in lowercase
-        };
-
-        const clearHistory = (key) => {
-            localStorage.removeItem(key);
-        };
-        // --- End History Management Functions ---
-
-
-        // Main navigation
-        const navigateToStep = (stepIndex) => {
-            navButtons.forEach(btn => btn.classList.remove('active'));
-            navButtons[stepIndex].classList.add('active');
-            stepContents.forEach((content, index) => {
-                content.classList.remove('active', 'fade-in');
-                if (index === stepIndex) { 
-                    content.classList.add('active');
-                    setTimeout(() => content.classList.add('fade-in'), 10);
-                    content.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        document.addEventListener('DOMContentLoaded', () => {
+            const navButtons = document.querySelectorAll('.nav-btn');
+            const stepContents = document.querySelectorAll('.step-content');
+            
+            // --- History Management Functions (remain the same) ---
+            const getHistory = (key) => {
+                try {
+                    return JSON.parse(localStorage.getItem(key)) || [];
+                } catch (e) {
+                    console.error('Error parsing localStorage for key', key, e);
+                    return [];
                 }
-            });
-        };
+            };
 
-        navButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                const targetStep = parseInt(button.getAttribute('data-step'));
-                navigateToStep(targetStep);
-            });
-        });
+            const saveHistory = (key, history) => {
+                localStorage.setItem(key, JSON.stringify(history));
+            };
 
-        // Step 3: Niche & Keyword Discovery - Stage 1 (Niche Generation)
-        const nicheCategorySelect = document.getElementById('niche-category-select');
-        const generateNichesBtn = document.getElementById('generate-niches-btn');
-        const nicheGeneratorOutput = document.getElementById('niche-generator-output');
-        const nicheGeneratorLoading = document.getElementById('niche-generator-loading');
-        const nicheGeneratorError = document.getElementById('niche-generator-error');
-        const clearNicheGeneratorHistoryBtn = document.getElementById('clear-niche-generator-history-btn');
-        
-        const keywordGenerationSection = document.getElementById('keyword-generation-section');
-        const selectedNicheDisplay = document.getElementById('selected-niche-display');
+            const addKeywordToHistory = (key, keyword) => {
+                let history = getHistory(key);
+                const lowerKeyword = keyword.toLowerCase(); // Store in lowercase for case-insensitive check
+                if (!history.includes(lowerKeyword)) {
+                    history.push(lowerKeyword);
+                    saveHistory(key, history);
+                }
+            };
 
-        clearNicheGeneratorHistoryBtn.addEventListener('click', () => {
-            clearHistory('generatedNicheCategories');
-            nicheGeneratorOutput.innerHTML = '<p class="text-gray-500">Generated niche category history cleared. New ideas will appear next time.</p>';
-            keywordGenerationSection.classList.add('hidden'); // Hide keyword section if niches are cleared
-            clearHistory('usedSubNicheKeywords'); // Also clear sub-niche keywords
-            document.getElementById('keyword-grabber-output').innerHTML = ''; // Clear keyword display
-        });
+            const isKeywordInHistory = (key, keyword) => {
+                const history = getHistory(key);
+                return history.includes(keyword.toLowerCase()); // Check in lowercase
+            };
 
-        generateNichesBtn.addEventListener('click', async () => {
-            const selectedCategory = nicheCategorySelect.value;
-            if (!selectedCategory) {
-                nicheGeneratorError.textContent = 'Please select a niche category.';
-                nicheGeneratorError.classList.remove('hidden');
-                return;
-            }
+            const clearHistory = (key) => {
+                localStorage.removeItem(key);
+            };
+            // --- End History Management Functions ---
 
-            nicheGeneratorOutput.innerHTML = '';
-            nicheGeneratorError.classList.add('hidden');
-            nicheGeneratorLoading.classList.remove('hidden');
-            generateNichesBtn.disabled = true;
 
-            const hasBeenExplored = isKeywordInHistory('generatedNicheCategories', selectedCategory);
-            if (hasBeenExplored) {
-                nicheGeneratorOutput.innerHTML += `<p class="text-orange-600 font-semibold mb-2">Note: You've explored '${selectedCategory}' before. Try clearing history or selecting another category for fresh ideas!</p>`;
-            }
-
-            try {
-                const prompt = `Generate 15 highly selective, high-demand, and relatively low-competition stock photo/video sub-niches within the '${selectedCategory}' category. For each niche, provide only the niche name (without numbering or description). Present as a comma-separated list.`;
-                const payload = { contents: [{ role: "user", parts: [{ text: prompt }] }] };
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`;
-                
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
+            // Main navigation
+            const navigateToStep = (stepIndex) => {
+                navButtons.forEach(btn => btn.classList.remove('active'));
+                navButtons[stepIndex].classList.add('active');
+                stepContents.forEach((content, index) => {
+                    content.classList.remove('active', 'fade-in');
+                    if (index === stepIndex) { 
+                        content.classList.add('active');
+                        setTimeout(() => content.classList.add('fade-in'), 10);
+                        content.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
                 });
-                
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(`API error: ${errorData.error || response.statusText}`);
+            };
+
+            navButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const targetStep = parseInt(button.getAttribute('data-step'));
+                    navigateToStep(targetStep);
+                });
+            });
+
+            // Step 3: Niche & Keyword Discovery - Stage 1 (Niche Generation)
+            const nicheCategorySelect = document.getElementById('niche-category-select');
+            const generateNichesBtn = document.getElementById('generate-niches-btn');
+            const nicheGeneratorOutput = document.getElementById('niche-generator-output');
+            const nicheGeneratorLoading = document.getElementById('niche-generator-loading');
+            const nicheGeneratorError = document.getElementById('niche-generator-error');
+            const clearNicheGeneratorHistoryBtn = document.getElementById('clear-niche-generator-history-btn');
+            
+            const keywordGenerationSection = document.getElementById('keyword-generation-section');
+            const selectedNicheDisplay = document.getElementById('selected-niche-display');
+
+            clearNicheGeneratorHistoryBtn.addEventListener('click', () => {
+                clearHistory('generatedNicheCategories');
+                nicheGeneratorOutput.innerHTML = '<p class="text-gray-500">Generated niche category history cleared. New ideas will appear next time.</p>';
+                keywordGenerationSection.classList.add('hidden'); // Hide keyword section if niches are cleared
+                clearHistory('usedSubNicheKeywords'); // Also clear sub-niche keywords
+                document.getElementById('keyword-grabber-output').innerHTML = ''; // Clear keyword display
+            });
+
+            generateNichesBtn.addEventListener('click', async () => {
+                const selectedCategory = nicheCategorySelect.value;
+                if (!selectedCategory) {
+                    nicheGeneratorError.textContent = 'Please select a niche category.';
+                    nicheGeneratorError.classList.remove('hidden');
+                    return;
                 }
 
-                const result = await response.json();
-                if (result.candidates && result.candidates[0]?.content?.parts[0]?.text) {
-                    const text = result.candidates[0].content.parts[0].text;
-                    const niches = text.split(',').map(n => n.trim()).filter(Boolean);
+                nicheGeneratorOutput.innerHTML = '';
+                nicheGeneratorError.classList.add('hidden');
+                nicheGeneratorLoading.classList.remove('hidden');
+                generateNichesBtn.disabled = true;
+
+                const hasBeenExplored = isKeywordInHistory('generatedNicheCategories', selectedCategory);
+                if (hasBeenExplored) {
+                    nicheGeneratorOutput.innerHTML += `<p class="text-orange-600 font-semibold mb-2">Note: You've explored '${selectedCategory}' before. Try clearing history or selecting another category for fresh ideas!</p>`;
+                }
+
+                try {
+                    const prompt = `Generate 15 highly selective, high-demand, and relatively low-competition stock photo/video sub-niches within the '${selectedCategory}' category. For each niche, provide only the niche name (without numbering or description). Present as a comma-separated list.`;
+                    const payload = { contents: [{ role: "user", parts: [{ text: prompt }] }] };
+                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`;
                     
-                    nicheGeneratorOutput.innerHTML += niches.map(nicheText => {
-                        return `<div class="niche-card bg-white p-3 rounded-md shadow-sm text-base text-center" data-niche-name="${nicheText}">${nicheText}</div>`;
-                    }).join('');
-                    addKeywordToHistory('generatedNicheCategories', selectedCategory);
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(`API error: ${errorData.error || response.statusText}`);
+                    }
 
-                    document.querySelectorAll('#niche-generator-output .niche-card').forEach(card => {
-                        card.addEventListener('click', async (event) => {
-                            document.querySelectorAll('#niche-generator-output .niche-card').forEach(c => c.classList.remove('selected'));
-                            event.currentTarget.classList.add('selected');
-                            const nicheName = event.currentTarget.getAttribute('data-niche-name');
-                            selectedNicheDisplay.textContent = nicheName;
-                            keywordGenerationSection.classList.remove('hidden'); // Show Stage 2
-                            localStorage.setItem('currentSelectedSubNiche', nicheName); // Store selected niche
+                    const result = await response.json();
+                    if (result.candidates && result.candidates[0]?.content?.parts[0]?.text) {
+                        const text = result.candidates[0].content.parts[0].text;
+                        const niches = text.split(',').map(n => n.trim()).filter(Boolean);
+                        
+                        nicheGeneratorOutput.innerHTML += niches.map(nicheText => {
+                            return `<div class="niche-card bg-white p-3 rounded-md shadow-sm text-base text-center" data-niche-name="${nicheText}">${nicheText}</div>`;
+                        }).join('');
+                        addKeywordToHistory('generatedNicheCategories', selectedCategory);
 
-                            keywordGrabberOutput.innerHTML = '';
-                            keywordGrabberError.classList.add('hidden');
-                            keywordGrabberLoading.classList.remove('hidden');
-                            
-                            try {
-                                const keywordPrompt = `Generate 100 diverse, commercially viable, and specific keywords for stock content related to the niche: '${nicheName}'. Focus on terms buyers would search for on Adobe Stock. Provide only the keywords, separated by commas, with no additional text, numbering, or explanations.`;
-                                const keywordPayload = { contents: [{ role: "user", parts: [{ text: keywordPrompt }] }] };
-                                const keywordApiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`;
+                        document.querySelectorAll('#niche-generator-output .niche-card').forEach(card => {
+                            card.addEventListener('click', async (event) => {
+                                document.querySelectorAll('#niche-generator-output .niche-card').forEach(c => c.classList.remove('selected'));
+                                event.currentTarget.classList.add('selected');
+                                const nicheName = event.currentTarget.getAttribute('data-niche-name');
+                                selectedNicheDisplay.textContent = nicheName;
+                                keywordGenerationSection.classList.remove('hidden'); // Show Stage 2
+                                localStorage.setItem('currentSelectedSubNiche', nicheName); // Store selected niche
+
+                                keywordGrabberOutput.innerHTML = '';
+                                keywordGrabberError.classList.add('hidden');
+                                keywordGrabberLoading.classList.remove('hidden');
                                 
-                                const keywordResponse = await fetch(keywordApiUrl, {
-                                    method: 'POST',
-                                    headers: { 'Content-Type': 'application/json' },
-                                    body: JSON.stringify(keywordPayload)
-                                });
-                                
-                                if (!keywordResponse.ok) {
-                                    const kwErrorData = await keywordResponse.json();
-                                    throw new Error(`API error: ${kwErrorData.error || keywordResponse.statusText}`);
-                                }
-
-                                const kwResult = await keywordResponse.json();
-                                if (kwResult.candidates && kwResult.candidates[0]?.content?.parts[0]?.text) {
-                                    const text = kwResult.candidates[0].content.parts[0].text;
-                                    let keywords = text.split(',').map(k => k.trim()).filter(Boolean);
+                                try {
+                                    const keywordPrompt = `Generate 100 diverse, commercially viable, and specific keywords for stock content related to the niche: '${nicheName}'. Focus on terms buyers would search for on Adobe Stock. Provide only the keywords, separated by commas, with no additional text, numbering, or explanations.`;
+                                    const keywordPayload = { contents: [{ role: "user", parts: [{ text: keywordPrompt }] }] };
+                                    const keywordApiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`;
                                     
-                                    const usedKeywordsForNiche = getHistory('usedSubNicheKeywords').filter(kw => kw.startsWith(nicheName.toLowerCase() + '::'));
-                                    const uniqueKeywords = keywords.filter(k => !usedKeywordsForNiche.includes(nicheName.toLowerCase() + '::' + k.toLowerCase()));
-
-                                    if (uniqueKeywords.length === 0 && keywords.length > 0) {
-                                        keywordGrabberOutput.innerHTML = '<p class="text-gray-500">All generated keywords for this niche have been previously used. Try clearing history for this niche or selecting another.</p>';
-                                    } else if (uniqueKeywords.length === 0 && keywords.length === 0) {
-                                         keywordGrabberOutput.innerHTML = '<p class="text-gray-500">No keywords could be generated for this niche.</p>';
-                                    } else {
-                                        keywordGrabberOutput.innerHTML = uniqueKeywords.map(s => `<div class="keyword-chip bg-white p-2 rounded-md border text-center shadow-sm">${s}</div>`).join('');
-                                        uniqueKeywords.forEach(k => addKeywordToHistory('usedSubNicheKeywords', nicheName + '::' + k));
-
-                                        document.querySelectorAll('#keyword-grabber-output .keyword-chip').forEach(chip => {
-                                            chip.addEventListener('click', (k_event) => {
-                                                const selectedKeyword = k_event.currentTarget.textContent;
-                                                promptKeywordInput.value = selectedKeyword;
-                                                navigateToStep(5);
-                                            });
-                                        });
+                                    const keywordResponse = await fetch(keywordApiUrl, {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify(keywordPayload)
+                                    });
+                                    
+                                    if (!keywordResponse.ok) {
+                                        const kwErrorData = await keywordResponse.json();
+                                        throw new Error(`API error: ${kwErrorData.error || keywordResponse.statusText}`);
                                     }
-                                } else {
-                                    throw new Error('No keywords received.');
-                                }
-                            } catch (kw_error) {
-                                console.error('Error generating keywords:', kw_error);
-                                keywordGrabberError.textContent = `Failed to get keywords: ${kw_error.message}.`;
-                                keywordGrabberError.classList.remove('hidden');
-                            } finally {
-                                keywordGrabberLoading.classList.add('hidden');
-                            }
-                        });
 
+                                    const kwResult = await keywordResponse.json();
+                                    if (kwResult.candidates && kwResult.candidates[0]?.content?.parts[0]?.text) {
+                                        const text = kwResult.candidates[0].content.parts[0].text;
+                                        let keywords = text.split(',').map(k => k.trim()).filter(Boolean);
+                                        
+                                        const usedKeywordsForNiche = getHistory('usedSubNicheKeywords').filter(kw => kw.startsWith(nicheName.toLowerCase() + '::'));
+                                        const uniqueKeywords = keywords.filter(k => !usedKeywordsForNiche.includes(nicheName.toLowerCase() + '::' + k.toLowerCase()));
+
+                                        if (uniqueKeywords.length === 0 && keywords.length > 0) {
+                                            keywordGrabberOutput.innerHTML = '<p class="text-gray-500">All generated keywords for this niche have been previously used. Try clearing history for this niche or selecting another.</p>';
+                                        } else if (uniqueKeywords.length === 0 && keywords.length === 0) {
+                                             keywordGrabberOutput.innerHTML = '<p class="text-gray-500">No keywords could be generated for this niche.</p>';
+                                        } else {
+                                            keywordGrabberOutput.innerHTML = uniqueKeywords.map(s => `<div class="keyword-chip bg-white p-2 rounded-md border text-center shadow-sm">${s}</div>`).join('');
+                                            uniqueKeywords.forEach(k => addKeywordToHistory('usedSubNicheKeywords', nicheName + '::' + k));
+
+                                            document.querySelectorAll('#keyword-grabber-output .keyword-chip').forEach(chip => {
+                                                chip.addEventListener('click', (k_event) => {
+                                                    const selectedKeyword = k_event.currentTarget.textContent;
+                                                    promptKeywordInput.value = selectedKeyword;
+                                                    navigateToStep(5);
+                                                });
+                                            });
+                                        }
+                                    } else {
+                                        throw new Error('No keywords received.');
+                                    }
+                                } catch (kw_error) {
+                                    console.error('Error generating keywords:', kw_error);
+                                    keywordGrabberError.textContent = `Failed to get keywords: ${kw_error.message}.`;
+                                    keywordGrabberError.classList.remove('hidden');
+                                } finally {
+                                    keywordGrabberLoading.classList.add('hidden');
+                                }
+                            });
+                        });
                     } else {
                         throw new Error('No niches received.');
                     }
@@ -1099,3 +1102,61 @@ Present each prompt as a numbered list item.`;
     </script>
 </body>
 </html>
+```
+
+---
+
+### Part 2: Putting Your App's Picture on the Internet (GitHub Pages!)
+
+This is the super simple way to make your app live.
+
+**Step 1: Go to GitHub.com**
+
+1.  Open your internet browser.
+2.  Go to: [https://github.com/](https://github.com/)
+3.  Log in (or sign up if you haven't yet, and confirm your email).
+
+**Step 2: Make a New "Display Case" (Repository)**
+
+1.  Make sure you're logged in.
+2.  In the top-right corner, click the **+** sign, then click **"New repository"**.
+3.  **Name of your Display Case:**
+    * You can name it anything you like, for example, `my-sleek-ai-app`.
+    * *If you want your app to be at a super simple address like `https://YOURUSERNAME.github.io/` (like your own personal website), you **MUST** name this display case *exactly* `yourusername.github.io`. (Replace `yourusername` with your real GitHub username).*
+4.  **Description (Optional):** Write a short sentence about your app here.
+5.  **Public/Private:** Choose **"Public"**! This is important so GitHub Pages can show your app.
+6.  **Check the box that says "Add a README file"** (this time, we *will* check it, it makes things easier).
+7.  Click the big green **"Create repository"** button.
+
+**Step 3: Upload Your `index.html` (Your Magic Drawing!)**
+
+1.  On your new GitHub repository page, you will see a bunch of files already (like `README.md`).
+2.  Click on the **"Add file"** button (it's usually a green button or near the top).
+3.  Then click **"Upload files"**.
+4.  Now, find your `MySleekAIAppLive` folder on your computer.
+5.  **Drag your `index.html` file** from that folder and **drop it into the big box** on the GitHub page (it will say "Drag files here to add them to your repository" or similar).
+6.  Scroll down a little. You can write a short message like "My sleek AI app!" in the "Commit changes" box.
+7.  Click the big green **"Commit changes"** button.
+
+Your `index.html` file is now in your GitHub display case!
+
+**Step 4: Turn on the "Website Switch" for Your Display Case!**
+
+1.  On your GitHub repository page, click on **"Settings"** (it's usually a tab near the top, looks like a gear).
+2.  On the left side of the screen, look for **"Pages"** and click it.
+3.  Under the "Build and deployment" section, for "Source", it should already be set to **"Deploy from a branch"**.
+4.  For "Branch", make sure it says **`main`** (or `master`).
+5.  Click the **"Save"** button.
+
+GitHub is now doing its magic! It's getting your app ready to show to the world. This can sometimes take a few minutes (like 1 to 5 minutes, or even a bit longer if the internet gnomes are busy).
+
+**Step 5: See Your Awesome App Live!**
+
+1.  Wait a few minutes. Then, go back to the "Pages" section in your GitHub repository settings and refresh the page.
+2.  You should now see a message that says something like:
+    "**Your site is live at [https://yourusername.github.io/your-repo-name/](https://yourusername.github.io/your-repo-name/)**"
+    (Or `https://yourusername.github.io/` if you named the repo exactly `yourusername.github.io`).
+
+**Click that link!**
+
+**Congratulations! Your super sleek AI Creator Hub app is now live and accessible to anyone on the internet
