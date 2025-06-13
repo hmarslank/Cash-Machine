@@ -3,146 +3,400 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Creator Hub: Get Stock Ideas (Simple Version)</title>
+    <title>Pixel Profits AI: Elevate Your Stock Content</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     
-    <!-- Chosen Palette: "Modern Teal" - Background: very light gray (#F8F9FA), Main Text: dark gray (#333333), Accent: deep teal (#008080) for active states, buttons, and key highlights. Secondary backgrounds: subtle light gray/teal shades. -->
+    <!-- New Palette (Inspired by Imagino):
+         Primary Background: #F8F9FA (Very light gray)
+         Secondary Backgrounds/Cards: #FFFFFF (White)
+         Accent Color (Primary): #8B5CF6 (Indigo-500)
+         Accent Color (Hover/Active/Darker): #7C3AED (Indigo-600)
+         Light Accent: #E0E7FF (Indigo-100)
+         Text: #333333 (Dark Gray), #4B5563 (Medium Gray), #6B7280 (Light Gray)
+         Success: #10B981 (Emerald-500)
+         Error: #EF4444 (Red-500)
+    -->
     <style>
+        /* Base styles for modern, sleek look */
         body {
             font-family: 'Inter', sans-serif;
             background-color: #F8F9FA; /* Very light gray */
             color: #333333; /* Dark gray for main text */
+            line-height: 1.6;
         }
+
+        .container {
+            max-width: 1200px; /* Wider container for spacious feel */
+            margin-left: auto;
+            margin-right: auto;
+            padding: 1.5rem; /* More consistent padding */
+        }
+
+        /* Header Specific */
+        .app-header {
+            background: linear-gradient(to right, #ffffff, #F9FAFB); /* Subtle gradient for header */
+            border-bottom: 1px solid #F3F4F6; /* Very light border */
+        }
+
+        /* Navigation Buttons */
         .nav-btn {
-            transition: all 0.2s ease-in-out;
+            transition: all 0.3s ease-in-out; /* Smoother transitions */
             border-bottom: 3px solid transparent;
-            padding-bottom: 0.75rem;
-            color: #666666; /* Lighter gray for inactive nav */
+            padding: 0.8rem 1rem; /* More vertical padding, consistent horizontal */
+            color: #6B7280; /* Neutral gray for inactive */
+            font-weight: 500; /* Medium weight for sleekness */
+            letter-spacing: -0.01em; /* Tighter letter spacing */
+            white-space: nowrap; /* Prevent wrapping */
         }
         .nav-btn.active {
-            color: #008080; /* Deep Teal for active nav */
-            border-bottom-color: #008080;
+            color: #8B5CF6; /* Primary Accent (Indigo-500) */
+            border-bottom-color: #8B5CF6;
+            font-weight: 700; /* Bolder when active */
         }
-        .step-content { display: none; }
+        .nav-btn:hover:not(.active) {
+            color: #7C3AED; /* Darker Indigo on hover for inactive */
+        }
+
+        /* Section Content */
+        .step-content { 
+            display: none; 
+            animation: fadeIn 0.5s ease-out forwards; /* Ensures fade-in on step change */
+        }
         .step-content.active { display: block; }
         
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .fade-in { animation: fadeIn 0.5s ease-out forwards; }
+        @keyframes fadeIn { 
+            from { opacity: 0; transform: translateY(10px); } 
+            to { opacity: 1; transform: translateY(0); } 
+        }
 
-        .chart-container { position: relative; width: 100%; max-width: 500px; margin-left: auto; margin-right: auto; height: 300px; max-height: 350px; }
-        @media (min-width: 768px) { .chart-container { height: 350px; } }
-
+        /* Loading Spinner */
         .loading-spinner {
-            border: 4px solid #e0e0e0; /* Light gray */
-            border-top: 4px solid #008080; /* Deep Teal */
+            border: 4px solid #E5E7EB; /* Lighter gray border */
+            border-top: 4px solid #8B5CF6; /* Primary Accent (Indigo-500) */
             border-radius: 50%;
-            width: 30px;
-            height: 30px;
+            width: 36px; /* Slightly larger */
+            height: 36px;
             animation: spin 1s linear infinite;
-            margin: 1rem auto;
+            margin: 1.5rem auto; /* More margin */
         }
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
 
-        .niche-card {
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s, background-color 0.2s, border-color 0.2s;
-            border-width: 1px; /* Add border for cleaner look */
-            border-color: #e5e7eb; /* gray-200 */
+        /* Card Styles */
+        .card-panel {
+            background-color: #FFFFFF;
+            border-radius: 1.25rem; /* More rounded */
+            box-shadow: 0 8px 30px rgba(0,0,0,0.08); /* Softer, larger shadow */
+            padding: 3rem; /* Generous padding */
+            margin-bottom: 2.5rem; /* Space between sections */
+            border: 1px solid #F3F4F6; /* Very subtle border */
         }
-        .niche-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+
+        /* Niche & Keyword Cards/Chips */
+        .niche-card, .keyword-chip {
+            background-color: #FDFDFE; /* Off-white for subtle contrast */
+            border: 1px solid #E5E7EB;
+            border-radius: 0.75rem; /* More rounded */
+            padding: 0.8rem 1.3rem; /* More padding */
+            font-size: 0.95rem;
+            font-weight: 500;
+            text-align: center;
+            transition: all 0.2s ease-in-out;
+            cursor: pointer;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04); /* Very subtle shadow */
+        }
+        .niche-card:hover, .keyword-chip:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            background-color: #EDE9FE; /* Light Indigo hover */
         }
         .niche-card.selected {
-            border-color: #008080;
-            background-color: #E0F2F2; /* Lighter Teal */
+            border-color: #8B5CF6; /* Primary Accent (Indigo-500) */
+            background-color: #EDE9FE; /* Lighter Indigo */
             font-weight: 600;
-            color: #004d4d; /* Darker Teal text */
+            color: #5B21B6; /* Darker Indigo text */
         }
-        .keyword-chip, .prompt-chip-item {
+        .keyword-chip-used {
+            border-color: #EF4444 !important; /* Red border for used keywords */
+            background-color: #FEE2E2 !important; /* Light red background */
+            color: #B91C1C !important; /* Darker red text */
+            font-weight: 600;
+        }
+
+
+        /* Prompt Chips */
+        .prompt-chip-item {
+            background-color: #FDFDFE; /* Light background */
+            border: 1px solid #E5E7EB;
+            border-radius: 0.75rem; /* Rounded corners */
+            padding: 1rem 1.5rem; /* More padding */
+            font-size: 0.95rem;
+            transition: all 0.3s ease-in-out;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        }
+        .prompt-chip-item.copied {
+            background-color: #D1FAE5; /* Light green */
+            border-color: #10B981; /* Green border */
+            animation: copiedFade 2s forwards;
+        }
+        @keyframes copiedFade {
+            0% { background-color: #D1FAE5; border-color: #10B981; }
+            100% { background-color: #FDFDFE; border-color: #E5E7EB; }
+        }
+
+        /* Inputs & Textareas */
+        input[type="text"], textarea, select {
+            border: 1px solid #D1D5DB; /* Light gray border */
+            border-radius: 0.75rem; /* More rounded */
+            padding: 0.8rem 1.2rem; /* Comfortable padding */
+            font-size: 1rem;
+            transition: all 0.2s ease-in-out;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.03); /* Subtle inner shadow */
+        }
+        input[type="text"]:focus, textarea:focus, select:focus {
+            border-color: #8B5CF6; /* Primary Accent (Indigo-500) */
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2), inset 0 1px 2px rgba(0,0,0,0.03); /* Soft accent ring */
+            outline: none;
+        }
+        .prompt-keyword-input-used {
+            border-color: #EF4444 !important; /* Red border for used keywords */
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2) !important;
+        }
+
+        /* Sleek Buttons */
+        .btn-primary {
+            background: linear-gradient(to right, #8B5CF6, #7C3AED); /* Indigo gradient */
+            color: white;
+            font-weight: 600; /* Semi-bold */
+            padding: 0.9rem 2.2rem; /* More generous padding */
+            border-radius: 0.75rem; /* More rounded */
+            box-shadow: 0 6px 20px rgba(139, 92, 246, 0.3); /* Softer, larger shadow */
+            transition: all 0.3s ease-in-out;
+            border: none; /* No ugly default border */
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4);
+            background: linear-gradient(to right, #7C3AED, #8B5CF6); /* Subtle gradient shift on hover */
+        }
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+            background: #A78BFA; /* Lighter indigo when disabled */
+        }
+
+        .btn-secondary-red {
+            background-color: #EF4444; /* Red */
+            color: white;
+            font-weight: 600;
+            padding: 0.9rem 2.2rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.2);
+            transition: all 0.3s ease-in-out;
+            border: none;
+        }
+        .btn-secondary-red:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(239, 68, 68, 0.3);
+            background-color: #DC2626; /* Darker red */
+        }
+        .btn-secondary-red:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-copy {
+            background-color: #A78BFA; /* Lighter Indigo */
+            color: white;
+            padding: 0.5rem 1rem; /* Slightly more padding */
+            border-radius: 0.625rem; /* More rounded */
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: background-color 0.2s ease-in-out, transform 0.1s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .btn-copy:hover {
+            background-color: #8B5CF6; /* Primary Indigo on hover */
+            transform: translateY(-1px);
+            box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+        }
+
+        /* Accordion styles (details/summary) - Enhanced */
+        details {
+            background-color: #F9FAFB; /* Match new light grey */
+            border: 1px solid #E5E7EB;
+            border-radius: 1rem; /* More rounded */
+            margin-bottom: 1.25rem; /* More space */
+            box-shadow: 0 2px 10px rgba(0,0,0,0.03); /* Softer shadow */
+            transition: all 0.3s ease-in-out;
+            overflow: hidden; /* Ensure content respects border-radius */
+        }
+
+        details[open] {
+            box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+            background-color: #FFFFFF; /* White when open for clean contrast */
+            border-color: #D1D5DB; /* Slightly darker border when open */
+        }
+
+        summary {
+            font-weight: 600;
+            color: #8B5CF6; /* Primary Accent (Indigo-500) */
+            padding: 1.25rem 2rem; /* More padding */
             cursor: pointer;
-            transition: background-color 0.1s;
+            outline: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1.1rem; /* Slightly larger */
+            user-select: none; /* Prevent text selection on click */
         }
-        .keyword-chip:hover, .prompt-chip-item:hover {
-            background-color: #E0F2F2; /* Lighter Teal */
+
+        summary::-webkit-details-marker {
+            display: none;
+        }
+
+        summary::after {
+            content: '\2b'; /* Plus sign Unicode */
+            font-size: 1.8rem; /* Larger icon */
+            color: #9CA3AF; /* Light gray for icon */
+            font-weight: 400; /* Regular weight for icon */
+            transition: transform 0.2s;
+        }
+
+        details[open] summary::after {
+            content: '\2212'; /* Minus sign Unicode */
+            transform: rotate(0deg);
+        }
+
+        .details-content {
+            padding: 0 2rem 2rem; /* Consistent padding */
+            color: #4B5563; /* Medium gray */
+            font-size: 0.95rem;
+        }
+        .details-content ul {
+            list-style: none; /* Remove default list style */
+            padding-left: 0;
+            margin-top: 0.75rem;
+        }
+        .details-content ul li {
+            margin-bottom: 0.6rem; /* More space between list items */
+            position: relative;
+            padding-left: 1.8rem; /* Space for custom bullet */
+        }
+        .details-content ul li::before {
+            content: '\2022'; /* Unicode bullet point */
+            color: #8B5CF6; /* Primary Accent for bullets */
+            position: absolute;
+            left: 0.5rem; /* Adjust position */
+            font-size: 1.2em;
+            line-height: 1;
+            top: 0.1em;
+            font-weight: bold;
         }
 
         /* Message Box for Copy/Paste Instruction */
         .message-box {
+            background-color: #10B981; /* Success green */
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+            font-weight: 500;
+            font-size: 1rem;
+            text-align: center;
             position: fixed;
-            bottom: 20px;
+            bottom: 25px; /* Slightly higher */
             left: 50%;
             transform: translateX(-50%);
-            background-color: #008080; /* Deep Teal */
-            color: white;
-            padding: 12px 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
             z-index: 1000;
-            display: none; /* Hidden by default */
+            display: none;
+            animation: slideInUp 0.3s forwards, fadeOut 0.5s 3.5s forwards; /* Adjust timing */
+            white-space: nowrap;
+        }
+
+        /* Image Generation Output Grid */
+        #imagen-output-container img {
+            border: 1px solid #E5E7EB; /* Subtle border for images */
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06); /* Soft shadow for images */
+        }
+
+        /* Footer CTA Specifics */
+        .cta-section {
+            background: linear-gradient(135deg, #8B5CF6, #7C3AED); /* Stronger indigo gradient */
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.4);
+        }
+        .cta-button {
+            background-color: white;
+            color: #8B5CF6;
+            font-weight: 700;
+            padding: 1rem 2.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease-in-out;
+        }
+        .cta-button:hover {
+            background-color: #F3F4F6;
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+
+        /* Table specific styles for Save Data tab */
+        #user-data-table th, #user-data-table td {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid #E5E7EB;
+        }
+        #user-data-table thead {
+            background-color: #F9FAFB;
+        }
+        #user-data-table th {
+            color: #4B5563;
+            font-weight: 600;
             font-size: 0.9rem;
-            animation: slideInUp 0.3s forwards, fadeOut 0.5s 4s forwards;
-            white-space: nowrap; /* Prevent text wrapping */
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
-
-        @keyframes slideInUp {
-            from { transform: translateX(-50%) translateY(50px); opacity: 0; }
-            to { transform: translateX(-50%) translateY(0); opacity: 1; }
-        }
-
-        @keyframes fadeOut {
-            from { opacity: 1; }
-            to { opacity: 0; display: none; } /* Ensure it becomes display:none after animation */
-        }
-
-        /* Styles for copied prompt highlighting */
-        .prompt-chip-item.copied {
-            background-color: #d1fae5; /* Light green */
-            border-color: #10b981; /* Green border */
-            animation: copiedFade 2s forwards; /* Animation duration for highlight */
-        }
-
-        @keyframes copiedFade {
-            0% { background-color: #d1fae5; border-color: #10b981; }
-            100% { background-color: #f9fafb; border-color: #e5e7eb; } /* Revert to original background and border */
-        }
-
-        /* Style for used keyword in input */
-        .prompt-keyword-input-used {
-            border-color: #ef4444 !important; /* Red border */
-            box-shadow: 0 0 0 1px #ef4444; /* Red shadow */
+        #user-data-table tbody tr:last-child td {
+            border-bottom: none;
         }
     </style>
 </head>
 <body class="antialiased">
 
-    <header class="bg-white shadow-sm">
+    <header class="app-header shadow-sm">
         <div class="container mx-auto px-4 py-6 text-center">
-            <h1 class="text-4xl md:text-5xl font-black tracking-tighter text-gray-900">Create & Cash</h1>
-            <p class="text-lg md:text-xl font-semibold text-teal-600">The AI Stock Blueprint</p>
+            <h1 class="text-4xl md:text-5xl font-black tracking-tighter text-gray-900">Pixel Profits AI</h1>
+            <p class="text-lg md:text-xl font-semibold text-indigo-600">Your Blueprint for Stock Content Success</p>
         </div>
     </header>
 
     <nav id="main-nav" class="sticky top-0 bg-white/90 backdrop-blur-sm z-50 shadow-md">
         <div class="container mx-auto px-4">
-            <div class="flex justify-center items-center font-bold text-gray-500 overflow-x-auto text-sm md:text-base">
-                <button data-step="0" class="nav-btn active py-3 px-2 md:px-4">Intro</button>
-                <button data-step="1" class="nav-btn py-3 px-2 md:px-4">1. Toolkit</button>
-                <button data-step="2" class="nav-btn py-3 px-2 md:px-4">2. Organic</button>
-                <button data-step="3" class="nav-btn py-3 px-2 md:px-4">3. Discovery</button>
-                <button data-step="4" class="nav-btn py-3 px-2 md:px-4">4. AI Tools</button>
-                <button data-step="5" class="nav-btn py-3 px-2 md:px-4">5. AI Prompts</button>
-                <button data-step="6" class="nav-btn py-3 px-2 md:px-4">6. Generate Images</button>
-                <button data-step="7" class="nav-btn py-3 px-2 md:px-4">7. Smart Tagging</button>
-                <button data-step="8" class="nav-btn py-3 px-2 md:px-4">8. Scale & Grow</button>
-                <button data-step="9" class="nav-btn py-3 px-2 md:px-4">Start Now</button>
+            <div class="flex justify-center items-center text-gray-500 overflow-x-auto text-sm md:text-base">
+                <button data-step="0" class="nav-btn active">Intro</button>
+                <button data-step="1" class="nav-btn">Toolkit</button>
+                <button data-step="2" class="nav-btn">Organic</button>
+                <button data-step="3" class="nav-btn">AI Tools</button>
+                <button data-step="4" class="nav-btn">Discovery</button>
+                <button data-step="5" class="nav-btn">AI Prompts</button>
+                <button data-step="6" class="nav-btn">Generators</button>
+                <button data-step="7" class="nav-btn">Save Data</button>
+                <button data-step="8" class="nav-btn">Smart Tagging</button>
+                <button data-step="9" class="nav-btn">Scale & Grow</button>
+                <button data-step="10" class="nav-btn">Start Now</button>
             </div>
         </div>
     </nav>
@@ -150,45 +404,48 @@
     <main class="container mx-auto p-4 md:p-8">
         <!-- Intro -->
         <section id="step-content-0" class="step-content active fade-in">
-            <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg text-center">
-                <h2 class="text-2xl md:text-3xl font-bold mb-4">Stop Scrolling, Start Earning.</h2>
-                <p class="max-w-3xl mx-auto text-gray-700 mb-8">Your direct guide to earning with visuals on Adobe Stock. No fluff, no low-pay gigs. Just actionable steps to monetize your creativity, heavily leveraging AI for rapid content creation.</p>
+            <div class="card-panel text-center">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4 text-gray-800">Unlock Your Creative Income Potential.</h2>
+                <p class="max-w-3xl mx-auto text-gray-600 text-lg mb-8">Your direct guide to earning with captivating visuals on Adobe Stock. Leverage cutting-edge AI for rapid, high-quality content creation and turn your ideas into a steady income stream.</p>
                 <div class="grid md:grid-cols-3 gap-6 text-left">
-                    <div class="bg-gray-50 p-6 rounded-lg border-l-4 border-teal-600">
-                        <h3 class="font-bold text-lg mb-2">Passive Income Engine</h3>
+                    <div class="bg-gray-50 p-6 rounded-xl border-l-4 border-indigo-500 shadow-sm">
+                        <h3 class="font-bold text-xl mb-2 text-gray-800">Passive Income</h3>
                         <p class="text-sm text-gray-600">Create once, earn 24/7. Your visuals become assets that work for you.</p>
                     </div>
-                    <div class="bg-gray-50 p-6 rounded-lg border-l-4 border-teal-600">
-                        <h3 class="font-bold text-lg mb-2">AI-Powered Creation</h3>
+                    <div class="bg-gray-50 p-6 rounded-xl border-l-4 border-indigo-500 shadow-sm">
+                        <h3 class="font-bold text-xl mb-2 text-gray-800">AI-Powered Creation</h3>
                         <p class="text-sm text-gray-600">Generate stunning images efficiently, saving time and scaling your output effortlessly.</p>
                     </div>
-                    <div class="bg-gray-50 p-6 rounded-lg border-l-4 border-teal-600">
-                        <h3 class="font-bold text-lg mb-2">Global Marketplace</h3>
+                    <div class="bg-gray-50 p-6 rounded-xl border-l-4 border-indigo-500 shadow-sm">
+                        <h3 class="font-bold text-xl mb-2 text-gray-800">Global Marketplace</h3>
                         <p class="text-sm text-gray-600">Access millions of buyers worldwide directly through Adobe apps. Unmatched visibility.</p>
                     </div>
+                </div>
+                <div class="mt-10">
+                     <img src="https://placehold.co/1000x400/E0E7FF/5B21B6?text=Creative+AI+Concepts" alt="Abstract AI creative process" class="w-full h-auto rounded-xl shadow-lg">
                 </div>
             </div>
         </section>
 
         <!-- Step 1: Toolkit & Setup -->
         <section id="step-content-1" class="step-content fade-in">
-            <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg">
-                <h2 class="text-2xl md:text-3xl font-bold mb-6 text-center">1. Essential Toolkit & Setup</h2>
-                <p class="max-w-3xl mx-auto text-gray-700 mb-8">Gather your basic gear and set up your Adobe Stock account. You likely have most of what you need already!</p>
+            <div class="card-panel">
+                <h2 class="text-3xl md:text-4xl font-bold mb-6 text-center text-gray-800">1. Essential Toolkit & Setup</h2>
+                <p class="max-w-3xl mx-auto text-gray-600 text-lg mb-8 text-center">Gather your basic gear and set up your Adobe Stock account. You likely have most of what you need already!</p>
                 <div class="grid md:grid-cols-2 gap-8 items-start">
-                    <div class="bg-gray-50 p-6 rounded-lg">
-                        <h3 class="font-bold text-xl mb-4 text-teal-600">Your Gear</h3>
-                        <ul class="space-y-3 text-base">
-                            <li class="flex items-start"><span class="text-teal-600 font-bold mr-2">✓</span><div><b>Device:</b> Laptop, phone, or camera.</div></li>
-                            <li class="flex items-start"><span class="text-teal-600 font-bold mr-2">✓</span><div><b>Internet:</b> Reliable connection for uploads.</div></li>
-                            <li class="flex items-start"><span class="text-teal-600 font-bold mr-2">✓</span><div><b>Keen Eye:</b> Intuition for marketable visuals.</div></li>
-                            <li class="flex items-start"><span class="text-teal-600 font-bold mr-2">✓</span><div><b>Dedication:</b> 2 hours daily, consistently.</div></li>
+                    <div class="bg-gray-50 p-6 rounded-xl shadow-sm">
+                        <h3 class="font-bold text-xl mb-4 text-indigo-600">Your Gear</h3>
+                        <ul class="space-y-3 text-base text-gray-700">
+                            <li class="flex items-center"><span class="text-indigo-600 font-bold text-xl mr-2">&#x2726;</span><div><b>Device:</b> Laptop, phone, or camera.</div></li>
+                            <li class="flex items-center"><span class="text-indigo-600 font-bold text-xl mr-2">&#x2726;</span><div><b>Internet:</b> Reliable connection for uploads.</div></li>
+                            <li class="flex items-center"><span class="text-indigo-600 font-bold text-xl mr-2">&#x2726;</span><div><b>Keen Eye:</b> Intuition for marketable visuals.</div></li>
+                            <li class="flex items-center"><span class="text-indigo-600 font-bold text-xl mr-2">&#x2726;</span><div><b>Dedication:</b> 2 hours daily, consistently.</div></li>
                         </ul>
                     </div>
-                    <div class="bg-gray-50 p-6 rounded-lg">
-                        <h3 class="font-bold text-xl mb-4 text-teal-600">Quick Setup</h3>
-                           <ol class="list-decimal list-inside space-y-3 text-base">
-                                <li><b>Sign Up:</b> Visit <a href="https://contributor.stock.adobe.com/en?isa0=1" target="_blank" class="font-semibold text-teal-600 hover:underline">Adobe Stock Contributor</a>.</li>
+                    <div class="bg-gray-50 p-6 rounded-xl shadow-sm">
+                        <h3 class="font-bold text-xl mb-4 text-indigo-600">Quick Setup</h3>
+                           <ol class="list-decimal list-inside space-y-3 text-base text-gray-700">
+                                <li><b>Sign Up:</b> Visit <a href="https://contributor.stock.adobe.com/en?isa0=1" target="_blank" class="font-semibold text-indigo-600 hover:underline">Adobe Stock Contributor</a>.</li>
                                 <li><b>Verify:</b> Complete ID & tax info for payouts.</li>
                                 <li><b>Go Live:</b> Account active! Adobe handles sales.</li>
                             </ol>
@@ -198,63 +455,107 @@
             </div>
         </section>
 
-        <!-- Step 2: Organic Creation -->
+        <!-- Step 2: Organic Content Creation -->
         <section id="step-content-2" class="step-content fade-in">
-            <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg">
-                <h2 class="text-2xl md:text-3xl font-bold mb-6 text-center">2. Organic Content Creation</h2>
-                <p class="max-w-3xl mx-auto text-gray-700 mb-8 text-center">Unique photos & videos offer authenticity. Focus on quality, composition, and trending subjects.</p>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <div class="bg-gray-50 p-5 rounded-lg border">
-                        <h3 class="font-bold text-lg mb-2 text-teal-600">Key Niches</h3>
-                        <p class="text-sm text-gray-700 mb-3">Focus on themes with consistent buyer demand:</p>
-                        <ul class="list-disc list-inside text-sm text-gray-700 space-y-1">
-                            <li>**Authentic Lifestyle:** Real, unposed human moments, diverse groups, remote work, mental wellness.</li>
-                            <li>**Modern Tech Use:** People interacting with devices, clean interfaces, innovative tech concepts.</li>
-                            <li>**Diversity & Inclusion:** Genuinely representing various ages, ethnicities, body types, and abilities.</li>
-                            <li>**Conceptual Imagery:** Visually representing abstract ideas like "growth," "connection," "innovation."</li>
-                            <li>**Vertical Video:** Short, engaging, and well-lit clips optimized for social media stories and reels.</li>
-                            <li>**Sustainable Living:** Eco-conscious practices, recycling, urban gardening, renewable energy.</li>
-                            <li>**Remote Work Productivity:** Beyond desk setups – work from cafes, parks, travel.</li>
-                            <li>**Authentic Mental Wellness:** Self-care, mindfulness, digital detox.</li>
-                            <li>**Generational Collaboration:** Multiple generations interacting naturally in various settings.</li>
-                            <li>**Digital Nomads/Van Life:** Freedom, minimalist lifestyle, connectivity on the go.</li>
-                        </ul>
-                    </div>
-                    <div class="bg-gray-50 p-5 rounded-lg border">
-                        <h3 class="font-bold text-lg mb-2 text-teal-600">Quality First</h3>
-                        <ul class="list-disc list-inside text-sm text-gray-700 space-y-1">
-                            <li>**Sharpness & Focus:** No blur.</li>
-                            <li>**Lighting:** Natural light often best.</li>
-                            <li>**Composition:** Frame well, leave "copy space."</li>
-                            <li>**Cleanliness:** No logos/trademarks.</li>
-                            <li>**Technical Specs:** Meet 4MP minimum.</li>
-                        </ul>
-                    </div>
-                    <div class="bg-gray-50 p-5 rounded-lg border">
-                        <h3 class="font-bold text-lg mb-2 text-teal-600">Legal Musts</h3>
-                        <ul class="list-disc list-inside text-sm text-gray-700 space-y-1">
-                            <li>**Model Releases:** MANDATORY for recognizable people.</li>
-                            <li>**Property Releases:** REQUIRED for private property.</li>
-                            <li><p class="text-xs text-amber-700 mt-2">Missing releases = rejection.</p></li>
-                        </ul>
-                    </div>
+            <div class="card-panel">
+                <h2 class="text-3xl md:text-4xl font-bold mb-6 text-center text-gray-800">2. Organic Content Creation</h2>
+                <p class="max-w-3xl mx-auto text-gray-600 text-lg mb-8 text-center">Unique photos & videos offer authenticity. Focus on quality, composition, and trending subjects.</p>
+                
+                <div class="space-y-4">
+                    <details class="rounded-xl overflow-hidden">
+                        <summary>Key Niches for Organic Content</summary>
+                        <div class="details-content">
+                            <p class="text-sm text-gray-700 mb-3">Focus on themes with consistent buyer demand:</p>
+                            <ul>
+                                <li>**Authentic Lifestyle:** Real, unposed human moments, diverse groups, remote work, mental wellness.</li>
+                                <li>**Modern Tech Use:** People interacting with devices, clean interfaces, innovative tech concepts.</li>
+                                <li>**Diversity & Inclusion:** Genuinely representing various ages, ethnicities, body types, and abilities.</li>
+                                <li>**Conceptual Imagery:** Visually representing abstract ideas like "growth," "connection," "innovation."</li>
+                                <li>**Vertical Video:** Short, engaging, and well-lit clips optimized for social media stories and reels.</li>
+                                <li>**Sustainable Living:** Eco-conscious practices, recycling, urban gardening, renewable energy.</li>
+                                <li>**Remote Work Productivity:** Beyond desk setups – work from cafes, parks, travel.</li>
+                                <li>**Authentic Mental Wellness:** Self-care, mindfulness, digital detox.</li>
+                                <li>**Generational Collaboration:** Multiple generations interacting naturally in various settings.</li>
+                                <li>**Digital Nomads/Van Life:** Freedom, minimalist lifestyle, connectivity on the go.</li>
+                            </ul>
+                        </div>
+                    </details>
+
+                    <details class="rounded-xl overflow-hidden">
+                        <summary>Quality First Principles</summary>
+                        <div class="details-content">
+                            <p class="text-sm text-gray-700 mb-3">Ensure your content meets high standards:</p>
+                            <ul>
+                                <li>**Sharpness & Focus:** No blur.</li>
+                                <li>**Lighting:** Natural light often best.</li>
+                                <li>**Composition:** Frame well, leave "copy space."</li>
+                                <li>**Cleanliness:** No logos/trademarks.</li>
+                                <li>**Technical Specs:** Meet 4MP minimum.</li>
+                            </ul>
+                        </div>
+                    </details>
+
+                    <details class="rounded-xl overflow-hidden">
+                        <summary>Legal Musts: Releases</summary>
+                        <div class="details-content">
+                            <p class="text-sm text-gray-700 mb-3">Critical for commercial use:</p>
+                            <ul>
+                                <li>**Model Releases:** MANDATORY for recognizable people.</li>
+                                <li>**Property Releases:** REQUIRED for private property.</li>
+                            </ul>
+                            <p class="text-xs text-amber-700 mt-2">Missing releases = rejection. Always secure them!</p>
+                        </div>
+                    </details>
                 </div>
                 <p class="mt-8 p-4 bg-emerald-50 rounded-lg border border-emerald-200 font-bold text-emerald-800 text-sm">Action: Practice! Shoot 5-10 high-quality concepts today. Focus on composition & lighting.</p>
             </div>
         </section>
-
-        <!-- Step 3: Niche & Keyword Discovery -->
+        
+        <!-- Step 3: AI Tools Overview -->
         <section id="step-content-3" class="step-content fade-in">
-            <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg">
-                <h2 class="text-2xl md:text-3xl font-bold mb-6 text-center">3. Niche & Keyword Discovery</h2>
-                <p class="max-w-3xl mx-auto text-gray-700 mb-8 text-center">Pinpoint high-demand niches and grab relevant keywords. Explore categories, then dive into specific content opportunities.</p>
+            <div class="card-panel">
+                <h2 class="text-3xl md:text-4xl font-bold mb-6 text-center text-gray-800">3. AI Tools Unleashed</h2>
+                <p class="max-w-3xl mx-auto text-gray-600 text-lg mb-8 text-center">AI tools empower you to create stunning, unique stock images at scale. Focus on efficiency and leveraging AI for maximum output.</p>
+                <div class="grid md:grid-cols-2 gap-8 items-start">
+                    <div class="bg-gray-50 p-6 rounded-xl shadow-sm">
+                        <h3 class="font-bold text-xl mb-4 text-indigo-600">Why AI for Stock?</h3>
+                        <ul class="list-disc list-inside text-base text-gray-700 space-y-2">
+                            <li>**Speed:** Dozens of images in minutes.</li>
+                            <li>**Scale:** High volume, no models/locations.</li>
+                            <li>**Versatility:** Create abstract or specific scenarios easily.</li>
+                            <li>**Cost-Effective:** Drastically reduces production costs.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-50 p-6 rounded-xl shadow-sm">
+                        <h3 class="font-bold text-xl mb-4 text-indigo-600">Your AI Arsenal</h3>
+                        <p class="text-sm text-gray-700 mb-3">Leading platforms for AI image generation:</p>
+                        <ul class="list-disc list-inside text-base text-gray-700 space-y-2">
+                            <li>**Leonardo AI:** User-friendly, photorealistic & stylized (free tiers).</li>
+                            <li>**Midjourney:** Artistic, high-quality outputs (Discord-based).</li>
+                            <li>**DALL-E (OpenAI):** Powerful and versatile.</li>
+                            <li>**Imagen 4 (Google)::** State-of-the-art text-to-image synthesis.</li>
+                        </ul>
+                    </div>
+                    <div class="md:col-span-2 mt-10">
+                         <img src="https://placehold.co/1000x400/E0E7FF/5B21B6?text=AI+Tools+for+Creatives" alt="AI image generation tools overview" class="w-full h-auto rounded-xl shadow-lg">
+                    </div>
+                </div>
+                <p class="mt-8 p-4 bg-emerald-50 rounded-lg border border-emerald-200 font-bold text-emerald-800 text-sm">Key: Image quality depends on your "prompt." Learn to craft perfect prompts here!</p>
+            </div>
+        </section>
+
+        <!-- Step 4: Niche & Keyword Discovery -->
+        <section id="step-content-4" class="step-content fade-in">
+            <div class="card-panel">
+                <h2 class="text-3xl md:text-4xl font-bold mb-6 text-center text-gray-800">4. Niche & Keyword Discovery</h2>
+                <p class="max-w-3xl mx-auto text-gray-600 text-lg mb-8 text-center">Pinpoint high-demand niches and grab relevant keywords. Explore categories, then dive into specific content opportunities.</p>
                 
                 <!-- Stage 1: Niche Category Selection & Generation -->
-                <div id="niche-generation-section" class="bg-gray-50 p-6 rounded-lg border mb-8">
-                    <h3 class="font-bold text-xl mb-4 text-center text-teal-600">Stage 1: Discover Unique Niches</h3>
+                <div id="niche-generation-section" class="bg-gray-50 p-6 rounded-xl border shadow-sm mb-8">
+                    <h3 class="font-bold text-xl mb-4 text-center text-indigo-600">Stage 1: Discover Unique Niches</h3>
                     <p class="text-sm text-center text-gray-700 mb-4">Select a category. Our AI generates 15-20 specific, low-competition niches. **Click any niche card to automatically grab 100 keywords for it below!**</p>
-                    <div class="max-w-md mx-auto">
-                        <select id="niche-category-select" class="w-full p-2 border border-gray-300 rounded-md mb-4 focus:ring-teal-600 focus:border-teal-600">
+                    <div class="max-w-md mx-auto space-y-3">
+                        <select id="niche-category-select" class="w-full p-2 border border-gray-300 rounded-xl focus:ring-indigo-600 focus:border-indigo-600">
                             <option value="">-- Select a Niche Category --</option>
                             <option value="Emerging Technologies">Emerging Technologies</option>
                             <option value="Subculture & Niche Lifestyles">Subculture & Niche Lifestyles</option>
@@ -277,28 +578,28 @@
                             <option value="Space Exploration & Astronomy (Conceptual)">Space Exploration & Astronomy (Conceptual)</option>
                             <option value="Generational Dynamics (Specific Interactions)">Generational Dynamics (Specific Interactions)</option>
                         </select>
-                        <button id="generate-niches-btn" class="w-full bg-teal-600 text-white font-bold px-6 py-2 rounded-lg hover:bg-teal-700 transition">Generate Niches</button>
-                        <button id="clear-niche-generator-history-btn" class="w-full bg-red-500 text-white font-bold px-6 py-2 rounded-lg hover:bg-red-600 transition mt-2 text-sm">Clear Niche History</button>
+                        <button id="generate-niches-btn" class="w-full btn-primary">Generate Niches</button>
+                        <button id="clear-niche-generator-history-btn" class="w-full btn-secondary-red text-sm">Clear Niche History</button>
                     </div>
                     
                     <div id="niche-generator-loading" class="hidden loading-spinner"></div>
                     <div id="niche-generator-error" class="hidden mt-4 text-center text-red-600 font-semibold"></div>
-                    <div id="niche-generator-output" class="mt-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 text-sm max-h-96 overflow-y-auto p-2 border border-gray-200 rounded-md bg-white">
+                    <div id="niche-generator-output" class="mt-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 text-sm max-h-96 overflow-y-auto p-2 border border-gray-200 rounded-xl bg-white">
                         <!-- Generated niches will appear here -->
                     </div>
                     <p class="text-xs text-gray-500 mt-4 text-center">**Note:** New niches are unique per category session. Click a niche to get its keywords!</p>
                 </div>
 
                 <!-- Stage 2: Keyword Generation for Selected Niche -->
-                <div id="keyword-generation-section" class="bg-gray-50 p-6 rounded-lg border hidden">
-                    <h3 class="font-bold text-xl mb-4 text-center text-teal-600">Stage 2: Keywords for <b id="selected-niche-display" class="text-teal-700"></b></h3>
+                <div id="keyword-generation-section" class="bg-gray-50 p-6 rounded-xl border shadow-sm hidden">
+                    <h3 class="font-bold text-xl mb-4 text-center text-indigo-600">Stage 2: Keywords for <b id="selected-niche-display" class="text-indigo-700"></b></h3>
                     <p class="text-sm text-center text-gray-700 mb-4">Here are 100 high-demand keywords generated for your selected niche. **Click any keyword to automatically populate it in the 'AI Prompts' section (Step 5)!**</p>
                     
-                    <button id="clear-subniche-keywords-btn" class="w-full bg-red-500 text-white font-bold px-6 py-2 rounded-lg hover:bg-red-600 transition mt-2 text-sm max-w-md mx-auto block">Clear Keywords History</button>
+                    <button id="clear-subniche-keywords-btn" class="w-full btn-secondary-red text-sm max-w-md mx-auto block">Clear Keywords History</button>
                     
                     <div id="keyword-grabber-loading" class="hidden loading-spinner"></div>
                     <div id="keyword-grabber-error" class="hidden mt-4 text-center text-red-600 font-semibold"></div>
-                    <div id="keyword-grabber-output" class="mt-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 text-sm max-h-96 overflow-y-auto p-2 border border-gray-200 rounded-md bg-white">
+                    <div id="keyword-grabber-output" class="mt-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 text-sm max-h-96 overflow-y-auto p-2 border border-gray-200 rounded-xl bg-white">
                         <!-- Keywords will appear here -->
                     </div>
                     <p class="text-xs text-gray-500 mt-4 text-center">**Pro Tip:** Click any keyword to jump to Step 5 and start generating AI prompts!</p>
@@ -306,60 +607,30 @@
             </div>
         </section>
 
-        <!-- Step 4: AI Tools Overview -->
-        <section id="step-content-4" class="step-content fade-in">
-            <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg">
-                <h2 class="text-2xl md:text-3xl font-bold mb-6 text-center">4. AI Tools Unleashed</h2>
-                <p class="max-w-3xl mx-auto text-gray-700 mb-8 text-center">AI tools empower you to create stunning, unique stock images at scale. Focus on efficiency and leveraging AI for maximum output.</p>
-                <div class="grid md:grid-cols-2 gap-6 items-center">
-                    <div class="bg-gray-50 p-6 rounded-lg border">
-                        <h3 class="font-bold text-xl mb-4 text-teal-600">Why AI for Stock?</h3>
-                        <ul class="list-disc list-inside text-base text-gray-700 space-y-2">
-                            <li>**Speed:** Dozens of images in minutes.</li>
-                            <li>**Scale:** High volume, no models/locations.</li>
-                            <li>**Versatility:** Create abstract or specific scenarios easily.</li>
-                            <li>**Cost-Effective:** Drastically reduces production costs.</li>
-                        </ul>
-                    </div>
-                    <div class="bg-gray-50 p-6 rounded-lg border">
-                        <h3 class="font-bold text-xl mb-4 text-teal-600">Your AI Arsenal</h3>
-                        <p class="text-sm text-gray-700 mb-3">Leading platforms for AI image generation:</p>
-                        <ul class="list-disc list-inside text-base text-gray-700 space-y-2">
-                            <li>**Leonardo AI:** User-friendly, photorealistic & stylized (free tiers).</li>
-                            <li>**Midjourney:** Artistic, high-quality outputs (Discord-based).</li>
-                            <li>**DALL-E (OpenAI):** Powerful and versatile.</li>
-                        </ul>
-                        <p class="text-sm text-amber-700 mt-4">Guide focuses on **Leonardo AI** examples.</p>
-                    </div>
-                </div>
-                <p class="mt-8 p-4 bg-emerald-50 rounded-lg border border-emerald-200 font-bold text-emerald-800 text-sm">Key: Image quality depends on your "prompt." Learn to craft perfect prompts here!</p>
-            </div>
-        </section>
-
         <!-- Step 5: AI Prompt Crafting Masterclass -->
         <section id="step-content-5" class="step-content fade-in">
-            <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg">
-                <h2 class="text-2xl md:text-3xl font-bold mb-6 text-center">5. AI Prompt Masterclass</h2>
-                <p class="max-w-3xl mx-auto text-gray-700 mb-8 text-center">Turn a simple keyword into a powerful AI command. A well-crafted prompt ensures you get exact image quality for Adobe Stock. Generate 10 unique prompts from a single keyword.</p>
+            <div class="card-panel">
+                <h2 class="text-3xl md:text-4xl font-bold mb-6 text-center text-gray-800">5. AI Prompt Masterclass</h2>
+                <p class="max-w-3xl mx-auto text-gray-600 text-lg mb-8 text-center">Turn a simple keyword into a powerful AI command. A well-crafted prompt ensures you get exact image quality for Adobe Stock. Generate 10 unique prompts from a single keyword.</p>
                 
-                <div class="bg-gray-50 p-6 rounded-lg border">
-                    <h3 class="font-bold text-lg mb-4 text-center">Keyword to 10 Prompts:</h3>
+                <div class="bg-gray-50 p-6 rounded-xl border shadow-sm">
+                    <h3 class="font-bold text-xl mb-4 text-center text-indigo-600">Keyword to 10 Prompts:</h3>
                     <p class="text-sm text-center text-gray-700 mb-4">Enter a keyword (e.g., "startup team", "forest stream"). Our AI generates 10 unique prompts based on your chosen length. **Click any generated prompt to copy!**</p>
-                    <div class="flex flex-col sm:flex-row items-center gap-2 max-w-xl mx-auto">
-                        <input type="text" id="prompt-keyword-input" placeholder="Enter keyword (e.g., 'German dog')" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-teal-600 focus:border-teal-600">
-                        <select id="prompt-length-select" class="p-2 border border-gray-300 rounded-md focus:ring-teal-600 focus:border-teal-600">
+                    <div class="flex flex-col sm:flex-row items-center gap-4 max-w-xl mx-auto mb-4">
+                        <input type="text" id="prompt-keyword-input" placeholder="Enter keyword (e.g., 'German dog')" class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-indigo-600 focus:border-indigo-600">
+                        <select id="prompt-length-select" class="p-2 border border-gray-300 rounded-xl focus:ring-indigo-600 focus:border-indigo-600 w-full sm:w-auto">
                             <option value="medium">Medium Prompts</option>
                             <option value="short">Short Prompts</option>
                             <option value="long">Long Prompts</option>
                         </select>
-                        <button id="generate-prompts-btn" class="w-full sm:w-auto bg-teal-600 text-white font-bold px-6 py-2 rounded-lg hover:bg-teal-700 transition">Generate 10 Prompts</button>
+                        <button id="generate-prompts-btn" class="w-full sm:w-auto btn-primary whitespace-nowrap">Generate 10 Prompts</button>
                     </div>
                     <p id="prompt-keyword-history-note" class="text-xs text-orange-600 mt-2 hidden text-center">Note: This keyword has been used before.</p>
-                    <button id="clear-prompt-keywords-btn" class="w-full bg-red-500 text-white font-bold px-6 py-2 rounded-lg hover:bg-red-600 transition mt-2 text-sm max-w-xl mx-auto block">Clear Prompt History</button>
+                    <button id="clear-prompt-keywords-btn" class="w-full btn-secondary-red text-sm max-w-xl mx-auto block">Clear Prompt History</button>
                     
                     <div id="prompts-loading" class="hidden loading-spinner"></div>
                     <div id="prompts-error" class="hidden mt-4 text-center text-red-600 font-semibold"></div>
-                    <div id="prompts-output" class="mt-6 space-y-4 text-base bg-white p-4 rounded-md border max-h-96 overflow-y-auto">
+                    <div id="prompts-output" class="mt-6 space-y-4 text-base bg-white p-4 rounded-xl border max-h-96 overflow-y-auto">
                         <!-- Prompts will appear here -->
                     </div>
                     <div id="prompt-copy-message" class="message-box">Prompt copied!</div>
@@ -368,77 +639,129 @@
             </div>
         </section>
 
-        <!-- Step 6: From Prompts to Pixels (Leonardo AI Deep Dive) -->
+        <!-- Step 6: AI Image Generators Overview (New content, replaced former Step 6) -->
         <section id="step-content-6" class="step-content fade-in">
-            <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg">
-                <h2 class="text-2xl md:text-3xl font-bold mb-6 text-center">6. Prompts to AI Images</h2>
-                <p class="max-w-3xl mx-auto text-gray-700 mb-8 text-center">Now, turn your perfect prompts into high-quality stock images with Leonardo AI. It's powerful and straightforward!</p>
+            <div class="card-panel">
+                <h2 class="text-3xl md:text-4xl font-bold mb-6 text-center text-gray-800">6. AI Image Generators Overview</h2>
+                <p class="max-w-3xl mx-auto text-gray-600 text-lg mb-8 text-center">Explore popular AI image generation tools. Each offers unique strengths for creating stock visuals.</p>
                 
-                <div class="bg-gray-50 p-6 rounded-lg border mb-6">
-                    <h3 class="font-bold text-xl mb-4 text-teal-600">Leonardo AI Walkthrough:</h3>
-                    <ol class="list-decimal list-inside space-y-4 text-base">
-                        <li><b>Access:</b> Go to <a href="https://leonardo.ai" target="_blank" class="font-semibold text-teal-600 hover:underline">leonardo.ai</a>, log in, go to "AI Image Generation."</li>
-                        <li><b>Choose Model:</b> Select an AI model (e.g., "Leonardo Diffusion").</li>
-                        <li><b>Input Prompt:</b> Paste a prompt from Step 5.</li>
-                        <li><b>Negative Prompts:</b> Crucial for stock! Add terms like: <code class="bg-gray-200 p-1 rounded-sm text-xs">ugly, deformed, blurry, watermark, text</code>.</li>
-                        <li><b>Adjust Settings:</b>
-                            <ul class="list-disc list-inside ml-4 mt-2 text-sm text-gray-700">
-                                <li><b>Aspect Ratio:</b> Aim for 3:2, 4:3, or 16:9.</li>
-                                <li><b>Image Count:</b> 4-8 per prompt.</li>
-                                <li><b>Tiling:</b> Keep OFF.</li>
+                <div class="space-y-4">
+                    <details class="rounded-xl overflow-hidden" open>
+                        <summary>Leonardo AI Walkthrough</summary>
+                        <div class="details-content">
+                            <p class="text-sm text-gray-700 mb-3">A user-friendly platform known for photorealistic and stylized outputs:</p>
+                            <ol class="list-decimal list-inside space-y-4 text-base text-gray-700">
+                                <li><b>Access:</b> Go to <a href="https://leonardo.ai" target="_blank" class="font-semibold text-indigo-600 hover:underline">leonardo.ai</a>, log in, go to "AI Image Generation."</li>
+                                <li><b>Choose Model:</b> Select an AI model (e.g., "Leonardo Diffusion").</li>
+                                <li><b>Input Prompt:</b> Paste a prompt from Step 5.</li>
+                                <li><b>Negative Prompts:</b> Crucial for stock! Add terms like: <code class="bg-gray-200 p-1 rounded-xl text-xs text-gray-700">ugly, deformed, blurry, watermark, text</code>.</li>
+                                <li><b>Adjust Settings:</b>
+                                    <ul class="list-disc list-inside ml-4 mt-2 text-sm text-gray-600">
+                                        <li><b>Aspect Ratio:</b> Aim for 3:2, 4:3, or 16:9.</li>
+                                        <li><b>Image Count:</b> 4-8 per prompt.</li>
+                                        <li><b>Tiling:</b> Keep OFF.</li>
+                                    </ul>
+                                </li>
+                                <li><b>Generate!</b> Click.</li>
+                                <li><b>Review & Refine:</b> Examine the generated images. Download the best ones. If they're not quite right, tweak your prompt or negative prompt and re-generate.</li>
+                            </ol>
+                        </div>
+                    </details>
+
+                    <details class="rounded-xl overflow-hidden">
+                        <summary>Midjourney Overview</summary>
+                        <div class="details-content">
+                            <p class="text-sm text-gray-700 mb-3">Known for its highly artistic and high-quality outputs, accessible via Discord:</p>
+                            <ul>
+                                <li>**Access:** Join the Midjourney Discord server. Use the `/imagine` command in a bot channel.</li>
+                                <li>**Prompting:** Input your desired image prompt. Midjourney excels with descriptive, evocative language.</li>
+                                <li>**Stylization:** Offers various style parameters (`--s`, `--stylize`) to control artistic influence.</li>
+                                <li>**Variations:** Generate multiple variations of an image and upscale your favorites.</li>
+                                <li>**Niche Suitability:** Excellent for conceptual, artistic, and visually striking images. Less suited for hyper-realistic people/products unless refined.</li>
                             </ul>
-                        </li>
-                        <li><b>Generate!</b> Click.</li>
-                        <li><b>Review & Refine:</b> Examine the generated images. Download the best ones. If they're not quite right, tweak your prompt or negative prompt and re-generate.</li>
-                    </ol>
+                        </div>
+                    </details>
+
+                    <details class="rounded-xl overflow-hidden">
+                        <summary>Ideogram Overview</summary>
+                        <div class="details-content">
+                            <p class="text-sm text-gray-700 mb-3">A powerful tool, particularly strong with typography and consistent character generation:</p>
+                            <ul>
+                                <li>**Access:** Visit <a href="https://ideogram.ai" target="_blank" class="font-semibold text-indigo-600 hover:underline">ideogram.ai</a>.</li>
+                                <li>**Text Rendering:** Unique capability to accurately render text within images, making it valuable for designs requiring specific words or phrases.</li>
+                                <li>**Styling Presets:** Offers a wide range of artistic styles and photographic modes to apply to your prompts.</li>
+                                <li>**Prompt Remixing:** Experiment with different variations and combine elements.</li>
+                                <li>**Niche Suitability:** Ideal for images with text, logos, or consistent character designs across a series.</li>
+                            </ul>
+                        </div>
+                    </details>
                 </div>
-                <p class="mt-8 p-4 bg-emerald-50 rounded-lg border border-emerald-200 font-bold text-emerald-800 text-sm">Quality matters. Look for crispness, correct anatomy, natural lighting, and commercial appeal. Only upload your absolute best.</p>
             </div>
         </section>
 
-        <!-- Step 7: Smart Tagging & Export -->
+        <!-- Step 7: Save Data (New Tab) -->
         <section id="step-content-7" class="step-content fade-in">
-            <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg">
-                <h2 class="text-2xl md:text-3xl font-bold mb-6 text-center">7. Smart Tagging & Export</h2>
-                <p class="max-w-3xl mx-auto text-gray-700 mb-8 text-center">Boost efficiency with AI-powered metadata. Upload images in batch, let Gemini analyze, and export titles & tags ready for Adobe Stock.</p>
+            <div class="card-panel">
+                <h2 class="text-3xl md:text-4xl font-bold mb-6 text-center text-gray-800">7. Save & Export Your Data</h2>
+                <p class="max-w-3xl mx-auto text-gray-600 text-lg mb-8 text-center">Track your discovered niches, keywords, and copied prompts. Export your data to a CSV file for analysis or import into a Google Sheet.</p>
                 
-                <div class="bg-gray-50 p-6 rounded-lg border mb-6">
-                    <h3 class="font-bold text-xl mb-4 text-center">Batch Image Metadata Generator</h3>
+                <div class="bg-gray-50 p-6 rounded-xl border shadow-sm">
+                    <h3 class="font-bold text-xl mb-4 text-center text-indigo-600">Your Collected Data</h3>
+                    <div id="collected-data-output" class="mb-6 bg-white p-4 rounded-xl border overflow-auto max-h-96">
+                        <!-- Data will be dynamically loaded here -->
+                        <p class="text-gray-500 text-center">No data collected yet. Start exploring niches and copying prompts!</p>
+                    </div>
+                    <button id="export-collected-data-btn" class="w-full btn-primary">Export Data to CSV</button>
+                    <p class="text-xs text-amber-700 mt-4 text-center">
+                        **Important:** Direct saving to Google Sheets from a client-side application is not securely feasible without a backend for OAuth authentication. Click "Export Data to CSV", then manually import the CSV into your Google Sheet.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Step 8: Smart Tagging & Export (Original Step 7) -->
+        <section id="step-content-8" class="step-content fade-in">
+            <div class="card-panel">
+                <h2 class="text-3xl md:text-4xl font-bold mb-6 text-center text-gray-800">8. Smart Tagging & Export</h2>
+                <p class="max-w-3xl mx-auto text-gray-600 text-lg mb-8 text-center">Boost efficiency with AI-powered metadata. Upload images in batch, let Gemini analyze, and export titles & tags ready for Adobe Stock.</p>
+                
+                <div class="bg-gray-50 p-6 rounded-xl border shadow-sm mb-6">
+                    <h3 class="font-bold text-xl mb-4 text-center text-indigo-600">Batch Image Metadata Generator</h3>
                     <p class="text-sm text-center text-gray-700 mb-4">Upload your images (up to 200). Our AI will analyze them and suggest titles & tags.</p>
                     
-                    <input type="file" id="image-upload-input" accept="image/jpeg, image/png" multiple class="w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-teal-50 file:text-teal-700 hover:file:bg-teal-100 mb-4">
+                    <input type="file" id="image-upload-input" accept="image/jpeg, image/png" multiple class="w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 mb-4">
                     <p id="upload-status" class="text-center text-gray-500 text-sm mb-4"></p>
 
-                    <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-6 p-4 bg-white rounded-md border">
+                    <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-6 p-4 bg-white rounded-xl border shadow-sm">
                         <div class="flex items-center space-x-2 w-full sm:w-auto">
                             <label for="title-length-slider" class="text-sm font-medium text-gray-700 whitespace-nowrap">Title Length:</label>
-                            <input type="range" id="title-length-slider" min="60" max="180" value="100" class="w-full accent-teal-600">
-                            <span id="title-length-value" class="text-sm font-bold text-teal-700 w-12 text-right">100</span>
+                            <input type="range" id="title-length-slider" min="60" max="180" value="100" class="w-full accent-indigo-600">
+                            <span id="title-length-value" class="text-sm font-bold text-indigo-700 w-12 text-right">100</span>
                         </div>
                         <div class="flex items-center space-x-2 w-full sm:w-auto">
                             <label for="tags-limit-slider" class="text-sm font-medium text-gray-700 whitespace-nowrap">Tags Count:</label>
-                            <input type="range" id="tags-limit-slider" min="0" max="49" value="30" class="w-full accent-teal-600">
-                            <span id="tags-limit-value" class="text-sm font-bold text-teal-700 w-12 text-right">30</span>
+                            <input type="range" id="tags-limit-slider" min="0" max="49" value="30" class="w-full accent-indigo-600">
+                            <span id="tags-limit-value" class="text-sm font-bold text-indigo-700 w-12 text-right">30</span>
                         </div>
                         <div class="flex items-center w-full sm:w-auto">
-                            <input type="checkbox" id="transparent-background-toggle" class="form-checkbox h-4 w-4 text-teal-600 transition duration-150 ease-in-out rounded focus:ring-teal-500">
+                            <input type="checkbox" id="transparent-background-toggle" class="form-checkbox h-4 w-4 text-indigo-600 transition duration-150 ease-in-out rounded focus:ring-indigo-500">
                             <label for="transparent-background-toggle" class="ml-2 block text-sm text-gray-700 whitespace-nowrap">Add "transparent background"</label>
                         </div>
                     </div>
                     
-                    <button id="analyze-images-btn" class="w-full bg-teal-600 text-white font-bold px-6 py-3 rounded-lg hover:bg-teal-700 transition disabled:opacity-50 disabled:cursor-not-allowed">Analyze & Generate Metadata</button>
+                    <button id="analyze-images-btn" class="w-full btn-primary">Analyze & Generate Metadata</button>
                     
                     <div id="metadata-loading" class="hidden loading-spinner"></div>
                     <div id="metadata-error" class="hidden mt-4 text-center text-red-600 font-semibold"></div>
                     
-                    <div id="image-previews-container" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 mt-6 max-h-64 overflow-y-auto p-2 border border-gray-200 rounded-md bg-white hidden">
+                    <div id="image-previews-container" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 mt-6 max-h-64 overflow-y-auto p-2 border border-gray-200 rounded-xl bg-white">
                         <!-- Image previews will go here -->
                     </div>
 
                     <div id="metadata-results-container" class="mt-6 hidden">
-                        <h4 class="font-bold text-lg mb-3 text-center text-teal-600">Generated Metadata (Ready for CSV)</h4>
-                        <div class="bg-white p-4 rounded-md border max-h-96 overflow-y-auto">
-                            <table class="min-w-full text-sm divide-y divide-gray-200">
+                        <h4 class="font-bold text-lg mb-3 text-center text-indigo-600">Generated Metadata (Ready for CSV)</h4>
+                        <div class="bg-white p-4 rounded-xl border max-h-96 overflow-y-auto">
+                            <table class="min-w-full text-sm divide-y divide-gray-200" id="metadata-table">
                                 <thead class="bg-gray-50 sticky top-0">
                                     <tr>
                                         <th class="px-2 py-2 text-left text-gray-600 font-semibold">Image</th>
@@ -451,27 +774,27 @@
                                 </tbody>
                             </table>
                         </div>
-                        <button id="export-csv-btn" class="w-full bg-green-600 text-white font-bold px-6 py-3 rounded-lg hover:bg-green-700 transition mt-6 disabled:opacity-50 disabled:cursor-not-allowed">Export to CSV</button>
+                        <button id="export-csv-btn" class="w-full btn-primary mt-6 bg-gradient-to-r from-emerald-500 to-emerald-700 hover:from-emerald-700 hover:to-emerald-500 hover:shadow-xl">Export to CSV</button>
                     </div>
                 </div>
             </div>
         </section>
 
-            <!-- Step 8: Analyze & Scale -->
-            <section id="step-content-8" class="step-content fade-in">
-                <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg">
-                    <h2 class="text-2xl md:text-3xl font-bold mb-6 text-center">8. Analyze, Adapt & Scale</h2>
-                    <p class="max-w-3xl mx-auto text-gray-700 mb-8 text-center">Monitor performance, learn from data, and strategically scale your portfolio for long-term income growth. Optimize your profit machine!</p>
+            <!-- Step 9: Analyze & Scale (Original Step 8) -->
+            <section id="step-content-9" class="step-content fade-in">
+                <div class="card-panel">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-6 text-center text-gray-800">9. Analyze, Adapt & Scale</h2>
+                    <p class="max-w-3xl mx-auto text-gray-600 text-lg mb-8 text-center">Monitor performance, learn from data, and strategically scale your portfolio for long-term income growth. Optimize your profit machine!</p>
                     <div class="grid md:grid-cols-2 gap-8">
-                        <div class="bg-gray-50 p-6 rounded-lg border">
-                            <h3 class="font-bold text-lg mb-2 text-center text-teal-600">Illustrative Earnings</h3>
+                        <div class="bg-gray-50 p-6 rounded-xl shadow-sm">
+                            <h3 class="font-bold text-lg mb-2 text-center text-indigo-600">Illustrative Earnings</h3>
                             <p class="text-sm text-gray-600 mb-4 text-center">Consistent uploads lead to exponential growth. This chart shows a typical trajectory.</p>
                             <div class="chart-container">
                                 <canvas id="growthChart"></canvas>
                             </div>
                         </div>
-                        <div class="bg-gray-50 p-6 rounded-lg border">
-                            <h3 class="font-bold text-lg mb-2 text-center text-teal-600">Portfolio Mix</h3>
+                        <div class="bg-gray-50 p-6 rounded-xl shadow-sm">
+                            <h3 class="font-bold text-lg mb-2 text-center text-indigo-600">Portfolio Mix</h3>
                             <p class="text-sm text-gray-600 mb-4 text-center">Diversify content types to tap more buyer segments and maximize earnings.</p>
                             <div class="chart-container">
                                 <canvas id="mixChart"></canvas>
@@ -479,18 +802,19 @@
                         </div>
                     </div>
                     <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="bg-gray-50 p-6 rounded-lg border">
-                            <h3 class="font-bold text-lg mb-2 text-teal-600">Analyze & Adapt: Your Dashboard is Gold</h3>
+                        <div class="bg-gray-50 p-6 rounded-xl shadow-sm">
+                            <h3 class="font-bold text-lg mb-2 text-indigo-600">Analyze & Adapt: Your Dashboard is Gold</h3>
                             <ul class="list-disc list-inside text-base text-gray-700 space-y-2">
                                 <li><b>Monitor Sales:</b> Regularly check your Adobe Stock Contributor dashboard. See what sells best.</li>
                                 <li><b>Create More:</b> Double down on best-performing content categories.</li>
                                 <li><b>Learn:</b> Use rejection feedback to improve.</li>
                             </ul>
                         </div>
-                        <div class="bg-gray-50 p-6 rounded-lg border">
-                            <h3 class="font-bold text-lg mb-2 text-teal-600">Reinvest & Stay Current: Future-Proof Income</h3>
+                        <div class="bg-gray-50 p-6 rounded-xl shadow-sm">
+                            <h3 class="font-bold text-lg mb-2 text-indigo-600">Reinvest & Stay Current: Future-Proof Income</h3>
                             <ul class="list-disc list-inside text-base text-gray-700 space-y-2">
                                 <li><b>Smart Reinvestment:</b> Use earnings to upgrade AI subscriptions, software, or advanced courses.</li>
+                                
                                 <li><b>Stay Savvy:</b> Follow market trends & new tech.</li>
                                 <li><b>Consistency:</b> Regular uploads build long-term income.</li>
                             </ul>
@@ -499,12 +823,12 @@
                 </div>
             </section>
 
-            <!-- Step 9: Final CTA -->
-            <section id="step-content-9" class="step-content fade-in">
-                <div class="bg-teal-600 text-white p-8 md:p-12 rounded-xl shadow-lg text-center">
+            <!-- Step 10: Final CTA (Original Step 9) -->
+            <section id="step-content-10" class="step-content fade-in">
+                <div class="cta-section text-white p-8 md:p-12 rounded-xl shadow-lg text-center">
                     <h2 class="text-3xl md:text-4xl font-black mb-4">Your Money Move. Today.</h2>
-                    <p class="text-lg text-teal-100 max-w-2xl mx-auto mb-8">You have the blueprint to monetize stunning visuals on Adobe Stock, with AI power. Stop waiting! Build your flexible income stream now.</p>
-                    <a href="https://contributor.stock.adobe.com/en?isa0=1" target="_blank" class="inline-block bg-white text-teal-600 font-bold text-lg px-10 py-4 rounded-lg hover:bg-gray-100 transition-transform transform hover:scale-105 shadow-lg">
+                    <p class="text-lg text-indigo-100 max-w-2xl mx-auto mb-8">You have the blueprint to monetize stunning visuals on Adobe Stock, with AI power. Stop waiting! Build your flexible income stream now.</p>
+                    <a href="https://contributor.stock.adobe.com/en?isa0=1" target="_blank" class="inline-block cta-button">
                         Start Your Adobe Stock Journey Now!
                     </a>
                 </div>
@@ -514,6 +838,8 @@
 
     <!-- Message Box for Copy/Paste Instruction -->
     <div id="prompt-copy-message" class="message-box">Prompt copied!</div>
+    <div id="custom-alert-message" class="message-box" style="background-color: #EF4444;"></div>
+
 
     <script>
         // --- IMPORTANT: Configure your Gemini API Key directly here ---
@@ -524,8 +850,18 @@
         document.addEventListener('DOMContentLoaded', () => {
             const navButtons = document.querySelectorAll('.nav-btn');
             const stepContents = document.querySelectorAll('.step-content');
-            
-            // --- History Management Functions ---
+            const customAlertMessageBox = document.getElementById('custom-alert-message');
+
+            // --- Global Data Storage for Save Data Tab ---
+            // This object will hold the data to be displayed and exported.
+            let userData = {
+                nicheCategory: '',
+                selectedSubNiche: '',
+                generatedKeywords: [],
+                copiedPrompts: [] // Stores objects: { text: "...", used: true/false }
+            };
+
+            // --- History Management Functions (adapted for userData) ---
             const getHistory = (key) => {
                 try {
                     return JSON.parse(localStorage.getItem(key)) || [];
@@ -539,18 +875,17 @@
                 localStorage.setItem(key, JSON.stringify(history));
             };
 
-            const addKeywordToHistory = (key, keyword) => {
+            const addEntryToHistory = (key, entry) => { // Generic function for any history
                 let history = getHistory(key);
-                const lowerKeyword = keyword.toLowerCase(); // Store in lowercase for case-insensitive check
-                if (!history.includes(lowerKeyword)) {
-                    history.push(lowerKeyword);
+                if (!history.includes(entry)) {
+                    history.push(entry);
                     saveHistory(key, history);
                 }
             };
 
-            const isKeywordInHistory = (key, keyword) => {
+            const isEntryInHistory = (key, entry) => { // Generic function for any history
                 const history = getHistory(key);
-                return history.includes(keyword.toLowerCase()); // Check in lowercase
+                return history.includes(entry);
             };
 
             const clearHistory = (key) => {
@@ -564,7 +899,7 @@
                     // Try the modern Clipboard API first
                     await navigator.clipboard.writeText(text);
                     console.log('Text copied using navigator.clipboard.writeText');
-                    displayMessageBox(messageBoxElement, 'Prompt copied!', '#008080'); // Changed message
+                    displayMessageBox(messageBoxElement, 'Prompt copied!', '#10B981'); /* Green for success */
                 } catch (err) {
                     console.warn('Failed to copy using navigator.clipboard.writeText, falling back to document.execCommand:', err);
                     // Fallback for older browsers or restricted environments
@@ -578,13 +913,13 @@
                         const successful = document.execCommand('copy');
                         if (successful) {
                             console.log('Text copied using document.execCommand');
-                            displayMessageBox(messageBoxElement, 'Prompt copied!', '#008080'); // Changed message
+                            displayMessageBox(messageBoxElement, 'Prompt copied!', '#10B981'); /* Green for success */
                         } else {
                             throw new Error('Failed to copy using execCommand');
                         }
                     } catch (execErr) {
                         console.error('Failed to copy prompt with any method: ', execErr);
-                        displayMessageBox(messageBoxElement, 'Failed to copy. Copy manually.', '#dc2626'); // Changed message
+                        displayMessageBox(messageBoxElement, 'Failed to copy. Copy manually.', '#EF4444'); /* Red for error */
                     } finally {
                         document.body.removeChild(textarea);
                     }
@@ -604,19 +939,79 @@
                 }, 4000); // Display for 4 seconds, then fade out over 0.5s
             };
 
+            // Function to render user data in the Save Data tab
+            const renderUserData = () => {
+                const collectedDataOutput = document.getElementById('collected-data-output');
+                let html = '';
+
+                if (userData.nicheCategory || userData.selectedSubNiche || userData.generatedKeywords.length > 0 || userData.copiedPrompts.length > 0) {
+                    html += `
+                        <div class="mb-4">
+                            <h4 class="font-semibold text-lg text-gray-700 mb-2">Current Session Data:</h4>
+                            <p class="text-gray-600 text-sm mb-1"><strong>Niche Category:</strong> ${userData.nicheCategory || 'N/A'}</p>
+                            <p class="text-gray-600 text-sm mb-1"><strong>Selected Sub-Niche:</strong> ${userData.selectedSubNiche || 'N/A'}</p>
+                            <p class="text-gray-600 text-sm mb-1"><strong>Generated Keywords:</strong> ${userData.generatedKeywords.join(', ') || 'N/A'}</p>
+                        </div>
+                    `;
+
+                    if (userData.copiedPrompts.length > 0) {
+                        html += `
+                            <h4 class="font-semibold text-lg text-gray-700 mb-2">Copied Prompts:</h4>
+                            <div class="bg-white p-4 rounded-xl border max-h-64 overflow-y-auto">
+                                <table class="min-w-full text-sm" id="user-data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Prompt</th>
+                                            <th>Used</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                        `;
+                        userData.copiedPrompts.forEach(p => {
+                            html += `
+                                <tr>
+                                    <td class="text-gray-700">${p.text}</td>
+                                    <td class="text-center">${p.used ? '<span class="text-emerald-600">&#10003;</span>' : '<span class="text-red-600">&#x2717;</span>'}</td>
+                                </tr>
+                            `;
+                        });
+                        html += `
+                                    </tbody>
+                                </table>
+                            </div>
+                        `;
+                    }
+                } else {
+                    html = '<p class="text-gray-500 text-center">No data collected yet. Start exploring niches and copying prompts!</p>';
+                }
+                collectedDataOutput.innerHTML = html;
+            };
+
 
             // Main navigation
             const navigateToStep = (stepIndex) => {
+                // Deactivate all nav buttons and content sections
                 navButtons.forEach(btn => btn.classList.remove('active'));
-                navButtons[stepIndex].classList.add('active');
-                stepContents.forEach((content, index) => {
-                    content.classList.remove('active', 'fade-in');
-                    if (index === stepIndex) { 
-                        content.classList.add('active');
-                        setTimeout(() => content.classList.add('fade-in'), 10);
-                        content.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    }
-                });
+                stepContents.forEach(content => content.classList.remove('active', 'fade-in'));
+
+                // Activate the target nav button
+                const targetNavButton = document.querySelector(`button[data-step="${stepIndex}"]`);
+                if (targetNavButton) {
+                    targetNavButton.classList.add('active');
+                }
+
+                // Activate the target content section
+                const targetContentSection = document.getElementById(`step-content-${stepIndex}`);
+                if (targetContentSection) {
+                    targetContentSection.classList.add('active');
+                    setTimeout(() => targetContentSection.classList.add('fade-in'), 10); // Small delay for animation
+                    targetContentSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+
+                // Re-render user data if the Save Data tab is activated
+                if (stepIndex === 7) {
+                    renderUserData();
+                }
             };
 
             navButtons.forEach(button => {
@@ -626,7 +1021,7 @@
                 });
             });
 
-            // Step 3: Niche & Keyword Discovery - Stage 1 (Niche Generation)
+            // Step 4: Niche & Keyword Discovery
             const nicheCategorySelect = document.getElementById('niche-category-select');
             const generateNichesBtn = document.getElementById('generate-niches-btn');
             const nicheGeneratorOutput = document.getElementById('niche-generator-output');
@@ -639,10 +1034,15 @@
 
             clearNicheGeneratorHistoryBtn.addEventListener('click', () => {
                 clearHistory('generatedNicheCategories');
+                clearHistory('selectedNichesHistory'); // Clear niche selection history
+                clearHistory('selectedSubNichesHistory'); // Clear sub-niche selection history
                 nicheGeneratorOutput.innerHTML = '<p class="text-gray-500">Generated niche category history cleared. New ideas will appear next time.</p>';
                 keywordGenerationSection.classList.add('hidden'); // Hide keyword section if niches are cleared
-                clearHistory('usedSubNicheKeywords'); // Also clear sub-niche keywords
                 document.getElementById('keyword-grabber-output').innerHTML = ''; // Clear keyword display
+                userData.nicheCategory = '';
+                userData.selectedSubNiche = '';
+                userData.generatedKeywords = [];
+                userData.copiedPrompts = []; // Also clear prompts as they depend on keywords
             });
 
             generateNichesBtn.addEventListener('click', async () => {
@@ -658,8 +1058,8 @@
                 nicheGeneratorLoading.classList.remove('hidden');
                 generateNichesBtn.disabled = true;
 
-                const hasBeenExplored = isKeywordInHistory('generatedNicheCategories', selectedCategory);
-                if (hasBeenExplored) {
+                const hasBeenExploredCategory = isEntryInHistory('generatedNicheCategories', selectedCategory.toLowerCase());
+                if (hasBeenExploredCategory) {
                     nicheGeneratorOutput.innerHTML += `<p class="text-orange-600 font-semibold mb-2">Note: You've explored '${selectedCategory}' before. Try clearing history or selecting another category for fresh ideas!</p>`;
                 }
 
@@ -685,22 +1085,34 @@
                         const niches = text.split(',').map(n => n.trim()).filter(Boolean);
                         
                         nicheGeneratorOutput.innerHTML += niches.map(nicheText => {
-                            return `<div class="niche-card bg-white p-3 rounded-md shadow-sm text-base text-center" data-niche-name="${nicheText}">${nicheText}</div>`;
+                            const isNicheAlreadySelected = isEntryInHistory('selectedNichesHistory', nicheText.toLowerCase());
+                            return `<div class="niche-card bg-white p-3 rounded-xl shadow-sm text-base text-center ${isNicheAlreadySelected ? 'selected' : ''}" data-niche-name="${nicheText}">${nicheText}</div>`;
                         }).join('');
-                        addKeywordToHistory('generatedNicheCategories', selectedCategory);
+                        addEntryToHistory('generatedNicheCategories', selectedCategory.toLowerCase());
+                        userData.nicheCategory = selectedCategory; // Store selected category
 
                         document.querySelectorAll('#niche-generator-output .niche-card').forEach(card => {
                             card.addEventListener('click', async (event) => {
+                                const nicheName = event.currentTarget.getAttribute('data-niche-name');
+                                
+                                if (isEntryInHistory('selectedNichesHistory', nicheName.toLowerCase())) {
+                                    displayMessageBox(customAlertMessageBox, `You've already selected "${nicheName}".`, '#EF4444');
+                                    return; // Stop execution if already selected
+                                }
+
                                 document.querySelectorAll('#niche-generator-output .niche-card').forEach(c => c.classList.remove('selected'));
                                 event.currentTarget.classList.add('selected');
-                                const nicheName = event.currentTarget.getAttribute('data-niche-name');
+                                
                                 selectedNicheDisplay.textContent = nicheName;
                                 keywordGenerationSection.classList.remove('hidden'); // Show Stage 2
                                 localStorage.setItem('currentSelectedSubNiche', nicheName); // Store selected niche
+                                userData.selectedSubNiche = nicheName; // Store selected sub-niche
+                                addEntryToHistory('selectedNichesHistory', nicheName.toLowerCase()); // Add to selected niche history
 
                                 keywordGrabberOutput.innerHTML = '';
                                 keywordGrabberError.classList.add('hidden');
                                 keywordGrabberLoading.classList.remove('hidden');
+                                userData.generatedKeywords = []; // Clear previous keywords for new sub-niche
                                 
                                 try {
                                     const keywordPrompt = `Generate 100 diverse, commercially viable, and specific keywords for stock content related to the niche: '${nicheName}'. Focus on terms buyers would search for on Adobe Stock. Provide only the keywords, separated by commas, with no additional text, numbering, or explanations.`;
@@ -723,25 +1135,30 @@
                                         const text = kwResult.candidates[0].content.parts[0].text;
                                         let keywords = text.split(',').map(k => k.trim()).filter(Boolean);
                                         
-                                        const usedKeywordsForNiche = getHistory('usedSubNicheKeywords').filter(kw => kw.startsWith(nicheName.toLowerCase() + '::'));
-                                        const uniqueKeywords = keywords.filter(k => !usedKeywordsForNiche.includes(nicheName.toLowerCase() + '::' + k.toLowerCase()));
+                                        // Filter out keywords already used for prompts to highlight them
+                                        const usedPromptKeywords = getHistory('usedPromptKeywords');
+                                        
+                                        keywordGrabberOutput.innerHTML = keywords.map(s => {
+                                            const isUsed = usedPromptKeywords.includes(s.toLowerCase());
+                                            return `<div class="keyword-chip bg-white p-2 rounded-xl shadow-sm text-center ${isUsed ? 'keyword-chip-used' : ''}">${s}</div>`;
+                                        }).join('');
+                                        
+                                        // Note: addEntryToHistory('usedSubNicheKeywords', nicheName + '::' + k) is not used directly for highlighting chips
+                                        // Instead, we highlight based on 'usedPromptKeywords' directly for consistency
+                                        userData.generatedKeywords = keywords; // Store generated keywords
 
-                                        if (uniqueKeywords.length === 0 && keywords.length > 0) {
-                                            keywordGrabberOutput.innerHTML = '<p class="text-gray-500">All generated keywords for this niche have been previously used. Try clearing history for this niche or selecting another.</p>';
-                                        } else if (uniqueKeywords.length === 0 && keywords.length === 0) {
-                                             keywordGrabberOutput.innerHTML = '<p class="text-gray-500">No keywords could be generated for this niche.</p>';
-                                        } else {
-                                            keywordGrabberOutput.innerHTML = uniqueKeywords.map(s => `<div class="keyword-chip bg-white p-2 rounded-md border text-center shadow-sm">${s}</div>`).join('');
-                                            uniqueKeywords.forEach(k => addKeywordToHistory('usedSubNicheKeywords', nicheName + '::' + k));
-
-                                            document.querySelectorAll('#keyword-grabber-output .keyword-chip').forEach(chip => {
-                                                chip.addEventListener('click', (k_event) => {
-                                                    const selectedKeyword = k_event.currentTarget.textContent;
-                                                    promptKeywordInput.value = selectedKeyword;
-                                                    navigateToStep(5);
-                                                });
+                                        document.querySelectorAll('#keyword-grabber-output .keyword-chip').forEach(chip => {
+                                            chip.addEventListener('click', (k_event) => {
+                                                const selectedKeyword = k_event.currentTarget.textContent;
+                                                promptKeywordInput.value = selectedKeyword;
+                                                
+                                                if (isEntryInHistory('usedPromptKeywords', selectedKeyword.toLowerCase())) {
+                                                    displayMessageBox(customAlertMessageBox, `You've already used "${selectedKeyword}" for a prompt.`, '#EF4444');
+                                                }
+                                                
+                                                navigateToStep(5); // Navigate to AI Prompts tab
                                             });
-                                        }
+                                        });
                                     } else {
                                         throw new Error('No keywords received.');
                                     }
@@ -777,10 +1194,20 @@
             clearSubNicheKeywordsBtn.addEventListener('click', () => {
                 const currentNiche = localStorage.getItem('currentSelectedSubNiche');
                 if (currentNiche) {
-                    let allUsedKeywords = getHistory('usedSubNicheKeywords');
-                    allUsedKeywords = allUsedKeywords.filter(kw => !kw.startsWith(currentNiche.toLowerCase() + '::'));
-                    saveHistory('usedSubNicheKeywords', allUsedKeywords);
+                    // Only clear the selected sub-niche history entry for the *current* niche
+                    let allSelectedSubNiches = getHistory('selectedSubNichesHistory');
+                    allSelectedSubNiches = allSelectedSubNiches.filter(entry => entry !== currentNiche.toLowerCase());
+                    saveHistory('selectedSubNichesHistory', allSelectedSubNiches);
+
+                    // Clear usedPromptKeywords that are directly related to this sub-niche (more complex, might require re-thinking prompt storage)
+                    // For now, clearing all usedPromptKeywords is simpler given the current storage structure
+                    clearHistory('usedPromptKeywords'); // This clears ALL used prompts, not just for this sub-niche.
+                                                         // A more granular approach would involve storing prompt usage per sub-niche.
+                                                         // Decided to clear all usedPromptKeywords for simplicity as per current code.
+
                     keywordGrabberOutput.innerHTML = `<p class="text-gray-500">Keywords history for '${currentNiche}' cleared.</p>`;
+                    userData.generatedKeywords = []; // Clear stored keywords for current niche
+                    userData.copiedPrompts = []; // Clear all copied prompts
                 } else {
                      keywordGrabberOutput.innerHTML = '<p class="text-gray-500">No niche selected to clear history for.</p>';
                 }
@@ -799,7 +1226,7 @@
 
             promptKeywordInput.addEventListener('input', () => {
                 const keyword = promptKeywordInput.value.trim();
-                if (isKeywordInHistory('usedPromptKeywords', keyword)) {
+                if (isEntryInHistory('usedPromptKeywords', keyword.toLowerCase())) {
                     promptKeywordInput.classList.add('prompt-keyword-input-used');
                     promptKeywordHistoryNote.classList.remove('hidden');
                 } else {
@@ -813,6 +1240,7 @@
                 promptKeywordHistoryNote.classList.add('hidden');
                 promptKeywordInput.classList.remove('prompt-keyword-input-used');
                 promptsOutput.innerHTML = '<p class="text-gray-500">Prompt keyword history cleared.</p>';
+                userData.copiedPrompts = []; // Clear all copied prompts on clear history
             });
 
             generatePromptsBtn.addEventListener('click', async () => {
@@ -876,43 +1304,56 @@
                         // Regex to robustly capture numbered lines, even if the number isn't at the very start
                         const promptLines = text.split('\n').filter(line => line.trim().match(/^\d+\.\s*/)).map(line => line.trim()); 
                         
-                        promptsOutput.innerHTML = promptLines.map((p, index) => `
-                            <div class="prompt-chip-item bg-gray-50 p-3 rounded-md border text-sm flex justify-between items-center">
-                                <span class="flex-grow mr-2">${p}</span>
-                                <button class="copy-prompt-btn bg-teal-500 text-white text-xs font-semibold px-3 py-1 rounded-md hover:bg-teal-600 transition">Copy</button>
-                            </div>
-                        `).join('');
+                        promptsOutput.innerHTML = promptLines.map((p, index) => {
+                            const isPromptCopied = userData.copiedPrompts.some(cp => cp.text === p && cp.used);
+                            return `
+                                <div class="prompt-chip-item bg-gray-50 p-3 rounded-xl border text-sm flex justify-between items-center ${isPromptCopied ? 'copied' : ''}" data-prompt-index="${index}">
+                                    <span class="flex-grow mr-2">${p}</span>
+                                    <button class="copy-prompt-btn bg-indigo-500 text-white text-xs font-semibold px-3 py-1 rounded-md hover:bg-indigo-600 transition">Copy</button>
+                                </div>
+                            `;
+                        }).join('');
                         
-                        addKeywordToHistory('usedPromptKeywords', keyword);
-                        if (isKeywordInHistory('usedPromptKeywords', keyword)) {
+                        // Add keyword to history for prompt generation
+                        addEntryToHistory('usedPromptKeywords', keyword.toLowerCase());
+                        if (isEntryInHistory('usedPromptKeywords', keyword.toLowerCase())) {
                             promptKeywordInput.classList.add('prompt-keyword-input-used');
                         }
 
+                        // Initialize userData.copiedPrompts for this generation session
+                        // Merge with existing if any, so we don't lose previous "used" states
+                        const newPromptsData = promptLines.map(p => {
+                            const existing = userData.copiedPrompts.find(cp => cp.text === p);
+                            return existing ? existing : { text: p, used: false };
+                        });
+                        userData.copiedPrompts = newPromptsData;
+
+
                         document.querySelectorAll('.copy-prompt-btn').forEach(button => {
                             button.addEventListener('click', async (p_event) => {
-                                // Get the full text of the prompt, including its number if present
                                 const promptTextElement = p_event.currentTarget.previousElementSibling;
-                                const promptText = promptTextElement.textContent; // This should now include the numbering
-
+                                const promptText = promptTextElement.textContent;
                                 const parentItem = p_event.currentTarget.closest('.prompt-chip-item');
+                                const promptIndex = parseInt(parentItem.getAttribute('data-prompt-index'));
 
-                                // Remove any existing copied class first to restart animation
                                 if (parentItem) {
                                     parentItem.classList.remove('copied');
-                                    // Force reflow to restart animation if clicked quickly
                                     void parentItem.offsetWidth; 
                                 }
 
-                                await copyToClipboard(promptText, promptCopyMessage); // Use the new copy utility
+                                await copyToClipboard(promptText, promptCopyMessage);
 
                                 if (parentItem) {
                                     parentItem.classList.add('copied');
-                                    // Remove the copied class after the animation duration
                                     setTimeout(() => {
                                         parentItem.classList.remove('copied');
-                                    }, 2000); // Should match the CSS animation duration
+                                    }, 2000);
                                 }
-                                // Removed window.open here as per user's request
+
+                                // Mark prompt as used in userData
+                                if (userData.copiedPrompts[promptIndex]) {
+                                    userData.copiedPrompts[promptIndex].used = true;
+                                }
                             });
                         });
                     } else {
@@ -928,7 +1369,41 @@
                 }
             });
 
-            // Step 7: Smart Tagging & Export
+            // Step 7: Save Data Tab
+            const exportCollectedDataBtn = document.getElementById('export-collected-data-btn');
+            exportCollectedDataBtn.addEventListener('click', () => {
+                let csvContent = "";
+                
+                // Add Niche Category, Selected Sub-Niche, Generated Keywords
+                csvContent += `"Niche Category","${(userData.nicheCategory || 'N/A').replace(/"/g, '""')}"\n`;
+                csvContent += `"Selected Sub-Niche","${(userData.selectedSubNiche || 'N/A').replace(/"/g, '""')}"\n`;
+                csvContent += `"Generated Keywords","${userData.generatedKeywords.map(k => k.replace(/"/g, '""')).join(', ') || 'N/A'}"\n`;
+                csvContent += "\n"; // Blank line for separation
+
+                // Add Copied Prompts
+                csvContent += `"Prompt","Prompt Used"\n`;
+                userData.copiedPrompts.forEach(p => {
+                    const escapedPrompt = `"${p.text.replace(/"/g, '""')}"`;
+                    csvContent += `${escapedPrompt},${p.used ? 'Yes' : 'No'}\n`;
+                });
+
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement('a');
+                if (link.download !== undefined) {
+                    const url = URL.createObjectURL(blob);
+                    link.setAttribute('href', url);
+                    link.setAttribute('download', 'pixel_profits_data.csv');
+                    link.style.visibility = 'hidden';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                } else {
+                    displayMessageBox(customAlertMessageBox, 'Your browser does not support direct CSV download. Please copy data manually from the table above.', '#EF4444');
+                }
+            });
+
+
+            // Step 8: Smart Tagging & Export (Original Step 7)
             const imageUploadInput = document.getElementById('image-upload-input');
             const uploadStatus = document.getElementById('upload-status');
             const analyzeImagesBtn = document.getElementById('analyze-images-btn');
@@ -971,7 +1446,7 @@
                         const reader = new FileReader();
                         reader.onload = (e) => {
                             const imgDiv = document.createElement('div');
-                            imgDiv.className = 'relative w-24 h-24 rounded-md overflow-hidden bg-gray-200 flex items-center justify-center';
+                            imgDiv.className = 'relative w-24 h-24 rounded-xl overflow-hidden bg-gray-200 flex items-center justify-center'; /* Updated rounded-xl */
                             const img = document.createElement('img');
                             img.src = e.target.result;
                             img.className = 'w-full h-full object-cover';
@@ -1047,7 +1522,7 @@
                             }]
                         };
 
-                        // IMPORTANT: Changed model from gemini-pro-vision to gemini-1.5-flash for image analysis
+                        // Using gemini-1.5-flash for image analysis (vision capabilities)
                         const MODEL_NAME_FOR_VISION = "gemini-1.5-flash"; 
 
                         // Fetch Title
@@ -1091,7 +1566,7 @@
 
                         const row = metadataTableBody.insertRow();
                         row.innerHTML = `
-                            <td class="px-2 py-2 whitespace-nowrap"><img src="${URL.createObjectURL(file)}" class="h-12 w-12 object-cover rounded-md inline-block mr-2" alt="${file.name}"> ${file.name}</td>
+                            <td class="px-2 py-2 whitespace-nowrap"><img src="${URL.createObjectURL(file)}" class="h-12 w-12 object-cover rounded-xl inline-block mr-2" alt="${file.name}"> ${file.name}</td> <!-- Updated rounded-xl -->
                             <td class="px-2 py-2">${generatedTitle}</td>
                             <td class="px-2 py-2 text-wrap">${generatedKeywords}</td>
                         `;
@@ -1106,7 +1581,7 @@
                         });
                          const row = metadataTableBody.insertRow();
                         row.innerHTML = `
-                            <td class="px-2 py-2 whitespace-nowrap"><img src="${URL.createObjectURL(file)}" class="h-12 w-12 object-cover rounded-md inline-block mr-2" alt="${file.name}"> ${file.name}</td>
+                            <td class="px-2 py-2 whitespace-nowrap"><img src="${URL.createObjectURL(file)}" class="h-12 w-12 object-cover rounded-xl inline-block mr-2" alt="${file.name}"> ${file.name}</td> <!-- Updated rounded-xl -->
                             <td class="px-2 py-2 text-red-500">Error generating</td>
                             <td class="px-2 py-2 text-red-500">Error generating</td>
                         `;
@@ -1147,7 +1622,7 @@
             });
 
 
-            // Charts (Step 8)
+            // Charts (Step 9)
             new Chart(document.getElementById('growthChart').getContext('2d'), {
                 type: 'line',
                 data: {
@@ -1155,8 +1630,8 @@
                     datasets: [{
                         label: 'Potential Earnings (Illustrative)',
                         data: [25, 75, 250, 500, 1000],
-                        backgroundColor: 'rgba(5, 150, 105, 0.2)',
-                        borderColor: '#059669',
+                        backgroundColor: 'rgba(139, 92, 246, 0.2)', /* Indigo-500 with opacity */
+                        borderColor: '#8B5CF6', /* Indigo-500 */
                         tension: 0.3,
                         fill: true
                     }]
@@ -1166,8 +1641,17 @@
                     maintainAspectRatio: false, 
                     plugins: { legend: { display: false } },
                     scales: {
-                        y: { beginAtZero: true, title: { display: true, text: 'Earnings ($)' } },
-                        x: { title: { display: true, text: 'Time' } }
+                        y: { 
+                            beginAtZero: true, 
+                            title: { display: true, text: 'Earnings ($)', color: '#4B5563' },
+                            ticks: { color: '#6B7280' },
+                            grid: { color: '#E5E7EB' } /* Lighter grid lines */
+                        },
+                        x: { 
+                            title: { display: true, text: 'Time', color: '#4B5563' },
+                            ticks: { color: '#6B7280' },
+                            grid: { color: '#E5E7EB' }
+                        }
                     }
                 }
             });
@@ -1178,14 +1662,19 @@
                     labels: ['Organic Photos', 'AI Images', 'Videos'],
                     datasets: [{
                         data: [50, 40, 10],
-                        backgroundColor: ['#059669', '#047857', '#065f46'],
-                        hoverOffset: 4
+                        backgroundColor: ['#8B5CF6', '#7C3AED', '#6D28D9'], /* Shades of Indigo */
+                        hoverOffset: 8 /* Slightly larger hover offset */
                     }]
                 },
                 options: { 
                     responsive: true, 
                     maintainAspectRatio: false, 
-                    plugins: { legend: { position: 'bottom' } }
+                    plugins: { 
+                        legend: { 
+                            position: 'bottom', 
+                            labels: { color: '#4B5563' } 
+                        } 
+                    }
                 }
             });
         });
