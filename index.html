@@ -450,7 +450,7 @@
         <section id="step-content-1" class="step-content fade-in">
             <div class="card-panel">
                 <h2 class="text-3xl md:text-4xl font-bold mb-6 text-center text-gray-800">1. Essential Toolkit & Setup</h2>
-                <p class="max-w-3xl mx-auto text-gray-600 text-lg mb-8 text-center">Gather your basic gear and set up your Adobe Stock account. You likely have most of what you need already!</p>
+                <p class="max-w_3xl mx-auto text-gray-600 text-lg mb-8 text-center">Gather your basic gear and set up your Adobe Stock account. You likely have most of what you need already!</p>
                 <div class="grid md:grid-cols-2 gap-8 items-start">
                     <div class="bg-gray-50 p-6 rounded-xl shadow-sm">
                         <h3 class="font-bold text-xl mb-4 text-indigo-600">Your Gear</h3>
@@ -1184,7 +1184,7 @@
 
                 const hasBeenExploredCategory = isEntryInHistory('generatedNicheCategories', selectedCategory);
                 if (hasBeenExploredCategory) {
-                    // Removed the explicit popup here as requested by user
+                    // This popup is REMOVED as per user request.
                     // displayMessageBox(customAlertMessageBox, `You've explored category "${selectedCategory}" before.`, '#EF4444');
                 }
 
@@ -1266,6 +1266,7 @@
                                         keywordGrabberOutput.innerHTML = keywords.map(s => {
                                             const isUsed = usedPromptKeywords.includes(s.toLowerCase());
                                             const isSelectedForBatch = currentlySelectedKeywordChips.includes(s);
+                                            // Apply 'used' class immediately if in history upon rendering
                                             return `<div class="keyword-chip bg-white p-2 rounded-xl shadow-sm text-center ${isUsed ? 'used' : ''} ${isSelectedForBatch ? 'selected-for-batch' : ''}" data-keyword-name="${s}">${s}</div>`;
                                         }).join('');
                                         
@@ -1281,19 +1282,16 @@
                                                     k_event.currentTarget.classList.remove('selected-for-batch');
                                                     currentlySelectedKeywordChips = currentlySelectedKeywordChips.filter(kw => kw !== clickedKeyword);
                                                 } else {
-                                                    // Check if already used for prompts to prioritize visual state
-                                                    // Only add selected-for-batch if not already used, or if user wants to select even if used.
-                                                    // The prompt did not specify, so I'll allow selection even if used, but keep the red highlight.
                                                     k_event.currentTarget.classList.add('selected-for-batch');
                                                     currentlySelectedKeywordChips.push(clickedKeyword);
                                                 }
                                                 updateBatchSendButtonVisibility();
 
                                                 // This is the specific change for instant red highlighting on click if used
+                                                // Now, it simply *ensures* the 'used' class is there if the keyword is in history,
+                                                // without a popup, and the styling handles the red color.
                                                 if (isEntryInHistory('usedPromptKeywords', clickedKeyword)) {
-                                                    k_event.currentTarget.classList.add('used'); // Ensure it's red if used
-                                                    // REMOVED: displayMessageBox(customAlertMessageBox, `You've already used "${clickedKeyword}" for a prompt.`, '#EF4444');
-                                                    // The user explicitly requested to remove this popup.
+                                                    k_event.currentTarget.classList.add('used'); 
                                                 }
                                                 
                                                 promptKeywordInput.value = clickedKeyword; // Still update single prompt input
@@ -1385,7 +1383,7 @@
             });
 
             clearPromptKeywordsBtn.addEventListener('click', () => {
-                clearHistory('usedPromptKeywords'); // Clear all used prompt keywords
+                clearHistory('usedPromptKeywords');
                 promptKeywordHistoryNote.classList.add('hidden');
                 promptKeywordInput.classList.remove('prompt-keyword-input-used');
                 promptsOutput.innerHTML = '<p class="text-gray-500">Prompt keyword history cleared.</p>';
