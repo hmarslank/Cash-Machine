@@ -660,7 +660,7 @@
                 <div class="bg-gray-50 p-6 rounded-xl border shadow-sm mt-10">
                     <h3 class="font-bold text-xl mb-4 text-center text-indigo-600">Batch Prompt Generator:</h3>
                     <p class="text-sm text-center text-gray-700 mb-4">Enter 1 to 100 keywords (one per line or comma-separated). Generate 10 prompts per keyword, then view them below.</p>
-                    <div class="flex flex-col gap-4 max-w-xl mx-auto mb-4">
+                    <div class="flex flex-col gap-4 max-w_xl mx-auto mb-4">
                         <textarea id="batch-keywords-input" rows="5" placeholder="Enter keywords (e.g., &#10;keyword1, keyword2 &#10;keyword3)" class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-indigo-600 focus:border-indigo-600 resize-y"></textarea>
                         <select id="batch-prompt-length-select" class="p-2 border border-gray-300 rounded-xl focus:ring-indigo-600 focus:border-indigo-600 w-full">
                             <option value="medium">Medium Prompts</option>
@@ -1152,20 +1152,32 @@
             };
 
             clearNicheGeneratorHistoryBtn.addEventListener('click', () => {
+                // Clear the relevant histories in localStorage
                 clearHistory('generatedNicheCategories');
                 clearHistory('selectedNichesHistory');
-                clearHistory('usedPromptKeywords'); // Clear used prompt keywords to reset red highlights
-                nicheGeneratorOutput.innerHTML = '<p class="text-gray-500">Generated niche category history cleared. New ideas will appear next time.</p>';
-                keywordGenerationSection.classList.add('hidden');
-                document.getElementById('keyword-grabber-output').innerHTML = '';
+                clearHistory('usedPromptKeywords'); // Clears the keywords used for prompt generation
+
+                // Clear internal userData state
                 userData.nicheCategory = '';
                 userData.selectedSubNiche = '';
                 userData.generatedKeywords = [];
                 userData.copiedPrompts = [];
                 userData.batchPrompts = [];
 
+                // Clear displayed elements
+                nicheGeneratorOutput.innerHTML = '<p class="text-gray-500">Generated niche category history cleared. New ideas will appear next time.</p>';
+                keywordGenerationSection.classList.add('hidden');
+                document.getElementById('keyword-grabber-output').innerHTML = ''; // Clear keyword chips display
+
+                // Reset batch selection state
                 currentlySelectedKeywordChips = [];
                 updateBatchSendButtonVisibility();
+
+                // Ensure no 'used' class remains on keyword chips if they were previously red
+                document.querySelectorAll('#keyword-grabber-output .keyword-chip').forEach(chip => {
+                    chip.classList.remove('used');
+                    chip.classList.remove('selected-for-batch');
+                });
             });
 
             generateNichesBtn.addEventListener('click', async () => {
@@ -1180,12 +1192,6 @@
                 nicheGeneratorError.classList.add('hidden');
                 nicheGeneratorLoading.classList.remove('hidden');
                 generateNichesBtn.disabled = true;
-
-                const hasBeenExploredCategory = isEntryInHistory('generatedNicheCategories', selectedCategory);
-                if (hasBeenExploredCategory) {
-                    // This popup is REMOVED as per user request.
-                    // displayMessageBox(customAlertMessageBox, `You've explored category "${selectedCategory}" before.`, '#EF4444');
-                }
 
                 try {
                     const prompt = `Generate 15 highly selective, high-demand, and relatively low-competition stock photo/video sub-niches within the '${selectedCategory}' category. For each niche, provide only the niche name (without numbering or description). Present as a comma-separated list.`;
@@ -1219,9 +1225,6 @@
                             card.addEventListener('click', async (event) => {
                                 const nicheName = event.currentTarget.getAttribute('data-niche-name');
                                 
-                                // REMOVED: displayMessageBox(customAlertMessageBox, `You've already selected "${nicheName}".`, '#EF4444');
-                                // The user explicitly requested to remove this popup.
-
                                 document.querySelectorAll('#niche-generator-output .niche-card').forEach(c => c.classList.remove('selected'));
                                 event.currentTarget.classList.add('selected');
                                 
@@ -1229,14 +1232,14 @@
                                 keywordGenerationSection.classList.remove('hidden');
                                 localStorage.setItem('currentSelectedSubNiche', nicheName);
                                 userData.selectedSubNiche = nicheName;
-                                addEntryToHistory('selectedNichesHistory', nicheName);
+                                addEntryToHistory('selectedNichesHistory', nicheName); // Mark niche as selected in history
 
                                 keywordGrabberOutput.innerHTML = '';
                                 keywordGrabberError.classList.add('hidden');
                                 keywordGrabberLoading.classList.remove('hidden');
                                 userData.generatedKeywords = [];
                                 
-                                currentlySelectedKeywordChips = [];
+                                currentlySelectedKeywordChips = []; // Clear batch selection
                                 updateBatchSendButtonVisibility();
 
                                 try {
@@ -1264,7 +1267,7 @@
                                         
                                         keywordGrabberOutput.innerHTML = keywords.map(s => {
                                             const isUsed = usedPromptKeywords.includes(s.toLowerCase());
-                                            const isSelectedForBatch = currentlySelectedKeywordChips.includes(s);
+                                            const isSelectedForBatch = currentlySelectedKeywordChips.includes(s); // Check if already selected for batch
                                             // Apply 'used' class immediately if in history upon rendering
                                             return `<div class="keyword-chip bg-white p-2 rounded-xl shadow-sm text-center ${isUsed ? 'used' : ''} ${isSelectedForBatch ? 'selected-for-batch' : ''}" data-keyword-name="${s}">${s}</div>`;
                                         }).join('');
@@ -1281,20 +1284,14 @@
                                                     k_event.currentTarget.classList.remove('selected-for-batch');
                                                     currentlySelectedKeywordChips = currentlySelectedKeywordChips.filter(kw => kw !== clickedKeyword);
                                                 } else {
-                                                    // Check if already used for prompts to prioritize visual state
-                                                    // Only add selected-for-batch if not already used, or if user wants to select even if used.
-                                                    // The prompt did not specify, so I'll allow selection even if used, but keep the red highlight.
                                                     k_event.currentTarget.classList.add('selected-for-batch');
                                                     currentlySelectedKeywordChips.push(clickedKeyword);
                                                 }
                                                 updateBatchSendButtonVisibility();
 
                                                 // This is the specific change for instant red highlighting on click if used
-                                                // Now, it simply *ensures* the 'used' class is there if the keyword is in history,
-                                                // without a popup, and the styling handles the red color.
-                                                if (isEntryInHistory('usedPromptKeywords', clickedKeyword)) {
-                                                    k_event.currentTarget.classList.add('used'); 
-                                                }
+                                                // The 'used' class is already applied on render if it's in history.
+                                                // No explicit popup for 'already used' keyword here, just the visual cue.
                                                 
                                                 promptKeywordInput.value = clickedKeyword; // Still update single prompt input
                                             });
@@ -1334,19 +1331,22 @@
                     allSelectedNichesHistory = allSelectedNichesHistory.filter(entry => entry !== currentNiche.toLowerCase());
                     saveHistory('selectedNichesHistory', allSelectedNichesHistory);
 
-                    clearHistory('usedPromptKeywords'); // This clears the global history for prompts.
-
+                    // Note: Clearing usedPromptKeywords is done by clearPromptKeywordsBtn (in Step 5) or clearNicheGeneratorHistoryBtn
+                    // This button only clears selection and the current niche context for Get Keywords.
+                    
                     keywordGrabberOutput.innerHTML = `<p class="text-gray-500">Keywords history for '${currentNiche}' cleared.</p>`;
                     userData.generatedKeywords = [];
-                    userData.copiedPrompts = [];
-                    userData.batchPrompts = [];
+                    // userData.copiedPrompts = []; // Do NOT clear here, as they are global
+                    // userData.batchPrompts = [];  // Do NOT clear here, as they are global
                     
                     currentlySelectedKeywordChips = [];
                     updateBatchSendButtonVisibility();
 
+                    // Re-render keyword chips to ensure 'used' state is correctly reflected if history cleared elsewhere
+                    // Or, simpler, just remove selected-for-batch
                     document.querySelectorAll('#keyword-grabber-output .keyword-chip').forEach(chip => {
-                        chip.classList.remove('used');
                         chip.classList.remove('selected-for-batch');
+                        // No change to 'used' class here, as its state is global/persistent
                     });
 
                 } else {
@@ -1359,12 +1359,12 @@
                 if (currentlySelectedKeywordChips.length > 0) {
                     batchKeywordsInput.value = currentlySelectedKeywordChips.join(', ');
                     navigateToStep(5); // Navigate to the Prompt Generator tab (Step 5)
-                    currentlySelectedKeywordChips.forEach(kw => {
-                        const chip = document.querySelector(`.keyword-chip[data-keyword-name="${kw}"]`);
-                        if (chip) chip.classList.remove('selected-for-batch');
+                    // Clear green selection after sending to batch
+                    document.querySelectorAll('#keyword-grabber-output .keyword-chip.selected-for-batch').forEach(chip => {
+                        chip.classList.remove('selected-for-batch');
                     });
-                    currentlySelectedKeywordChips = [];
-                    updateBatchSendButtonVisibility();
+                    currentlySelectedKeywordChips = []; // Clear selected keywords array
+                    updateBatchSendButtonVisibility(); // Hide button
                 } else {
                     displayMessageBox(customAlertMessageBox, 'Please select keywords first!', '#EF4444');
                 }
@@ -1389,10 +1389,12 @@
                 promptKeywordHistoryNote.classList.add('hidden');
                 promptKeywordInput.classList.remove('prompt-keyword-input-used');
                 promptsOutput.innerHTML = '<p class="text-gray-500">Prompt keyword history cleared.</p>';
-                userData.copiedPrompts = [];
+                userData.copiedPrompts = []; // Clear copied prompts data
+                userData.batchPrompts = []; // Clear batch prompts data
 
+                // Also update keyword chips in Get Keywords tab if visible
                 document.querySelectorAll('#keyword-grabber-output .keyword-chip').forEach(chip => {
-                    chip.classList.remove('used');
+                    chip.classList.remove('used'); // Remove red highlight
                 });
             });
 
@@ -1465,9 +1467,13 @@
                             `;
                         }).join('');
                         
-                        addEntryToHistory('usedPromptKeywords', keyword);
+                        addEntryToHistory('usedPromptKeywords', keyword); // This keyword is now used for prompt generation
                         if (isEntryInHistory('usedPromptKeywords', keyword)) {
                             promptKeywordInput.classList.add('prompt-keyword-input-used');
+                            // Also ensure any keyword chips in Get Keywords tab that match this are updated
+                            document.querySelectorAll(`#keyword-grabber-output .keyword-chip[data-keyword-name="${keyword}"]`).forEach(chip => {
+                                chip.classList.add('used');
+                            });
                         }
 
                         const newPromptsData = promptLines.map(p => {
@@ -1592,6 +1598,9 @@
                             const generatedPrompts = text.split('\n').filter(line => line.trim().match(/^\d+\.\s*/)).map(line => ({ text: line.trim(), used: false }));
                             userData.batchPrompts.push({ keyword: keyword, prompts: generatedPrompts });
                             generatedCount++;
+
+                            // Mark each keyword as used in global history
+                            addEntryToHistory('usedPromptKeywords', keyword);
                         } else {
                             throw new Error(`No prompts received for keyword "${keyword}".`);
                         }
@@ -1606,9 +1615,17 @@
                 batchPromptsLoading.classList.add('hidden');
                 generateBatchPromptsBtn.disabled = false;
                 if (generatedCount > 0) {
-                    // Removed this success popup as per user request
-                    // displayMessageBox(customAlertMessageBox, `Generated prompts for ${generatedCount} keyword(s). Check the Batch Prompt Generator section.`, '#10B981');
                     renderBatchPromptsOutput(); // Render output directly in Step 5
+                    // After generation, update keyword chips in Get Keywords tab to reflect red state
+                    document.querySelectorAll('#keyword-grabber-output .keyword-chip').forEach(chip => {
+                        const kwText = chip.textContent;
+                        if (isEntryInHistory('usedPromptKeywords', kwText)) {
+                            chip.classList.add('used');
+                            chip.classList.remove('selected-for-batch'); // Clear batch selection
+                        }
+                    });
+                    currentlySelectedKeywordChips = []; // Clear selected batch keywords
+                    updateBatchSendButtonVisibility(); // Hide batch send button
                 } else if (!batchPromptsError.classList.contains('hidden')) {
                 } else {
                     batchPromptsError.textContent = 'No prompts could be generated. Try adjusting keywords or prompt length.';
