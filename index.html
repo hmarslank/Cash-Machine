@@ -780,7 +780,7 @@
                     let allUsedKeywords = getHistory('usedSubNicheKeywords');
                     allUsedKeywords = allUsedKeywords.filter(kw => !kw.startsWith(currentNiche.toLowerCase() + '::'));
                     saveHistory('usedSubNicheKeywords', allUsedKeywords);
-                    keywordGrabberOutput.innerHTML = `<p class="text-gray-500">Keywords history for '${currentNiche}' cleared.</pاهرة`;
+                    keywordGrabberOutput.innerHTML = `<p class="text-gray-500">Keywords history for '${currentNiche}' cleared.</p>`;
                 } else {
                      keywordGrabberOutput.innerHTML = '<p class="text-gray-500">No niche selected to clear history for.</p>';
                 }
@@ -1047,8 +1047,11 @@
                             }]
                         };
 
-                        // Fetch Title (using gemini-pro-vision model)
-                        const titleResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro-vision:generateContent?key=${GEMINI_API_KEY}`, {
+                        // IMPORTANT: Changed model from gemini-pro-vision to gemini-1.5-flash for image analysis
+                        const MODEL_NAME_FOR_VISION = "gemini-1.5-flash"; 
+
+                        // Fetch Title
+                        const titleResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME_FOR_VISION}:generateContent?key=${GEMINI_API_KEY}`, {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify(titlePayload)
@@ -1063,8 +1066,8 @@
                         }
 
 
-                        // Fetch Keywords (using gemini-pro-vision model as it also handles image input well)
-                        const keywordResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro-vision:generateContent?key=${GEMINI_API_KEY}`, {
+                        // Fetch Keywords
+                        const keywordResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME_FOR_VISION}:generateContent?key=${GEMINI_API_KEY}`, {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify(keywordPayload)
