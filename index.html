@@ -10,28 +10,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
     
-    <!-- Chosen Palette: "Modern Teal" - Background: very light gray (#F8F9FA), Main Text: dark gray (#333333), Accent: deep teal (#008080) for active states, buttons, and key highlights. Secondary backgrounds: subtle light gray/teal shades. -->
-    <!-- Application Structure Plan: A clean, multi-section single-page app with a sticky top navigation. Each section (Intro, Steps 1-8, CTA) is distinct and visually uncluttered. The core flow (Niche/Keyword Discovery, Prompt Generation) is highly integrated and interactive, minimizing text and maximizing user action. This design prioritizes scannability, modern aesthetics, and direct engagement. -->
-    <!-- Visualization & Content Choices:
-        - Report Info: Comprehensive guide on earning from Adobe Stock, emphasizing AI generation, with integrated niche and keyword discovery. Goal: Provide detailed, easy-to-understand, and interactive instructions with unique keyword and niche tracking.
-        - THIS VERSION: NO Firebase Auth/Firestore. Gemini API key is directly in client-side HTML.
-        - Section 1 (Intro): Short, punchy sentences.
-        - Section 2 (Toolkit & Setup): Very brief bullet points for gear and setup.
-        - Section 3 (Organic Creation): Condensed key niches and quality points.
-        - Section 4 (Niche & Keyword Discovery):
-            - Stage 1: Clean grid of sub-niche cards (only name). Clicking generates keywords.
-            - Stage 2: Clean grid of keyword chips. Clicking pre-fills prompt input and navigates to Step 5.
-            - Focus on visual separation and click-driven progression.
-        - Section 5 (AI Tools Overview): Concise benefits/tools.
-        - Section 6 (Prompt Crafting): Streamlined prompts, clear copy-to-clipboard function.
-        - Section 7 (Leonardo AI Walkthrough): Short, numbered steps.
-        - Section 8 (Tagging & Upload): Simplified titles/CSV concepts. AI Title Generator remains.
-        - Section 9 (Analyze & Scale): Charts for visual data. Brief bullet points for advice.
-        - Section 10 (Final CTA).
-        - Library/Method: Vanilla JS for all logic and interactivity (including localStorage for history). Chart.js for all charts on Canvas. Gemini API for AI-powered keyword, prompt, niche, and title generation, called DIRECTLY from frontend.
-    -->
-    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
-
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -122,6 +100,24 @@
             from { opacity: 1; }
             to { opacity: 0; display: none; } /* Ensure it becomes display:none after animation */
         }
+
+        /* Styles for copied prompt highlighting */
+        .prompt-chip-item.copied {
+            background-color: #d1fae5; /* Light green */
+            border-color: #10b981; /* Green border */
+            animation: copiedFade 2s forwards;
+        }
+
+        @keyframes copiedFade {
+            0% { background-color: #d1fae5; border-color: #10b981; }
+            100% { background-color: #f9fafb; border-color: #e5e7eb; } /* Revert to original background */
+        }
+
+        /* Style for used keyword in input */
+        .prompt-keyword-input-used {
+            border-color: #ef4444 !important; /* Red border */
+            box-shadow: 0 0 0 1px #ef4444; /* Red shadow */
+        }
     </style>
 </head>
 <body class="antialiased">
@@ -151,7 +147,6 @@
     </nav>
 
     <main class="container mx-auto p-4 md:p-8">
-        <!-- Intro -->
         <section id="step-content-0" class="step-content active fade-in">
             <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg text-center">
                 <h2 class="text-2xl md:text-3xl font-bold mb-4">Stop Scrolling, Start Earning.</h2>
@@ -173,7 +168,6 @@
             </div>
         </section>
 
-        <!-- Step 1: Toolkit & Setup -->
         <section id="step-content-1" class="step-content fade-in">
             <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg">
                 <h2 class="text-2xl md:text-3xl font-bold mb-6 text-center">1. Essential Toolkit & Setup</h2>
@@ -190,18 +184,17 @@
                     </div>
                     <div class="bg-gray-50 p-6 rounded-lg">
                         <h3 class="font-bold text-xl mb-4 text-teal-600">Quick Setup</h3>
-                         <ol class="list-decimal list-inside space-y-3 text-base">
-                            <li><b>Sign Up:</b> Visit <a href="https://contributor.stock.adobe.com/en?isa0=1" target="_blank" class="font-semibold text-teal-600 hover:underline">Adobe Stock Contributor</a>.</li>
-                            <li><b>Verify:</b> Complete ID & tax info for payouts.</li>
-                            <li><b>Go Live:</b> Account active! Adobe handles sales.</li>
-                        </ol>
-                        <p class="text-sm text-amber-700 mt-4">Pro Tip: Double-check country of residence during sign-up.</p>
+                           <ol class="list-decimal list-inside space-y-3 text-base">
+                                <li><b>Sign Up:</b> Visit <a href="https://contributor.stock.adobe.com/en?isa0=1" target="_blank" class="font-semibold text-teal-600 hover:underline">Adobe Stock Contributor</a>.</li>
+                                <li><b>Verify:</b> Complete ID & tax info for payouts.</li>
+                                <li><b>Go Live:</b> Account active! Adobe handles sales.</li>
+                            </ol>
+                            <p class="text-sm text-amber-700 mt-4">Pro Tip: Double-check country of residence during sign-up.</p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Step 2: Organic Creation -->
         <section id="step-content-2" class="step-content fade-in">
             <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg">
                 <h2 class="text-2xl md:text-3xl font-bold mb-6 text-center">2. Organic Content Creation</h2>
@@ -246,13 +239,11 @@
             </div>
         </section>
 
-        <!-- Step 3: Niche & Keyword Discovery -->
         <section id="step-content-3" class="step-content fade-in">
             <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg">
                 <h2 class="text-2xl md:text-3xl font-bold mb-6 text-center">3. Niche & Keyword Discovery</h2>
                 <p class="max-w-3xl mx-auto text-gray-700 mb-8 text-center">Pinpoint high-demand niches and grab relevant keywords. Explore categories, then dive into specific content opportunities.</p>
                 
-                <!-- Stage 1: Niche Category Selection & Generation -->
                 <div id="niche-generation-section" class="bg-gray-50 p-6 rounded-lg border mb-8">
                     <h3 class="font-bold text-xl mb-4 text-center text-teal-600">Stage 1: Discover Unique Niches</h3>
                     <p class="text-sm text-center text-gray-700 mb-4">Select a category. Our AI generates 15-20 specific, low-competition niches. **Click any niche card to automatically grab 100 keywords for it below!**</p>
@@ -287,29 +278,25 @@
                     <div id="niche-generator-loading" class="hidden loading-spinner"></div>
                     <div id="niche-generator-error" class="hidden mt-4 text-center text-red-600 font-semibold"></div>
                     <div id="niche-generator-output" class="mt-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 text-sm max-h-96 overflow-y-auto p-2 border border-gray-200 rounded-md bg-white">
-                        <!-- Generated niches will appear here -->
-                    </div>
+                        </div>
                     <p class="text-xs text-gray-500 mt-4 text-center">**Note:** New niches are unique per category session. Click a niche to get its keywords!</p>
                 </div>
 
-                <!-- Stage 2: Keyword Generation for Selected Niche -->
                 <div id="keyword-generation-section" class="bg-gray-50 p-6 rounded-lg border hidden">
                     <h3 class="font-bold text-xl mb-4 text-center text-teal-600">Stage 2: Keywords for <b id="selected-niche-display" class="text-teal-700"></b></h3>
                     <p class="text-sm text-center text-gray-700 mb-4">Here are 100 high-demand keywords generated for your selected niche. **Click any keyword to automatically populate it in the 'AI Prompts' section (Step 5)!**</p>
-                   
+                    
                     <button id="clear-subniche-keywords-btn" class="w-full bg-red-500 text-white font-bold px-6 py-2 rounded-lg hover:bg-red-600 transition mt-2 text-sm max-w-md mx-auto block">Clear Keywords History</button>
                     
                     <div id="keyword-grabber-loading" class="hidden loading-spinner"></div>
                     <div id="keyword-grabber-error" class="hidden mt-4 text-center text-red-600 font-semibold"></div>
                     <div id="keyword-grabber-output" class="mt-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 text-sm max-h-96 overflow-y-auto p-2 border border-gray-200 rounded-md bg-white">
-                        <!-- Keywords will appear here -->
-                    </div>
+                        </div>
                     <p class="text-xs text-gray-500 mt-4 text-center">**Pro Tip:** Click any keyword to jump to Step 5 and start generating AI prompts!</p>
                 </div>
             </div>
         </section>
 
-        <!-- Step 4: AI Tools Overview -->
         <section id="step-content-4" class="step-content fade-in">
             <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg">
                 <h2 class="text-2xl md:text-3xl font-bold mb-6 text-center">4. AI Tools Unleashed</h2>
@@ -339,7 +326,6 @@
             </div>
         </section>
 
-        <!-- Step 5: AI Prompt Crafting Masterclass -->
         <section id="step-content-5" class="step-content fade-in">
             <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg">
                 <h2 class="text-2xl md:text-3xl font-bold mb-6 text-center">5. AI Prompt Masterclass</h2>
@@ -358,15 +344,13 @@
                     <div id="prompts-loading" class="hidden loading-spinner"></div>
                     <div id="prompts-error" class="hidden mt-4 text-center text-red-600 font-semibold"></div>
                     <div id="prompts-output" class="mt-6 space-y-4 text-base bg-white p-4 rounded-md border max-h-96 overflow-y-auto">
-                        <!-- Prompts will appear here -->
-                    </div>
+                        </div>
                     <div id="prompt-copy-message" class="message-box">Prompt copied! Switch to the new tab and paste.</div>
                 </div>
                 <p class="mt-8 p-4 bg-emerald-50 rounded-lg border border-emerald-200 font-bold text-emerald-800 text-sm">Pro Tip: Good prompts include: **Subject + Action + Setting + Style + Technical Details** (e.g., 8K, white background). Aim for clarity and detail!</p>
             </div>
         </section>
 
-        <!-- Step 6: From Prompts to Pixels (Leonardo AI Deep Dive) -->
         <section id="step-content-6" class="step-content fade-in">
             <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg">
                 <h2 class="text-2xl md:text-3xl font-bold mb-6 text-center">6. Prompts to AI Images</h2>
@@ -394,7 +378,6 @@
             </div>
         </section>
 
-        <!-- Step 7: Smart Tagging & Export -->
         <section id="step-content-7" class="step-content fade-in">
             <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg">
                 <h2 class="text-2xl md:text-3xl font-bold mb-6 text-center">7. Smart Tagging & Export</h2>
@@ -430,8 +413,7 @@
                     <div id="metadata-error" class="hidden mt-4 text-center text-red-600 font-semibold"></div>
                     
                     <div id="image-previews-container" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 mt-6 max-h-64 overflow-y-auto p-2 border border-gray-200 rounded-md bg-white hidden">
-                        <!-- Image previews will go here -->
-                    </div>
+                        </div>
 
                     <div id="metadata-results-container" class="mt-6 hidden">
                         <h4 class="font-bold text-lg mb-3 text-center text-teal-600">Generated Metadata (Ready for CSV)</h4>
@@ -445,16 +427,15 @@
                                     </tr>
                                 </thead>
                                 <tbody id="metadata-table-body" class="divide-y divide-gray-200">
-                                    <!-- Metadata rows will be injected here -->
-                                </tbody>
+                                    </tbody>
                             </table>
                         </div>
                         <button id="export-csv-btn" class="w-full bg-green-600 text-white font-bold px-6 py-3 rounded-lg hover:bg-green-700 transition mt-6 disabled:opacity-50 disabled:cursor-not-allowed">Export to CSV</button>
                     </div>
                 </div>
-            </section>
+            </div>
+        </section>
 
-            <!-- Step 8: Analyze & Scale -->
             <section id="step-content-8" class="step-content fade-in">
                 <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg">
                     <h2 class="text-2xl md:text-3xl font-bold mb-6 text-center">8. Analyze, Adapt & Scale</h2>
@@ -496,7 +477,6 @@
                 </div>
             </section>
 
-            <!-- Step 9: Final CTA -->
             <section id="step-content-9" class="step-content fade-in">
                 <div class="bg-teal-600 text-white p-8 md:p-12 rounded-xl shadow-lg text-center">
                     <h2 class="text-3xl md:text-4xl font-black mb-4">Your Money Move. Today.</h2>
@@ -507,10 +487,7 @@
                 </div>
             </section>
         </main>
-    </div> <!-- End of main-app-content -->
-
-    <!-- Message Box for Copy/Paste Instruction -->
-    <div id="prompt-copy-message" class="message-box">Prompt copied! Now switch to the new tab and paste it into the prompt input field.</div>
+    </div> <div id="prompt-copy-message" class="message-box">Prompt copied! Now switch to the new tab and paste it into the prompt input field.</div>
 
     <script>
         // --- IMPORTANT: Configure your Gemini API Key directly here ---
@@ -753,8 +730,10 @@
             promptKeywordInput.addEventListener('input', () => {
                 const keyword = promptKeywordInput.value.trim();
                 if (isKeywordInHistory('usedPromptKeywords', keyword)) {
+                    promptKeywordInput.classList.add('prompt-keyword-input-used');
                     promptKeywordHistoryNote.classList.remove('hidden');
                 } else {
+                    promptKeywordInput.classList.remove('prompt-keyword-input-used');
                     promptKeywordHistoryNote.classList.add('hidden');
                 }
             });
@@ -762,6 +741,7 @@
             clearPromptKeywordsBtn.addEventListener('click', () => {
                 clearHistory('usedPromptKeywords');
                 promptKeywordHistoryNote.classList.add('hidden');
+                promptKeywordInput.classList.remove('prompt-keyword-input-used');
                 promptsOutput.innerHTML = '<p class="text-gray-500">Prompt keyword history cleared.</p>';
             });
 
@@ -777,14 +757,21 @@
                 promptsError.classList.add('hidden');
                 promptsLoading.classList.remove('hidden');
                 generatePromptsBtn.disabled = true;
-                promptKeywordHistoryNote.classList.add('hidden');
+                promptKeywordHistoryNote.classList.add('hidden'); // Hide note while generating
 
                 try {
-                    const prompt = `Generate 10 highly detailed and unique image prompts for a stock image generation tool (like Leonardo AI or Midjourney) based on the keyword "${keyword}". Each prompt should be photorealistic, high-quality, suitable for commercial use, and specify:
-1. Subject + Action + Setting
-2. Specific style/details (e.g., textures, expressions)
-3. Technical details (e.g., "ultra-sharp 8K resolution," "pure white background," "no shadows," "evenly lit").
-Present each prompt as a numbered list item.`;
+                    const prompt = `Generate 10 highly detailed, unique, and commercially viable image prompts for a stock image generation tool (like Leonardo AI or Midjourney) based on the core concept/keyword "${keyword}". Each prompt should be a single, cohesive paragraph that clearly defines:
+
+                    1.  **Subject + Action + Setting:** What is the main subject, what are they doing, and where are they? (e.g., "A diverse group of young professionals collaborating in a modern coworking space.")
+                    2.  **Specific style/details:** Artistic style (e.g., photorealistic, cinematic, isometric, minimalist), textures, specific objects, expressions, or visual elements. (e.g., "Photorealistic, with warm ambient lighting and soft bokeh.")
+                    3.  **Lighting:** Describe the quality, direction, and mood of the lighting. (e.g., "Golden hour sunlight streaming through large windows.")
+                    4.  **Colors:** Mention the dominant color palette or desired color mood. (e.g., "Predominantly earth tones with vibrant pops of teal.")
+                    5.  **Composition:** How is the scene framed? (e.g., "Wide-angle shot, rule of thirds composition, plenty of copy space.")
+                    6.  **Technical details:** Resolution, background type (e.g., "pure white background", "on transparent background"), lens effects, depth of field. (e.g., "Ultra-sharp 8K resolution, f/1.8 depth of field.")
+                    7.  **Mood/Emotion:** The overall feeling or message the image should convey. (e.g., "Conveys a sense of teamwork, innovation, and positive energy.")
+
+                    Combine these elements into a fluid, descriptive paragraph for each of the 10 prompts. Ensure no numbering or additional conversational text.`;
+                    
                     const payload = { contents: [{ role: "user", parts: [{ text: prompt }] }] };
                     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`;
                     
@@ -796,20 +783,29 @@ Present each prompt as a numbered list item.`;
                     
                     if (!response.ok) {
                         const errorData = await response.json();
-                        throw new Error(`API error: ${errorData.error || response.statusText}`);
+                        throw new Error(`API error: ${errorData.error?.message || response.statusText}`);
                     }
 
                     const result = await response.json();
                     if (result.candidates && result.candidates[0]?.content?.parts[0]?.text) {
                         const text = result.candidates[0].content.parts[0].text;
-                        const promptLines = text.split('\n').filter(line => line.trim().match(/^\d+\./));
-                        promptsOutput.innerHTML = promptLines.map(s => `<p class="prompt-chip-item bg-gray-50 p-3 rounded-md border text-sm">${s}</p>`).join('');
+                        const promptLines = text.split('\n').filter(line => line.trim() !== ''); // Filter out empty lines
+                        promptsOutput.innerHTML = promptLines.map((p, index) => `
+                            <div class="prompt-chip-item bg-gray-50 p-3 rounded-md border text-sm flex justify-between items-center">
+                                <span class="flex-grow mr-2">${p.trim()}</span>
+                                <button class="copy-prompt-btn bg-teal-500 text-white text-xs font-semibold px-3 py-1 rounded-md hover:bg-teal-600 transition">Copy</button>
+                            </div>
+                        `).join('');
+                        
                         addKeywordToHistory('usedPromptKeywords', keyword);
+                        promptKeywordInput.classList.add('prompt-keyword-input-used');
 
-                        document.querySelectorAll('.prompt-chip-item').forEach(item => {
-                            item.addEventListener('click', (p_event) => {
-                                const promptText = p_event.currentTarget.textContent;
+
+                        document.querySelectorAll('.copy-prompt-btn').forEach(button => {
+                            button.addEventListener('click', (p_event) => {
+                                const promptText = p_event.currentTarget.previousElementSibling.textContent;
                                 navigator.clipboard.writeText(promptText).then(() => {
+                                    // Show copy message
                                     promptCopyMessage.style.display = 'block';
                                     promptCopyMessage.classList.remove('fadeOut');
                                     promptCopyMessage.classList.add('slideInUp');
@@ -817,6 +813,17 @@ Present each prompt as a numbered list item.`;
                                         promptCopyMessage.classList.remove('slideInUp');
                                         promptCopyMessage.classList.add('fadeOut');
                                     }, 4000);
+
+                                    // Highlight the copied prompt item
+                                    const parentItem = p_event.currentTarget.closest('.prompt-chip-item');
+                                    if (parentItem) {
+                                        parentItem.classList.add('copied');
+                                        // Remove the copied class after the animation duration
+                                        setTimeout(() => {
+                                            parentItem.classList.remove('copied');
+                                        }, 2000); // Should match the animation duration
+                                    }
+
                                     window.open('https://leonardo.ai/ai-image-generation', '_blank');
                                 }).catch(err => {
                                     console.error('Failed to copy prompt: ', err);
@@ -1102,6 +1109,3 @@ Present each prompt as a numbered list item.`;
     </script>
 </body>
 </html>
-```
-
-
