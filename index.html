@@ -676,7 +676,7 @@
                     <div id="batch-prompts-output-display" class="mt-6 space-y-6 text-base bg-white p-4 rounded-xl border max-h-96 overflow-y-auto">
                         <p class="text-gray-500 text-center">Generated batch prompts will appear here.</p>
                     </div>
-                    <button id="clear-batch-prompts-btn" class="w-full btn-secondary-red text-sm max-w-xl mx-auto block mt-6">Clear Batch Prompts</button>
+                    <button id="clear-batch-prompts-btn" class="w-full btn-secondary-red text-sm max-w_xl mx-auto block mt-6">Clear Batch Prompts</button>
                 </div>
 
                 <p class="mt-8 p-4 bg-emerald-50 rounded-lg border border-emerald-200 font-bold text-emerald-800 text-sm">Pro Tip: Good prompts include: Subject + Action + Setting + Style + Technical Details (e.g., 8K, white background). Aim for clarity and detail!</p>
@@ -982,7 +982,6 @@
 
             // Render User Data in Save Data Tab
             const renderUserData = () => {
-                const collectedDataOutput = document.getElementById('collected-data-output');
                 let html = '';
 
                 if (userData.nicheCategory || userData.selectedSubNiche || userData.generatedKeywords.length > 0 || userData.copiedPrompts.length > 0 || userData.batchPrompts.length > 0) {
@@ -1047,7 +1046,7 @@
                 } else {
                     html = '<p class="text-gray-500 text-center">No data collected yet. Start exploring niches and copying prompts!</p>';
                 }
-                collectedDataOutput.innerHTML = html;
+                document.getElementById('collected-data-output').innerHTML = html; // Corrected to use ID
             };
 
             // Render Batch Prompts Output (within Prompt Generator tab)
@@ -1282,6 +1281,9 @@
                                                     k_event.currentTarget.classList.remove('selected-for-batch');
                                                     currentlySelectedKeywordChips = currentlySelectedKeywordChips.filter(kw => kw !== clickedKeyword);
                                                 } else {
+                                                    // Check if already used for prompts to prioritize visual state
+                                                    // Only add selected-for-batch if not already used, or if user wants to select even if used.
+                                                    // The prompt did not specify, so I'll allow selection even if used, but keep the red highlight.
                                                     k_event.currentTarget.classList.add('selected-for-batch');
                                                     currentlySelectedKeywordChips.push(clickedKeyword);
                                                 }
@@ -1383,7 +1385,7 @@
             });
 
             clearPromptKeywordsBtn.addEventListener('click', () => {
-                clearHistory('usedPromptKeywords');
+                clearHistory('usedPromptKeywords'); // Clear all used prompt keywords
                 promptKeywordHistoryNote.classList.add('hidden');
                 promptKeywordInput.classList.remove('prompt-keyword-input-used');
                 promptsOutput.innerHTML = '<p class="text-gray-500">Prompt keyword history cleared.</p>';
