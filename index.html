@@ -122,11 +122,13 @@
             font-weight: 600;
             color: #5B21B6; /* Darker Indigo text */
         }
-        .keyword-chip-used {
-            border-color: #EF4444 !important; /* Red border for used keywords */
+        /* Specific style for keyword chips that have been used */
+        .keyword-chip.used {
+            border-color: #EF4444 !important; /* Red border */
             background-color: #FEE2E2 !important; /* Light red background */
             color: #B91C1C !important; /* Darker red text */
             font-weight: 600;
+            opacity: 0.7; /* Slightly dim it */
         }
 
 
@@ -144,14 +146,32 @@
             box-shadow: 0 1px 3px rgba(0,0,0,0.04);
         }
         .prompt-chip-item.copied {
-            background-color: #D1FAE5; /* Light green */
-            border-color: #10B981; /* Green border */
-            animation: copiedFade 2s forwards;
+            background-color: #D1FAE5; /* Light green for flash */
+            border-color: #10B981; /* Green border for flash */
+            /* Animation handles the fade to .used state, or back to default if not used */
+            animation: copiedFlash 0.5s ease-out forwards; /* Shorter flash animation */
         }
-        @keyframes copiedFade {
-            0% { background-color: #D1FAE5; border-color: #10B981; }
-            100% { background-color: #FDFDFE; border-color: #E5E7EB; }
+
+        /* Keyframe for the flash animation */
+        @keyframes copiedFlash {
+            from { background-color: #D1FAE5; border-color: #10B981; }
+            to { background-color: #FDFDFE; border-color: #E5E7EB; } /* Fade back to default */
         }
+
+        /* Permanent dimmed state for used prompts */
+        .prompt-chip-item.used {
+            background-color: #F3F4F6; /* Slightly darker than default, subtly dim */
+            color: #9CA3AF; /* Muted text color */
+            border-color: #E5E7EB; /* Default border */
+            opacity: 0.8; /* Dim it further */
+            /* pointer-events: none; /* Make it unclickable/unselectable after use, optional but good UX */ */
+        }
+        .prompt-chip-item.used .copy-prompt-btn {
+            background-color: #CBD5E1; /* Muted button */
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
 
         /* Inputs & Textareas */
         input[type="text"], textarea, select {
@@ -390,13 +410,12 @@
                 <button data-step="1" class="nav-btn">Toolkit</button>
                 <button data-step="2" class="nav-btn">Organic</button>
                 <button data-step="3" class="nav-btn">AI Tools</button>
-                <button data-step="4" class="nav-btn">Discovery</button>
-                <button data-step="5" class="nav-btn">AI Prompts</button>
-                <button data-step="6" class="nav-btn">Generators</button>
-                <button data-step="7" class="nav-btn">Save Data</button>
-                <button data-step="8" class="nav-btn">Smart Tagging</button>
-                <button data-step="9" class="nav-btn">Scale & Grow</button>
-                <button data-step="10" class="nav-btn">Start Now</button>
+                <button data-step="4" class="nav-btn">Get Keywords</button> <!-- Changed from Discovery -->
+                <button data-step="5" class="nav-btn">Prompt Generator</button> <!-- Changed from AI Prompts -->
+                <button data-step="6" class="nav-btn">Save Data</button> <!-- Moved from step 7 -->
+                <button data-step="7" class="nav-btn">Smart Tagging</button> <!-- Moved from step 8 -->
+                <button data-step="8" class="nav-btn">Scale & Grow</button> <!-- Moved from step 9 -->
+                <button data-step="9" class="nav-btn">Start Now</button> <!-- Moved from step 10 -->
             </div>
         </div>
     </nav>
@@ -467,16 +486,16 @@
                         <div class="details-content">
                             <p class="text-sm text-gray-700 mb-3">Focus on themes with consistent buyer demand:</p>
                             <ul>
-                                <li>**Authentic Lifestyle:** Real, unposed human moments, diverse groups, remote work, mental wellness.</li>
-                                <li>**Modern Tech Use:** People interacting with devices, clean interfaces, innovative tech concepts.</li>
-                                <li>**Diversity & Inclusion:** Genuinely representing various ages, ethnicities, body types, and abilities.</li>
-                                <li>**Conceptual Imagery:** Visually representing abstract ideas like "growth," "connection," "innovation."</li>
-                                <li>**Vertical Video:** Short, engaging, and well-lit clips optimized for social media stories and reels.</li>
-                                <li>**Sustainable Living:** Eco-conscious practices, recycling, urban gardening, renewable energy.</li>
-                                <li>**Remote Work Productivity:** Beyond desk setups – work from cafes, parks, travel.</li>
-                                <li>**Authentic Mental Wellness:** Self-care, mindfulness, digital detox.</li>
-                                <li>**Generational Collaboration:** Multiple generations interacting naturally in various settings.</li>
-                                <li>**Digital Nomads/Van Life:** Freedom, minimalist lifestyle, connectivity on the go.</li>
+                                <li>Authentic Lifestyle: Real, unposed human moments, diverse groups, remote work, mental wellness.</li>
+                                <li>Modern Tech Use: People interacting with devices, clean interfaces, innovative tech concepts.</li>
+                                <li>Diversity & Inclusion: Genuinely representing various ages, ethnicities, body types, and abilities.</li>
+                                <li>Conceptual Imagery: Visually representing abstract ideas like "growth," "connection," "innovation."</li>
+                                <li>Vertical Video: Short, engaging, and well-lit clips optimized for social media stories and reels.</li>
+                                <li>Sustainable Living: Eco-conscious practices, recycling, urban gardening, renewable energy.</li>
+                                <li>Remote Work Productivity: Beyond desk setups – work from cafes, parks, travel.</li>
+                                <li>Authentic Mental Wellness: Self-care, mindfulness, digital detox.</li>
+                                <li>Generational Collaboration: Multiple generations interacting naturally in various settings.</li>
+                                <li>Digital Nomads/Van Life: Freedom, minimalist lifestyle, connectivity on the go.</li>
                             </ul>
                         </div>
                     </details>
@@ -486,11 +505,11 @@
                         <div class="details-content">
                             <p class="text-sm text-gray-700 mb-3">Ensure your content meets high standards:</p>
                             <ul>
-                                <li>**Sharpness & Focus:** No blur.</li>
-                                <li>**Lighting:** Natural light often best.</li>
-                                <li>**Composition:** Frame well, leave "copy space."</li>
-                                <li>**Cleanliness:** No logos/trademarks.</li>
-                                <li>**Technical Specs:** Meet 4MP minimum.</li>
+                                <li>Sharpness & Focus: No blur.</li>
+                                <li>Lighting: Natural light often best.</li>
+                                <li>Composition: Frame well, leave "copy space."</li>
+                                <li>Cleanliness: No logos/trademarks.</li>
+                                <li>Technical Specs: Meet 4MP minimum.</li>
                             </ul>
                         </div>
                     </details>
@@ -500,8 +519,8 @@
                         <div class="details-content">
                             <p class="text-sm text-gray-700 mb-3">Critical for commercial use:</p>
                             <ul>
-                                <li>**Model Releases:** MANDATORY for recognizable people.</li>
-                                <li>**Property Releases:** REQUIRED for private property.</li>
+                                <li>Model Releases: MANDATORY for recognizable people.</li>
+                                <li>Property Releases: REQUIRED for private property.</li>
                             </ul>
                             <p class="text-xs text-amber-700 mt-2">Missing releases = rejection. Always secure them!</p>
                         </div>
@@ -516,44 +535,41 @@
             <div class="card-panel">
                 <h2 class="text-3xl md:text-4xl font-bold mb-6 text-center text-gray-800">3. AI Tools Unleashed</h2>
                 <p class="max-w-3xl mx-auto text-gray-600 text-lg mb-8 text-center">AI tools empower you to create stunning, unique stock images at scale. Focus on efficiency and leveraging AI for maximum output.</p>
-                <div class="grid md:grid-cols-2 gap-8 items-start">
-                    <div class="bg-gray-50 p-6 rounded-xl shadow-sm">
-                        <h3 class="font-bold text-xl mb-4 text-indigo-600">Why AI for Stock?</h3>
-                        <ul class="list-disc list-inside text-base text-gray-700 space-y-2">
-                            <li>**Speed:** Dozens of images in minutes.</li>
-                            <li>**Scale:** High volume, no models/locations.</li>
-                            <li>**Versatility:** Create abstract or specific scenarios easily.</li>
-                            <li>**Cost-Effective:** Drastically reduces production costs.</li>
-                        </ul>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
+                    <!-- New visual-driven content for AI Tools -->
+                    <div class="p-6 rounded-xl bg-gray-50 shadow-sm flex flex-col items-center text-center">
+                        <img src="https://placehold.co/150x100/E0E7FF/5B21B6?text=AI+Efficiency" alt="AI for Efficiency" class="mb-4 rounded-lg shadow-md">
+                        <h3 class="font-bold text-xl mb-2 text-indigo-600">Boost Efficiency</h3>
+                        <p class="text-sm text-gray-700">Automate repetitive tasks and accelerate content creation.</p>
                     </div>
-                    <div class="bg-gray-50 p-6 rounded-xl shadow-sm">
-                        <h3 class="font-bold text-xl mb-4 text-indigo-600">Your AI Arsenal</h3>
-                        <p class="text-sm text-gray-700 mb-3">Leading platforms for AI image generation:</p>
-                        <ul class="list-disc list-inside text-base text-gray-700 space-y-2">
-                            <li>**Leonardo AI:** User-friendly, photorealistic & stylized (free tiers).</li>
-                            <li>**Midjourney:** Artistic, high-quality outputs (Discord-based).</li>
-                            <li>**DALL-E (OpenAI):** Powerful and versatile.</li>
-                            <li>**Imagen 4 (Google)::** State-of-the-art text-to-image synthesis.</li>
-                        </ul>
+                    <div class="p-6 rounded-xl bg-gray-50 shadow-sm flex flex-col items-center text-center">
+                        <img src="https://placehold.co/150x100/E0E7FF/5B21B6?text=Global+Reach" alt="AI for Global Reach" class="mb-4 rounded-lg shadow-md">
+                        <h3 class="font-bold text-xl mb-2 text-indigo-600">Expand Reach</h3>
+                        <p class="text-sm text-gray-700">Generate diverse content appealing to global markets.</p>
                     </div>
-                    <div class="md:col-span-2 mt-10">
-                         <img src="https://placehold.co/1000x400/E0E7FF/5B21B6?text=AI+Tools+for+Creatives" alt="AI image generation tools overview" class="w-full h-auto rounded-xl shadow-lg">
+                    <div class="p-6 rounded-xl bg-gray-50 shadow-sm flex flex-col items-center text-center">
+                        <img src="https://placehold.co/150x100/E0E7FF/5B21B6?text=Innovation" alt="AI for Innovation" class="mb-4 rounded-lg shadow-md">
+                        <h3 class="font-bold text-xl mb-2 text-indigo-600">Fuel Innovation</h3>
+                        <p class="text-sm text-gray-700">Explore new creative concepts and visual styles rapidly.</p>
+                    </div>
+                    <div class="md:col-span-3 mt-10">
+                         <img src="https://placehold.co/1000x400/E0E7FF/5B21B6?text=Unlock+AI+Potential" alt="AI tools overview" class="w-full h-auto rounded-xl shadow-lg">
                     </div>
                 </div>
-                <p class="mt-8 p-4 bg-emerald-50 rounded-lg border border-emerald-200 font-bold text-emerald-800 text-sm">Key: Image quality depends on your "prompt." Learn to craft perfect prompts here!</p>
+                <p class="mt-8 p-4 bg-emerald-50 rounded-lg border border-emerald-200 font-bold text-emerald-800 text-sm">Key: Image quality depends on your prompt. Learn to craft perfect prompts here!</p>
             </div>
         </section>
 
-        <!-- Step 4: Niche & Keyword Discovery -->
+        <!-- Step 4: Get Keywords -->
         <section id="step-content-4" class="step-content fade-in">
             <div class="card-panel">
-                <h2 class="text-3xl md:text-4xl font-bold mb-6 text-center text-gray-800">4. Niche & Keyword Discovery</h2>
+                <h2 class="text-3xl md:text-4xl font-bold mb-6 text-center text-gray-800">4. Get Keywords</h2>
                 <p class="max-w-3xl mx-auto text-gray-600 text-lg mb-8 text-center">Pinpoint high-demand niches and grab relevant keywords. Explore categories, then dive into specific content opportunities.</p>
                 
                 <!-- Stage 1: Niche Category Selection & Generation -->
                 <div id="niche-generation-section" class="bg-gray-50 p-6 rounded-xl border shadow-sm mb-8">
                     <h3 class="font-bold text-xl mb-4 text-center text-indigo-600">Stage 1: Discover Unique Niches</h3>
-                    <p class="text-sm text-center text-gray-700 mb-4">Select a category. Our AI generates 15-20 specific, low-competition niches. **Click any niche card to automatically grab 100 keywords for it below!**</p>
+                    <p class="text-sm text-center text-gray-700 mb-4">Select a category. Our AI generates 15-20 specific, low-competition niches. Click any niche card to automatically grab 100 keywords for it below!</p>
                     <div class="max-w-md mx-auto space-y-3">
                         <select id="niche-category-select" class="w-full p-2 border border-gray-300 rounded-xl focus:ring-indigo-600 focus:border-indigo-600">
                             <option value="">-- Select a Niche Category --</option>
@@ -587,13 +603,13 @@
                     <div id="niche-generator-output" class="mt-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 text-sm max-h-96 overflow-y-auto p-2 border border-gray-200 rounded-xl bg-white">
                         <!-- Generated niches will appear here -->
                     </div>
-                    <p class="text-xs text-gray-500 mt-4 text-center">**Note:** New niches are unique per category session. Click a niche to get its keywords!</p>
+                    <p class="text-xs text-gray-500 mt-4 text-center">Note: New niches are unique per category session. Click a niche to get its keywords!</p>
                 </div>
 
                 <!-- Stage 2: Keyword Generation for Selected Niche -->
                 <div id="keyword-generation-section" class="bg-gray-50 p-6 rounded-xl border shadow-sm hidden">
                     <h3 class="font-bold text-xl mb-4 text-center text-indigo-600">Stage 2: Keywords for <b id="selected-niche-display" class="text-indigo-700"></b></h3>
-                    <p class="text-sm text-center text-gray-700 mb-4">Here are 100 high-demand keywords generated for your selected niche. **Click any keyword to automatically populate it in the 'AI Prompts' section (Step 5)!**</p>
+                    <p class="text-sm text-center text-gray-700 mb-4">Here are 100 high-demand keywords generated for your selected niche. Click any keyword to automatically populate it in the 'Prompt Generator' section (Step 5)!</p>
                     
                     <button id="clear-subniche-keywords-btn" class="w-full btn-secondary-red text-sm max-w-md mx-auto block">Clear Keywords History</button>
                     
@@ -602,20 +618,20 @@
                     <div id="keyword-grabber-output" class="mt-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 text-sm max-h-96 overflow-y-auto p-2 border border-gray-200 rounded-xl bg-white">
                         <!-- Keywords will appear here -->
                     </div>
-                    <p class="text-xs text-gray-500 mt-4 text-center">**Pro Tip:** Click any keyword to jump to Step 5 and start generating AI prompts!</p>
+                    <p class="text-xs text-gray-500 mt-4 text-center">Pro Tip: Click any keyword to jump to Step 5 and start generating AI prompts!</p>
                 </div>
             </div>
         </section>
 
-        <!-- Step 5: AI Prompt Crafting Masterclass -->
+        <!-- Step 5: Prompt Generator -->
         <section id="step-content-5" class="step-content fade-in">
             <div class="card-panel">
-                <h2 class="text-3xl md:text-4xl font-bold mb-6 text-center text-gray-800">5. AI Prompt Masterclass</h2>
+                <h2 class="text-3xl md:text-4xl font-bold mb-6 text-center text-gray-800">5. Prompt Generator</h2>
                 <p class="max-w-3xl mx-auto text-gray-600 text-lg mb-8 text-center">Turn a simple keyword into a powerful AI command. A well-crafted prompt ensures you get exact image quality for Adobe Stock. Generate 10 unique prompts from a single keyword.</p>
                 
                 <div class="bg-gray-50 p-6 rounded-xl border shadow-sm">
                     <h3 class="font-bold text-xl mb-4 text-center text-indigo-600">Keyword to 10 Prompts:</h3>
-                    <p class="text-sm text-center text-gray-700 mb-4">Enter a keyword (e.g., "startup team", "forest stream"). Our AI generates 10 unique prompts based on your chosen length. **Click any generated prompt to copy!**</p>
+                    <p class="text-sm text-center text-gray-700 mb-4">Enter a keyword (e.g., "startup team", "forest stream"). Our AI generates 10 unique prompts based on your chosen length. Click any generated prompt to copy!</p>
                     <div class="flex flex-col sm:flex-row items-center gap-4 max-w-xl mx-auto mb-4">
                         <input type="text" id="prompt-keyword-input" placeholder="Enter keyword (e.g., 'German dog')" class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-indigo-600 focus:border-indigo-600">
                         <select id="prompt-length-select" class="p-2 border border-gray-300 rounded-xl focus:ring-indigo-600 focus:border-indigo-600 w-full sm:w-auto">
@@ -635,11 +651,12 @@
                     </div>
                     <div id="prompt-copy-message" class="message-box">Prompt copied!</div>
                 </div>
-                <p class="mt-8 p-4 bg-emerald-50 rounded-lg border border-emerald-200 font-bold text-emerald-800 text-sm">Pro Tip: Good prompts include: **Subject + Action + Setting + Style + Technical Details** (e.g., 8K, white background). Aim for clarity and detail!</p>
+                <p class="mt-8 p-4 bg-emerald-50 rounded-lg border border-emerald-200 font-bold text-emerald-800 text-sm">Pro Tip: Good prompts include: Subject + Action + Setting + Style + Technical Details (e.g., 8K, white background). Aim for clarity and detail!</p>
             </div>
         </section>
 
         <!-- Step 6: AI Image Generators Overview (New content, replaced former Step 6) -->
+        <!-- Renamed to Generators -->
         <section id="step-content-6" class="step-content fade-in">
             <div class="card-panel">
                 <h2 class="text-3xl md:text-4xl font-bold mb-6 text-center text-gray-800">6. AI Image Generators Overview</h2>
@@ -673,11 +690,11 @@
                         <div class="details-content">
                             <p class="text-sm text-gray-700 mb-3">Known for its highly artistic and high-quality outputs, accessible via Discord:</p>
                             <ul>
-                                <li>**Access:** Join the Midjourney Discord server. Use the `/imagine` command in a bot channel.</li>
-                                <li>**Prompting:** Input your desired image prompt. Midjourney excels with descriptive, evocative language.</li>
-                                <li>**Stylization:** Offers various style parameters (`--s`, `--stylize`) to control artistic influence.</li>
-                                <li>**Variations:** Generate multiple variations of an image and upscale your favorites.</li>
-                                <li>**Niche Suitability:** Excellent for conceptual, artistic, and visually striking images. Less suited for hyper-realistic people/products unless refined.</li>
+                                <li><b>Access:</b> Join the Midjourney Discord server. Use the <code>/imagine</code> command in a bot channel.</li>
+                                <li><b>Prompting:</b> Input your desired image prompt. Midjourney excels with descriptive, evocative language.</li>
+                                <li><b>Stylization:</b> Offers various style parameters (<code>--s</code>, <code>--stylize</code>) to control artistic influence.</li>
+                                <li><b>Variations:</b> Generate multiple variations of an image and upscale your favorites.</li>
+                                <li><b>Niche Suitability:</b> Excellent for conceptual, artistic, and visually striking images. Less suited for hyper-realistic people/products unless refined.</li>
                             </ul>
                         </div>
                     </details>
@@ -687,11 +704,11 @@
                         <div class="details-content">
                             <p class="text-sm text-gray-700 mb-3">A powerful tool, particularly strong with typography and consistent character generation:</p>
                             <ul>
-                                <li>**Access:** Visit <a href="https://ideogram.ai" target="_blank" class="font-semibold text-indigo-600 hover:underline">ideogram.ai</a>.</li>
-                                <li>**Text Rendering:** Unique capability to accurately render text within images, making it valuable for designs requiring specific words or phrases.</li>
-                                <li>**Styling Presets:** Offers a wide range of artistic styles and photographic modes to apply to your prompts.</li>
-                                <li>**Prompt Remixing:** Experiment with different variations and combine elements.</li>
-                                <li>**Niche Suitability:** Ideal for images with text, logos, or consistent character designs across a series.</li>
+                                <li><b>Access:</b> Visit <a href="https://ideogram.ai" target="_blank" class="font-semibold text-indigo-600 hover:underline">ideogram.ai</a>.</li>
+                                <li><b>Text Rendering:</b> Unique capability to accurately render text within images, making it valuable for designs requiring specific words or phrases.</li>
+                                <li><b>Styling Presets:</b> Offers a wide range of artistic styles and photographic modes to apply to your prompts.</li>
+                                <li><b>Prompt Remixing:</b> Experiment with different variations and combine elements.</li>
+                                <li><b>Niche Suitability:</b> Ideal for images with text, logos, or consistent character designs across a series.</li>
                             </ul>
                         </div>
                     </details>
@@ -713,13 +730,13 @@
                     </div>
                     <button id="export-collected-data-btn" class="w-full btn-primary">Export Data to CSV</button>
                     <p class="text-xs text-amber-700 mt-4 text-center">
-                        **Important:** Direct saving to Google Sheets from a client-side application is not securely feasible without a backend for OAuth authentication. Click "Export Data to CSV", then manually import the CSV into your Google Sheet.
+                        <b>Important:</b> Direct saving to Google Sheets from a client-side application is not securely feasible without a backend for OAuth authentication. Click "Export Data to CSV", then manually import the CSV into your Google Sheet.
                     </p>
                 </div>
             </div>
         </section>
 
-        <!-- Step 8: Smart Tagging & Export (Original Step 7) -->
+        <!-- Step 8: Smart Tagging & Export -->
         <section id="step-content-8" class="step-content fade-in">
             <div class="card-panel">
                 <h2 class="text-3xl md:text-4xl font-bold mb-6 text-center text-gray-800">8. Smart Tagging & Export</h2>
@@ -780,7 +797,7 @@
             </div>
         </section>
 
-            <!-- Step 9: Analyze & Scale (Original Step 8) -->
+            <!-- Step 9: Analyze & Scale -->
             <section id="step-content-9" class="step-content fade-in">
                 <div class="card-panel">
                     <h2 class="text-3xl md:text-4xl font-bold mb-6 text-center text-gray-800">9. Analyze, Adapt & Scale</h2>
@@ -823,7 +840,7 @@
                 </div>
             </section>
 
-            <!-- Step 10: Final CTA (Original Step 9) -->
+            <!-- Step 10: Final CTA -->
             <section id="step-content-10" class="step-content fade-in">
                 <div class="cta-section text-white p-8 md:p-12 rounded-xl shadow-lg text-center">
                     <h2 class="text-3xl md:text-4xl font-black mb-4">Your Money Move. Today.</h2>
@@ -877,15 +894,20 @@
 
             const addEntryToHistory = (key, entry) => { // Generic function for any history
                 let history = getHistory(key);
-                if (!history.includes(entry)) {
-                    history.push(entry);
+                // Ensure entry is converted to lowercase for case-insensitive checks
+                const lowerCaseEntry = typeof entry === 'string' ? entry.toLowerCase() : entry; 
+
+                if (!history.includes(lowerCaseEntry)) {
+                    history.push(lowerCaseEntry);
                     saveHistory(key, history);
                 }
             };
 
             const isEntryInHistory = (key, entry) => { // Generic function for any history
                 const history = getHistory(key);
-                return history.includes(entry);
+                // Ensure entry is converted to lowercase for case-insensitive checks
+                const lowerCaseEntry = typeof entry === 'string' ? entry.toLowerCase() : entry;
+                return history.includes(lowerCaseEntry);
             };
 
             const clearHistory = (key) => {
@@ -1009,7 +1031,7 @@
                 }
 
                 // Re-render user data if the Save Data tab is activated
-                if (stepIndex === 7) {
+                if (stepIndex === 6) { // Now Step 6 for Save Data
                     renderUserData();
                 }
             };
@@ -1021,7 +1043,7 @@
                 });
             });
 
-            // Step 4: Niche & Keyword Discovery
+            // Step 4: Get Keywords (formerly Discovery)
             const nicheCategorySelect = document.getElementById('niche-category-select');
             const generateNichesBtn = document.getElementById('generate-niches-btn');
             const nicheGeneratorOutput = document.getElementById('niche-generator-output');
@@ -1035,7 +1057,7 @@
             clearNicheGeneratorHistoryBtn.addEventListener('click', () => {
                 clearHistory('generatedNicheCategories');
                 clearHistory('selectedNichesHistory'); // Clear niche selection history
-                clearHistory('selectedSubNichesHistory'); // Clear sub-niche selection history
+                clearHistory('usedPromptKeywords'); // Clear used prompt keywords to reset red highlights
                 nicheGeneratorOutput.innerHTML = '<p class="text-gray-500">Generated niche category history cleared. New ideas will appear next time.</p>';
                 keywordGenerationSection.classList.add('hidden'); // Hide keyword section if niches are cleared
                 document.getElementById('keyword-grabber-output').innerHTML = ''; // Clear keyword display
@@ -1058,9 +1080,10 @@
                 nicheGeneratorLoading.classList.remove('hidden');
                 generateNichesBtn.disabled = true;
 
-                const hasBeenExploredCategory = isEntryInHistory('generatedNicheCategories', selectedCategory.toLowerCase());
+                // Check if category has been explored (case-insensitive)
+                const hasBeenExploredCategory = isEntryInHistory('generatedNicheCategories', selectedCategory);
                 if (hasBeenExploredCategory) {
-                    nicheGeneratorOutput.innerHTML += `<p class="text-orange-600 font-semibold mb-2">Note: You've explored '${selectedCategory}' before. Try clearing history or selecting another category for fresh ideas!</p>`;
+                    displayMessageBox(customAlertMessageBox, `You've explored category "${selectedCategory}" before.`, '#EF4444');
                 }
 
                 try {
@@ -1084,20 +1107,22 @@
                         const text = result.candidates[0].content.parts[0].text;
                         const niches = text.split(',').map(n => n.trim()).filter(Boolean);
                         
-                        nicheGeneratorOutput.innerHTML += niches.map(nicheText => {
-                            const isNicheAlreadySelected = isEntryInHistory('selectedNichesHistory', nicheText.toLowerCase());
+                        nicheGeneratorOutput.innerHTML = niches.map(nicheText => { // Changed from += to =
+                            const isNicheAlreadySelected = isEntryInHistory('selectedNichesHistory', nicheText);
+                            // Add 'selected' class if it's in the history of selected niches
                             return `<div class="niche-card bg-white p-3 rounded-xl shadow-sm text-base text-center ${isNicheAlreadySelected ? 'selected' : ''}" data-niche-name="${nicheText}">${nicheText}</div>`;
                         }).join('');
-                        addEntryToHistory('generatedNicheCategories', selectedCategory.toLowerCase());
+                        addEntryToHistory('generatedNicheCategories', selectedCategory); // Add category to history
                         userData.nicheCategory = selectedCategory; // Store selected category
 
                         document.querySelectorAll('#niche-generator-output .niche-card').forEach(card => {
                             card.addEventListener('click', async (event) => {
                                 const nicheName = event.currentTarget.getAttribute('data-niche-name');
                                 
-                                if (isEntryInHistory('selectedNichesHistory', nicheName.toLowerCase())) {
+                                if (isEntryInHistory('selectedNichesHistory', nicheName)) {
                                     displayMessageBox(customAlertMessageBox, `You've already selected "${nicheName}".`, '#EF4444');
-                                    return; // Stop execution if already selected
+                                    // Optionally, don't re-generate keywords if already selected and just show existing ones
+                                    // For now, it will proceed to regenerate and display, but alert user.
                                 }
 
                                 document.querySelectorAll('#niche-generator-output .niche-card').forEach(c => c.classList.remove('selected'));
@@ -1107,7 +1132,7 @@
                                 keywordGenerationSection.classList.remove('hidden'); // Show Stage 2
                                 localStorage.setItem('currentSelectedSubNiche', nicheName); // Store selected niche
                                 userData.selectedSubNiche = nicheName; // Store selected sub-niche
-                                addEntryToHistory('selectedNichesHistory', nicheName.toLowerCase()); // Add to selected niche history
+                                addEntryToHistory('selectedNichesHistory', nicheName); // Add selected niche to its history
 
                                 keywordGrabberOutput.innerHTML = '';
                                 keywordGrabberError.classList.add('hidden');
@@ -1135,28 +1160,25 @@
                                         const text = kwResult.candidates[0].content.parts[0].text;
                                         let keywords = text.split(',').map(k => k.trim()).filter(Boolean);
                                         
-                                        // Filter out keywords already used for prompts to highlight them
-                                        const usedPromptKeywords = getHistory('usedPromptKeywords');
+                                        const usedPromptKeywords = getHistory('usedPromptKeywords'); // Get already used keywords from prompt gen tab
                                         
                                         keywordGrabberOutput.innerHTML = keywords.map(s => {
                                             const isUsed = usedPromptKeywords.includes(s.toLowerCase());
-                                            return `<div class="keyword-chip bg-white p-2 rounded-xl shadow-sm text-center ${isUsed ? 'keyword-chip-used' : ''}">${s}</div>`;
+                                            return `<div class="keyword-chip bg-white p-2 rounded-xl shadow-sm text-center ${isUsed ? 'used' : ''}" data-keyword-name="${s}">${s}</div>`; // Add 'used' class
                                         }).join('');
                                         
-                                        // Note: addEntryToHistory('usedSubNicheKeywords', nicheName + '::' + k) is not used directly for highlighting chips
-                                        // Instead, we highlight based on 'usedPromptKeywords' directly for consistency
                                         userData.generatedKeywords = keywords; // Store generated keywords
 
                                         document.querySelectorAll('#keyword-grabber-output .keyword-chip').forEach(chip => {
                                             chip.addEventListener('click', (k_event) => {
                                                 const selectedKeyword = k_event.currentTarget.textContent;
-                                                promptKeywordInput.value = selectedKeyword;
                                                 
-                                                if (isEntryInHistory('usedPromptKeywords', selectedKeyword.toLowerCase())) {
+                                                if (isEntryInHistory('usedPromptKeywords', selectedKeyword)) { // Check against used prompts history
                                                     displayMessageBox(customAlertMessageBox, `You've already used "${selectedKeyword}" for a prompt.`, '#EF4444');
                                                 }
                                                 
-                                                navigateToStep(5); // Navigate to AI Prompts tab
+                                                promptKeywordInput.value = selectedKeyword;
+                                                navigateToStep(5); // Navigate to Prompt Generator tab
                                             });
                                         });
                                     } else {
@@ -1185,7 +1207,7 @@
             });
 
 
-            // Step 3: Niche & Keyword Discovery - Stage 2 (Keyword Generation)
+            // Step 4: Get Keywords - Stage 2 (Keyword Generation)
             const keywordGrabberOutput = document.getElementById('keyword-grabber-output');
             const keywordGrabberLoading = document.getElementById('keyword-grabber-loading');
             const keywordGrabberError = document.getElementById('keyword-grabber-error');
@@ -1194,26 +1216,29 @@
             clearSubNicheKeywordsBtn.addEventListener('click', () => {
                 const currentNiche = localStorage.getItem('currentSelectedSubNiche');
                 if (currentNiche) {
-                    // Only clear the selected sub-niche history entry for the *current* niche
-                    let allSelectedSubNiches = getHistory('selectedSubNichesHistory');
-                    allSelectedSubNiches = allSelectedSubNiches.filter(entry => entry !== currentNiche.toLowerCase());
-                    saveHistory('selectedSubNichesHistory', allSelectedSubNiches);
+                    // Remove current niche from selectedNichesHistory
+                    let allSelectedNichesHistory = getHistory('selectedNichesHistory');
+                    allSelectedNichesHistory = allSelectedNichesHistory.filter(entry => entry !== currentNiche.toLowerCase());
+                    saveHistory('selectedNichesHistory', allSelectedNichesHistory);
 
-                    // Clear usedPromptKeywords that are directly related to this sub-niche (more complex, might require re-thinking prompt storage)
-                    // For now, clearing all usedPromptKeywords is simpler given the current storage structure
-                    clearHistory('usedPromptKeywords'); // This clears ALL used prompts, not just for this sub-niche.
-                                                         // A more granular approach would involve storing prompt usage per sub-niche.
-                                                         // Decided to clear all usedPromptKeywords for simplicity as per current code.
+                    // Also clear all usedPromptKeywords related to THIS niche if possible, or all for simplicity
+                    clearHistory('usedPromptKeywords'); // Clearing all used prompts for simplicity here
 
                     keywordGrabberOutput.innerHTML = `<p class="text-gray-500">Keywords history for '${currentNiche}' cleared.</p>`;
                     userData.generatedKeywords = []; // Clear stored keywords for current niche
                     userData.copiedPrompts = []; // Clear all copied prompts
+                    
+                    // Re-render keyword chips to remove 'used' class
+                    document.querySelectorAll('#keyword-grabber-output .keyword-chip').forEach(chip => {
+                        chip.classList.remove('used');
+                    });
+
                 } else {
                      keywordGrabberOutput.innerHTML = '<p class="text-gray-500">No niche selected to clear history for.</p>';
                 }
             });
 
-            // AI Prompt Crafting Masterclass (Step 5)
+            // Prompt Generator (Step 5)
             const promptKeywordInput = document.getElementById('prompt-keyword-input');
             const generatePromptsBtn = document.getElementById('generate-prompts-btn');
             const promptsOutput = document.getElementById('prompts-output');
@@ -1226,7 +1251,8 @@
 
             promptKeywordInput.addEventListener('input', () => {
                 const keyword = promptKeywordInput.value.trim();
-                if (isEntryInHistory('usedPromptKeywords', keyword.toLowerCase())) {
+                // Check if keyword has been used for prompts
+                if (isEntryInHistory('usedPromptKeywords', keyword)) {
                     promptKeywordInput.classList.add('prompt-keyword-input-used');
                     promptKeywordHistoryNote.classList.remove('hidden');
                 } else {
@@ -1236,11 +1262,16 @@
             });
 
             clearPromptKeywordsBtn.addEventListener('click', () => {
-                clearHistory('usedPromptKeywords');
+                clearHistory('usedPromptKeywords'); // Clear all used prompt keywords
                 promptKeywordHistoryNote.classList.add('hidden');
                 promptKeywordInput.classList.remove('prompt-keyword-input-used');
                 promptsOutput.innerHTML = '<p class="text-gray-500">Prompt keyword history cleared.</p>';
                 userData.copiedPrompts = []; // Clear all copied prompts on clear history
+
+                // Also update keyword chips in Get Keywords tab if visible
+                document.querySelectorAll('#keyword-grabber-output .keyword-chip').forEach(chip => {
+                    chip.classList.remove('used');
+                });
             });
 
             generatePromptsBtn.addEventListener('click', async () => {
@@ -1274,13 +1305,13 @@
                 try {
                     const prompt = `Generate 10 highly detailed, unique, and commercially viable image prompts for a stock image generation tool (like Leonardo AI or Midjourney) based on the core concept/keyword "${keyword}". ${lengthConstraint} Each prompt should be a single, cohesive paragraph that clearly defines:
 
-                    1.  **Subject + Action + Setting:** What is the main subject, what are they doing, and where are they?
-                    2.  **Specific style/details:** Artistic style (e.g., photorealistic, cinematic, isometric, minimalist), textures, specific objects, expressions, or visual elements.
-                    3.  **Lighting:** Describe the quality, direction, and mood of the lighting.
-                    4.  **Colors:** Mention the dominant color palette or desired color mood.
-                    5.  **Composition:** How is the scene framed?
-                    6.  **Technical details:** Resolution, background type (e.g., "pure white background", "on transparent background"), lens effects, depth of field.
-                    7.  **Mood/Emotion:** The overall feeling or message the image should convey.
+                    1.  <b>Subject + Action + Setting:</b> What is the main subject, what are they doing, and where are they?
+                    2.  <b>Specific style/details:</b> Artistic style (e.g., photorealistic, cinematic, isometric, minimalist), textures, specific objects, expressions, or visual elements.
+                    3.  <b>Lighting:</b> Describe the quality, direction, and mood of the lighting.
+                    4.  <b>Colors:</b> Mention the dominant color palette or desired color mood.
+                    5.  <b>Composition:</b> How is the scene framed?
+                    6.  <b>Technical details:</b> Resolution, background type (e.g., "pure white background", "on transparent background"), lens effects, depth of field.
+                    7.  <b>Mood/Emotion:</b> The overall feeling or message the image should convey.
 
                     Present each prompt as a numbered list item (1. [Prompt text], 2. [Prompt text], etc.). Ensure no additional conversational text beyond the prompts themselves.`;
                     
@@ -1305,23 +1336,23 @@
                         const promptLines = text.split('\n').filter(line => line.trim().match(/^\d+\.\s*/)).map(line => line.trim()); 
                         
                         promptsOutput.innerHTML = promptLines.map((p, index) => {
-                            const isPromptCopied = userData.copiedPrompts.some(cp => cp.text === p && cp.used);
+                            // Check if this specific prompt text was already marked as used
+                            const isPromptUsed = userData.copiedPrompts.some(cp => cp.text === p && cp.used);
                             return `
-                                <div class="prompt-chip-item bg-gray-50 p-3 rounded-xl border text-sm flex justify-between items-center ${isPromptCopied ? 'copied' : ''}" data-prompt-index="${index}">
+                                <div class="prompt-chip-item bg-gray-50 p-3 rounded-xl border text-sm flex justify-between items-center ${isPromptUsed ? 'used' : ''}" data-prompt-index="${index}">
                                     <span class="flex-grow mr-2">${p}</span>
                                     <button class="copy-prompt-btn bg-indigo-500 text-white text-xs font-semibold px-3 py-1 rounded-md hover:bg-indigo-600 transition">Copy</button>
                                 </div>
                             `;
                         }).join('');
                         
-                        // Add keyword to history for prompt generation
-                        addEntryToHistory('usedPromptKeywords', keyword.toLowerCase());
-                        if (isEntryInHistory('usedPromptKeywords', keyword.toLowerCase())) {
+                        addEntryToHistory('usedPromptKeywords', keyword); // Add keyword to history for prompt generation
+                        if (isEntryInHistory('usedPromptKeywords', keyword)) {
                             promptKeywordInput.classList.add('prompt-keyword-input-used');
                         }
 
-                        // Initialize userData.copiedPrompts for this generation session
-                        // Merge with existing if any, so we don't lose previous "used" states
+                        // Update userData.copiedPrompts for this generation session
+                        // This handles both new prompts and maintaining 'used' status of existing ones
                         const newPromptsData = promptLines.map(p => {
                             const existing = userData.copiedPrompts.find(cp => cp.text === p);
                             return existing ? existing : { text: p, used: false };
@@ -1337,17 +1368,20 @@
                                 const promptIndex = parseInt(parentItem.getAttribute('data-prompt-index'));
 
                                 if (parentItem) {
+                                    // Remove copied class to allow animation to replay
                                     parentItem.classList.remove('copied');
+                                    // Force reflow to restart animation if clicked quickly
                                     void parentItem.offsetWidth; 
                                 }
 
                                 await copyToClipboard(promptText, promptCopyMessage);
 
                                 if (parentItem) {
-                                    parentItem.classList.add('copied');
+                                    parentItem.classList.add('copied'); // Apply flash animation
+                                    // After animation, ensure it has the 'used' state
                                     setTimeout(() => {
-                                        parentItem.classList.remove('copied');
-                                    }, 2000);
+                                        parentItem.classList.add('used'); // Apply permanent dimming
+                                    }, 500); // After flash animation (0.5s)
                                 }
 
                                 // Mark prompt as used in userData
@@ -1403,7 +1437,7 @@
             });
 
 
-            // Step 8: Smart Tagging & Export (Original Step 7)
+            // Step 8: Smart Tagging & Export
             const imageUploadInput = document.getElementById('image-upload-input');
             const uploadStatus = document.getElementById('upload-status');
             const analyzeImagesBtn = document.getElementById('analyze-images-btn');
