@@ -130,6 +130,13 @@
             font-weight: 600;
             opacity: 0.7; /* Slightly dim it */
         }
+        /* Style for selected keyword chips (for batch sending) */
+        .keyword-chip.selected-for-batch {
+            border-color: #22C55E !important; /* Green border */
+            background-color: #DCFCE7 !important; /* Light green background */
+            box-shadow: 0 2px 8px rgba(34, 197, 94, 0.2) !important;
+            font-weight: 600;
+        }
 
 
         /* Prompt Chips */
@@ -404,12 +411,12 @@
                 <button data-step="1" class="nav-btn">Toolkit</button>
                 <button data-step="2" class="nav-btn">Organic</button>
                 <button data-step="3" class="nav-btn">AI Tools</button>
-                <button data-step="4" class="nav-btn">Get Keywords</button> <!-- Changed from Discovery -->
-                <button data-step="5" class="nav-btn">Prompt Generator</button> <!-- Changed from AI Prompts -->
-                <button data-step="6" class="nav-btn">Save Data</button> <!-- Now step 6 -->
-                <button data-step="7" class="nav-btn">Smart Tagging</button> <!-- Now step 7 -->
-                <button data-step="8" class="nav-btn">Scale & Grow</button> <!-- Now step 8 -->
-                <button data-step="9" class="nav-btn">Start Now</button> <!-- Now step 9 -->
+                <button data-step="4" class="nav-btn">Get Keywords</button>
+                <button data-step="5" class="nav-btn">Prompt Generator</button>
+                <button data-step="6" class="nav-btn">Save Data</button>
+                <button data-step="7" class="nav-btn">Smart Tagging</button>
+                <button data-step="8" class="nav-btn">Scale & Grow</button>
+                <button data-step="9" class="nav-btn">Start Now</button>
             </div>
         </div>
     </nav>
@@ -472,7 +479,7 @@
         <section id="step-content-2" class="step-content fade-in">
             <div class="card-panel">
                 <h2 class="text-3xl md:text-4xl font-bold mb-6 text-center text-gray-800">2. Organic Content Creation</h2>
-                <p class="max-w-3xl mx-auto text-gray-600 text-lg mb-8 text-center">Unique photos & videos offer authenticity. Focus on quality, composition, and trending subjects.</p>
+                <p class="max-w_3xl mx-auto text-gray-600 text-lg mb-8 text-center">Unique photos & videos offer authenticity. Focus on quality, composition, and trending subjects.</p>
                 
                 <div class="space-y-4">
                     <details class="rounded-xl overflow-hidden">
@@ -533,13 +540,13 @@
                     <!-- New visual-driven content for AI Tools -->
                     <div class="p-6 rounded-xl bg-gray-50 shadow-sm flex flex-col items-center text-center">
                         <img src="https://placehold.co/150x100/E0E7FF/5B21B6?text=AI+Efficiency" alt="AI for Efficiency" class="mb-4 rounded-lg shadow-md">
-                        <h3 class="font-bold text-xl mb-2 text-indigo-600">Rapid Creation</h3>
-                        <p class="text-sm text-gray-700">Generate dozens of images in minutes, accelerating your workflow.</p>
+                        <h3 class="font-bold text-xl mb-2 text-indigo-600">Boost Efficiency</h3>
+                        <p class="text-sm text-gray-700">Automate repetitive tasks and accelerate content creation.</p>
                     </div>
                     <div class="p-6 rounded-xl bg-gray-50 shadow-sm flex flex-col items-center text-center">
                         <img src="https://placehold.co/150x100/E0E7FF/5B21B6?text=Global+Reach" alt="AI for Global Reach" class="mb-4 rounded-lg shadow-md">
-                        <h3 class="font-bold text-xl mb-2 text-indigo-600">Massive Scale</h3>
-                        <p class="text-sm text-gray-700">Produce high volumes of content without models or physical locations.</p>
+                        <h3 class="font-bold text-xl mb-2 text-indigo-600">Expand Reach</h3>
+                        <p class="text-sm text-gray-700">Generate diverse content appealing to global markets.</p>
                     </div>
                     <div class="p-6 rounded-xl bg-gray-50 shadow-sm flex flex-col items-center text-center">
                         <img src="https://placehold.co/150x100/E0E7FF/5B21B6?text=Innovation" alt="AI for Innovation" class="mb-4 rounded-lg shadow-md">
@@ -578,7 +585,7 @@
                             <option value="Health & Wellness Beyond Fitness">Health & Wellness Beyond Fitness</option>
                             <option value="AI & Robotics in Daily Life">AI & Robotics in Daily Life</option>
                             <option value="Urban Exploration & Architecture Details">Urban Exploration & Architecture Details</option>
-                            <option value="Mindful Living & Digital Detox">Mindful Living & Digital Detox</option>
+                            <option value="Mindful Living & Digital Detox">Mindful Living & Digital Detox</m-step>
                             <option value="Sensory Experiences (Texture, Sound Vis.)">Sensory Experiences (Texture, Sound Vis.)</option>
                             <option value="Retro Futurism & Nostalgia">Retro Futurism & Nostalgia</option>
                             <option value="Financial Literacy & Investing (Visualized)">Financial Literacy & Investing (Visualized)</option>
@@ -612,7 +619,11 @@
                     <div id="keyword-grabber-output" class="mt-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 text-sm max-h-96 overflow-y-auto p-2 border border-gray-200 rounded-xl bg-white">
                         <!-- Keywords will appear here -->
                     </div>
-                    <p class="text-xs text-gray-500 mt-4 text-center">Pro Tip: Click any keyword to jump to Step 5 and start generating AI prompts!</p>
+                    <p class="text-xs text-gray-500 mt-4 text-center">Pro Tip: Click any keyword to select for batch transfer, or click to copy to single prompt generator!</p>
+                    
+                    <!-- Button to send selected keywords to batch generator -->
+                    <button id="send-keywords-to-batch-btn" class="w-full btn-primary mt-6 hidden">Send Selected to Batch Prompts</button>
+
                 </div>
             </div>
         </section>
@@ -623,8 +634,8 @@
                 <h2 class="text-3xl md:text-4xl font-bold mb-6 text-center text-gray-800">5. Prompt Generator</h2>
                 <p class="max-w-3xl mx-auto text-gray-600 text-lg mb-8 text-center">Turn a simple keyword into a powerful AI command. A well-crafted prompt ensures you get exact image quality for Adobe Stock. Generate 10 unique prompts from a single keyword.</p>
                 
-                <div class="bg-gray-50 p-6 rounded-xl border shadow-sm">
-                    <h3 class="font-bold text-xl mb-4 text-center text-indigo-600">Keyword to 10 Prompts:</h3>
+                <div class="bg-gray-50 p-6 rounded-xl border shadow-sm mb-8">
+                    <h3 class="font-bold text-xl mb-4 text-center text-indigo-600">Single Prompt Generation:</h3>
                     <p class="text-sm text-center text-gray-700 mb-4">Enter a keyword (e.g., "startup team", "forest stream"). Our AI generates 10 unique prompts based on your chosen length. Click any generated prompt to copy!</p>
                     <div class="flex flex-col sm:flex-row items-center gap-4 max-w-xl mx-auto mb-4">
                         <input type="text" id="prompt-keyword-input" placeholder="Enter keyword (e.g., 'German dog')" class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-indigo-600 focus:border-indigo-600">
@@ -645,11 +656,35 @@
                     </div>
                     <div id="prompt-copy-message" class="message-box">Prompt copied!</div>
                 </div>
+
+                <!-- Batch Prompt Generator Section (inside Prompt Generator) -->
+                <div class="bg-gray-50 p-6 rounded-xl border shadow-sm mt-10">
+                    <h3 class="font-bold text-xl mb-4 text-center text-indigo-600">Batch Prompt Generator:</h3>
+                    <p class="text-sm text-center text-gray-700 mb-4">Enter 1 to 100 keywords (one per line or comma-separated). Generate 10 prompts per keyword, then view them below.</p>
+                    <div class="flex flex-col gap-4 max-w-xl mx-auto mb-4">
+                        <textarea id="batch-keywords-input" rows="5" placeholder="Enter keywords (e.g., &#10;keyword1, keyword2 &#10;keyword3)" class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-indigo-600 focus:border-indigo-600 resize-y"></textarea>
+                        <select id="batch-prompt-length-select" class="p-2 border border-gray-300 rounded-xl focus:ring-indigo-600 focus:border-indigo-600 w-full">
+                            <option value="medium">Medium Prompts</option>
+                            <option value="short">Short Prompts</option>
+                            <option value="long">Long Prompts</option>
+                        </select>
+                        <button id="generate-batch-prompts-btn" class="w-full btn-primary">Generate Batch Prompts</button>
+                    </div>
+                    <div id="batch-prompts-loading" class="hidden loading-spinner"></div>
+                    <div id="batch-prompts-error" class="hidden mt-4 text-center text-red-600 font-semibold"></div>
+
+                    <!-- Batch prompts output section (moved here from a separate tab) -->
+                    <div id="batch-prompts-output-display" class="mt-6 space-y-6 text-base bg-white p-4 rounded-xl border max-h-96 overflow-y-auto">
+                        <p class="text-gray-500 text-center">Generated batch prompts will appear here.</p>
+                    </div>
+                    <button id="clear-batch-prompts-btn" class="w-full btn-secondary-red text-sm max-w-xl mx-auto block mt-6">Clear Batch Prompts</button>
+                </div>
+
                 <p class="mt-8 p-4 bg-emerald-50 rounded-lg border border-emerald-200 font-bold text-emerald-800 text-sm">Pro Tip: Good prompts include: Subject + Action + Setting + Style + Technical Details (e.g., 8K, white background). Aim for clarity and detail!</p>
             </div>
         </section>
 
-        <!-- Step 6: Save Data (Moved from step 7) -->
+        <!-- Step 6: Save Data -->
         <section id="step-content-6" class="step-content fade-in">
             <div class="card-panel">
                 <h2 class="text-3xl md:text-4xl font-bold mb-6 text-center text-gray-800">6. Save & Export Your Data</h2>
@@ -669,7 +704,7 @@
             </div>
         </section>
 
-        <!-- Step 7: Smart Tagging & Export (Moved from step 8) -->
+        <!-- Step 7: Smart Tagging & Export -->
         <section id="step-content-7" class="step-content fade-in">
             <div class="card-panel">
                 <h2 class="text-3xl md:text-4xl font-bold mb-6 text-center text-gray-800">7. Smart Tagging & Export</h2>
@@ -715,7 +750,7 @@
                                 <thead class="bg-gray-50 sticky top-0">
                                     <tr>
                                         <th class="px-2 py-2 text-left text-gray-600 font-semibold">Image</th>
-                                        <th class="px-2 py-2 text-left text-gray-600 font-semibold">Title</th>
+                                                                                <th class="px-2 py-2 text-left text-gray-600 font-semibold">Title</th>
                                         <th class="px-2 py-2 text-left text-gray-600 font-semibold">Keywords</th>
                                     </tr>
                                 </thead>
@@ -798,20 +833,83 @@
         const GEMINI_API_KEY = "AIzaSyB5nnpO3T2yh4id5ErSKNW5dee6FlzgraQ"; // <<< REPLACE THIS WITH YOUR ACTUAL KEY!
 
         document.addEventListener('DOMContentLoaded', () => {
+            // --- DOM Element References (Declared once at the very top of DOMContentLoaded) ---
             const navButtons = document.querySelectorAll('.nav-btn');
             const stepContents = document.querySelectorAll('.step-content');
             const customAlertMessageBox = document.getElementById('custom-alert-message');
+            
+            // Get Keywords Tab Elements
+            const nicheCategorySelect = document.getElementById('niche-category-select');
+            const generateNichesBtn = document.getElementById('generate-niches-btn');
+            const nicheGeneratorOutput = document.getElementById('niche-generator-output');
+            const nicheGeneratorLoading = document.getElementById('niche-generator-loading');
+            const nicheGeneratorError = document.getElementById('niche-generator-error');
+            const clearNicheGeneratorHistoryBtn = document.getElementById('clear-niche-generator-history-btn');
+            const keywordGenerationSection = document.getElementById('keyword-generation-section');
+            const selectedNicheDisplay = document.getElementById('selected-niche-display');
+            const keywordGrabberOutput = document.getElementById('keyword-grabber-output');
+            const keywordGrabberLoading = document.getElementById('keyword-grabber-loading');
+            const keywordGrabberError = document.getElementById('keyword-grabber-error');
+            const clearSubNicheKeywordsBtn = document.getElementById('clear-subniche-keywords-btn');
+            const sendKeywordsToBatchBtn = document.getElementById('send-keywords-to-batch-btn'); 
 
-            // --- Global Data Storage for Save Data Tab ---
-            // This object will hold the data to be displayed and exported.
+            // Prompt Generator Tab Elements
+            const promptKeywordInput = document.getElementById('prompt-keyword-input');
+            const generatePromptsBtn = document.getElementById('generate-prompts-btn');
+            const promptsOutput = document.getElementById('prompts-output');
+            const promptsLoading = document.getElementById('prompts-loading');
+            const promptsError = document.getElementById('prompts-error');
+            const promptKeywordHistoryNote = document.getElementById('prompt-keyword-history-note');
+            const clearPromptKeywordsBtn = document.getElementById('clear-prompt-keywords-btn');
+            const promptCopyMessage = document.getElementById('prompt-copy-message');
+            const promptLengthSelect = document.getElementById('prompt-length-select');
+            
+            // Batch Prompt Generator Elements (within Prompt Generator tab)
+            const batchKeywordsInput = document.getElementById('batch-keywords-input');
+            const batchPromptLengthSelect = document.getElementById('batch-prompt-length-select');
+            const generateBatchPromptsBtn = document.getElementById('generate-batch-prompts-btn');
+            const batchPromptsLoading = document.getElementById('batch-prompts-loading');
+            const batchPromptsError = document.getElementById('batch-prompts-error');
+            const batchPromptsOutputDisplayDiv = document.getElementById('batch-prompts-output-display'); 
+            const clearBatchPromptsBtn = document.getElementById('clear-batch-prompts-btn');
+
+
+            // Save Data Tab Elements
+            const exportCollectedDataBtn = document.getElementById('export-collected-data-btn');
+
+            // Smart Tagging & Export Tab Elements
+            const imageUploadInput = document.getElementById('image-upload-input');
+            const uploadStatus = document.getElementById('upload-status');
+            const analyzeImagesBtn = document.getElementById('analyze-images-btn');
+            const metadataLoading = document.getElementById('metadata-loading');
+            const metadataError = document.getElementById('metadata-error');
+            const imagePreviewsContainer = document.getElementById('image-previews-container');
+            const metadataResultsContainer = document.getElementById('metadata-results-container');
+            const metadataTableBody = document.getElementById('metadata-table-body');
+            const exportCsvBtn = document.getElementById('export-csv-btn');
+            const titleLengthSlider = document.getElementById('title-length-slider');
+            const titleLengthValue = document.getElementById('title-length-value');
+            const tagsLimitSlider = document.getElementById('tags-limit-slider');
+            const tagsLimitValue = document.getElementById('tags-limit-value');
+            const transparentBackgroundToggle = document.getElementById('transparent-background-toggle');
+
+
+            // --- Global Data Storage for Save Data Tab & Feature Logic ---
             let userData = {
                 nicheCategory: '',
                 selectedSubNiche: '',
                 generatedKeywords: [],
-                copiedPrompts: [] // Stores objects: { text: "...", used: true/false }
+                copiedPrompts: [], // For single prompt gen: { text: "...", used: true/false }
+                batchPrompts: [] // For batch gen: { keyword: "...", prompts: [{ text: "...", used: true/false }] }
             };
 
-            // --- History Management Functions (adapted for userData) ---
+            // --- Tracking selected keywords for batch transfer from Get Keywords tab ---
+            let currentlySelectedKeywordChips = []; // Keep track of selected chips
+
+
+            // --- Utility Functions ---
+
+            // History Management Functions (adapted for userData)
             const getHistory = (key) => {
                 try {
                     return JSON.parse(localStorage.getItem(key)) || [];
@@ -825,9 +923,8 @@
                 localStorage.setItem(key, JSON.stringify(history));
             };
 
-            const addEntryToHistory = (key, entry) => { // Generic function for any history
+            const addEntryToHistory = (key, entry) => {
                 let history = getHistory(key);
-                // Ensure entry is converted to lowercase for case-insensitive checks
                 const lowerCaseEntry = typeof entry === 'string' ? entry.toLowerCase() : entry; 
 
                 if (!history.includes(lowerCaseEntry)) {
@@ -836,9 +933,8 @@
                 }
             };
 
-            const isEntryInHistory = (key, entry) => { // Generic function for any history
+            const isEntryInHistory = (key, entry) => {
                 const history = getHistory(key);
-                // Ensure entry is converted to lowercase for case-insensitive checks
                 const lowerCaseEntry = typeof entry === 'string' ? entry.toLowerCase() : entry;
                 return history.includes(lowerCaseEntry);
             };
@@ -846,42 +942,31 @@
             const clearHistory = (key) => {
                 localStorage.removeItem(key);
             };
-            // --- End History Management Functions ---
 
-            // Utility function for copying text with fallback
+            // Copy to Clipboard with Fallback
             const copyToClipboard = async (text, messageBoxElement) => {
                 try {
-                    // Try the modern Clipboard API first
                     await navigator.clipboard.writeText(text);
-                    console.log('Text copied using navigator.clipboard.writeText');
-                    displayMessageBox(messageBoxElement, 'Prompt copied!', '#10B981'); /* Green for success */
+                    displayMessageBox(messageBoxElement, 'Prompt copied!', '#10B981');
                 } catch (err) {
-                    console.warn('Failed to copy using navigator.clipboard.writeText, falling back to document.execCommand:', err);
-                    // Fallback for older browsers or restricted environments
                     const textarea = document.createElement('textarea');
                     textarea.value = text;
-                    textarea.style.position = 'fixed'; // Avoid scrolling to bottom
-                    textarea.style.left = '-9999px'; // Hide it off-screen
+                    textarea.style.position = 'fixed';
+                    textarea.style.left = '-9999px';
                     document.body.appendChild(textarea);
                     textarea.select();
                     try {
-                        const successful = document.execCommand('copy');
-                        if (successful) {
-                            console.log('Text copied using document.execCommand');
-                            displayMessageBox(messageBoxElement, 'Prompt copied!', '#10B981'); /* Green for success */
-                        } else {
-                            throw new Error('Failed to copy using execCommand');
-                        }
+                        document.execCommand('copy');
+                        displayMessageBox(messageBoxElement, 'Prompt copied!', '#10B981');
                     } catch (execErr) {
-                        console.error('Failed to copy prompt with any method: ', execErr);
-                        displayMessageBox(messageBoxElement, 'Failed to copy. Copy manually.', '#EF4444'); /* Red for error */
+                        displayMessageBox(messageBoxElement, 'Failed to copy. Copy manually.', '#EF4444');
                     } finally {
                         document.body.removeChild(textarea);
                     }
                 }
             };
 
-            // Function to display the message box
+            // Display Message Box
             const displayMessageBox = (element, message, bgColor) => {
                 element.textContent = message;
                 element.style.backgroundColor = bgColor;
@@ -891,15 +976,15 @@
                 setTimeout(() => {
                     element.classList.remove('slideInUp');
                     element.classList.add('fadeOut');
-                }, 4000); // Display for 4 seconds, then fade out over 0.5s
+                }, 4000);
             };
 
-            // Function to render user data in the Save Data tab
+            // Render User Data in Save Data Tab
             const renderUserData = () => {
                 const collectedDataOutput = document.getElementById('collected-data-output');
                 let html = '';
 
-                if (userData.nicheCategory || userData.selectedSubNiche || userData.generatedKeywords.length > 0 || userData.copiedPrompts.length > 0) {
+                if (userData.nicheCategory || userData.selectedSubNiche || userData.generatedKeywords.length > 0 || userData.copiedPrompts.length > 0 || userData.batchPrompts.length > 0) {
                     html += `
                         <div class="mb-4">
                             <h4 class="font-semibold text-lg text-gray-700 mb-2">Current Session Data:</h4>
@@ -911,8 +996,8 @@
 
                     if (userData.copiedPrompts.length > 0) {
                         html += `
-                            <h4 class="font-semibold text-lg text-gray-700 mb-2">Copied Prompts:</h4>
-                            <div class="bg-white p-4 rounded-xl border max-h-64 overflow-y-auto">
+                            <h4 class="font-semibold text-lg text-gray-700 mb-2">Copied Prompts (Single Generation):</h4>
+                            <div class="bg-white p-4 rounded-xl border max-h-64 overflow-y-auto mb-4">
                                 <table class="min-w-full text-sm" id="user-data-table">
                                     <thead>
                                         <tr>
@@ -936,14 +1021,95 @@
                             </div>
                         `;
                     }
+
+                    if (userData.batchPrompts.length > 0) {
+                        html += `
+                            <h4 class="font-semibold text-lg text-gray-700 mb-2">Batch Generated Prompts:</h4>
+                            <div class="bg-white p-4 rounded-xl border max-h-64 overflow-y-auto">
+                        `;
+                        userData.batchPrompts.forEach(batchEntry => {
+                            html += `<p class="font-medium text-indigo-600 mt-3 mb-2"><b>Keyword:</b> ${batchEntry.keyword}</p>`;
+                            html += `<table class="min-w-full text-sm mb-3"><thead><tr><th>Prompt</th><th>Used</th></tr></thead><tbody>`;
+                            batchEntry.prompts.forEach(p => {
+                                html += `
+                                    <tr>
+                                        <td class="text-gray-700">${p.text}</td>
+                                        <td class="text-center">${p.used ? '<span class="text-emerald-600">&#10003;</span>' : '<span class="text-red-600">&#x2717;</span>'}</td>
+                                    </tr>
+                                `;
+                            });
+                            html += `</tbody></table>`;
+                        });
+                        html += `</div>`;
+                    }
+
                 } else {
                     html = '<p class="text-gray-500 text-center">No data collected yet. Start exploring niches and copying prompts!</p>';
                 }
                 collectedDataOutput.innerHTML = html;
             };
 
+            // Render Batch Prompts Output (within Prompt Generator tab)
+            const renderBatchPromptsOutput = () => {
+                let html = '';
+                if (userData.batchPrompts.length === 0) {
+                    html = '<p class="text-gray-500 text-center">Generated batch prompts will appear here.</p>';
+                } else {
+                    userData.batchPrompts.forEach((batchEntry, batchIndex) => {
+                        html += `
+                            <div class="bg-white p-4 rounded-xl border shadow-sm mb-6">
+                                <h4 class="font-bold text-lg text-indigo-600 mb-3">Keyword: ${batchEntry.keyword}</h4>
+                                <div class="space-y-4 text-base">
+                        `;
+                        batchEntry.prompts.forEach((p, promptIndex) => {
+                            const isPromptUsed = p.used;
+                            html += `
+                                    <div class="prompt-chip-item bg-gray-50 p-3 rounded-xl border text-sm flex justify-between items-center ${isPromptUsed ? 'used' : ''}" data-batch-index="${batchIndex}" data-prompt-index="${promptIndex}">
+                                        <span class="flex-grow mr-2">${p.text}</span>
+                                        <button class="copy-prompt-btn bg-indigo-500 text-white text-xs font-semibold px-3 py-1 rounded-md hover:bg-indigo-600 transition">Copy</button>
+                                    </div>
+                            `;
+                        });
+                        html += `
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+                batchPromptsOutputDisplayDiv.innerHTML = html;
 
-            // Main navigation
+                // Attach event listeners to newly rendered copy buttons in batch output
+                document.querySelectorAll('#batch-prompts-output-display .copy-prompt-btn').forEach(button => {
+                    button.addEventListener('click', async (p_event) => {
+                        const promptTextElement = p_event.currentTarget.previousElementSibling;
+                        const promptText = promptTextElement.textContent;
+                        const parentItem = p_event.currentTarget.closest('.prompt-chip-item');
+                        const batchIndex = parseInt(parentItem.getAttribute('data-batch-index'));
+                        const promptIndex = parseInt(parentItem.getAttribute('data-prompt-index'));
+
+                        if (parentItem) {
+                            parentItem.classList.remove('copied');
+                            void parentItem.offsetWidth; 
+                        }
+
+                        await copyToClipboard(promptText, customAlertMessageBox);
+
+                        if (parentItem) {
+                            parentItem.classList.add('copied');
+                            setTimeout(() => {
+                                parentItem.classList.add('used');
+                            }, 500);
+                        }
+
+                        if (userData.batchPrompts[batchIndex] && userData.batchPrompts[batchIndex].prompts[promptIndex]) {
+                            userData.batchPrompts[batchIndex].prompts[promptIndex].used = true;
+                        }
+                    });
+                });
+            };
+
+
+            // --- Main Navigation Logic ---
             const navigateToStep = (stepIndex) => {
                 // Deactivate all nav buttons and content sections
                 navButtons.forEach(btn => btn.classList.remove('active'));
@@ -959,12 +1125,14 @@
                 const targetContentSection = document.getElementById(`step-content-${stepIndex}`);
                 if (targetContentSection) {
                     targetContentSection.classList.add('active');
-                    setTimeout(() => targetContentSection.classList.add('fade-in'), 10); // Small delay for animation
+                    setTimeout(() => targetContentSection.classList.add('fade-in'), 10);
                     targetContentSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }
 
-                // Re-render user data if the Save Data tab is activated
-                if (stepIndex === 6) { // Now Step 6 for Save Data
+                // Special handling for content rendering when navigating to specific tabs
+                if (stepIndex === 5) { // Prompt Generator tab (which now also displays batch output)
+                    renderBatchPromptsOutput(); // Ensure batch output is updated
+                } else if (stepIndex === 6) { // Save Data tab
                     renderUserData();
                 }
             };
@@ -976,28 +1144,32 @@
                 });
             });
 
-            // Step 4: Get Keywords (formerly Discovery)
-            const nicheCategorySelect = document.getElementById('niche-category-select');
-            const generateNichesBtn = document.getElementById('generate-niches-btn');
-            const nicheGeneratorOutput = document.getElementById('niche-generator-output');
-            const nicheGeneratorLoading = document.getElementById('niche-generator-loading');
-            const nicheGeneratorError = document.getElementById('niche-generator-error');
-            const clearNicheGeneratorHistoryBtn = document.getElementById('clear-niche-generator-history-btn');
+            // --- Event Listeners for Get Keywords Tab (Step 4) ---
             
-            const keywordGenerationSection = document.getElementById('keyword-generation-section');
-            const selectedNicheDisplay = document.getElementById('selected-niche-display');
+            // Function to update the visibility of the "Send to Batch Prompts" button
+            const updateBatchSendButtonVisibility = () => {
+                if (currentlySelectedKeywordChips.length > 0) {
+                    sendKeywordsToBatchBtn.classList.remove('hidden');
+                } else {
+                    sendKeywordsToBatchBtn.classList.add('hidden');
+                }
+            };
 
             clearNicheGeneratorHistoryBtn.addEventListener('click', () => {
                 clearHistory('generatedNicheCategories');
-                clearHistory('selectedNichesHistory'); // Clear niche selection history
-                clearHistory('usedPromptKeywords'); // Clear used prompt keywords to reset red highlights
+                clearHistory('selectedNichesHistory');
+                clearHistory('usedPromptKeywords');
                 nicheGeneratorOutput.innerHTML = '<p class="text-gray-500">Generated niche category history cleared. New ideas will appear next time.</p>';
-                keywordGenerationSection.classList.add('hidden'); // Hide keyword section if niches are cleared
-                document.getElementById('keyword-grabber-output').innerHTML = ''; // Clear keyword display
+                keywordGenerationSection.classList.add('hidden');
+                document.getElementById('keyword-grabber-output').innerHTML = '';
                 userData.nicheCategory = '';
                 userData.selectedSubNiche = '';
                 userData.generatedKeywords = [];
-                userData.copiedPrompts = []; // Also clear prompts as they depend on keywords
+                userData.copiedPrompts = [];
+                userData.batchPrompts = [];
+
+                currentlySelectedKeywordChips = [];
+                updateBatchSendButtonVisibility();
             });
 
             generateNichesBtn.addEventListener('click', async () => {
@@ -1013,7 +1185,6 @@
                 nicheGeneratorLoading.classList.remove('hidden');
                 generateNichesBtn.disabled = true;
 
-                // Check if category has been explored (case-insensitive)
                 const hasBeenExploredCategory = isEntryInHistory('generatedNicheCategories', selectedCategory);
                 if (hasBeenExploredCategory) {
                     displayMessageBox(customAlertMessageBox, `You've explored category "${selectedCategory}" before.`, '#EF4444');
@@ -1040,13 +1211,12 @@
                         const text = result.candidates[0].content.parts[0].text;
                         const niches = text.split(',').map(n => n.trim()).filter(Boolean);
                         
-                        nicheGeneratorOutput.innerHTML = niches.map(nicheText => { // Changed from += to =
+                        nicheGeneratorOutput.innerHTML = niches.map(nicheText => {
                             const isNicheAlreadySelected = isEntryInHistory('selectedNichesHistory', nicheText);
-                            // Add 'selected' class if it's in the history of selected niches
                             return `<div class="niche-card bg-white p-3 rounded-xl shadow-sm text-base text-center ${isNicheAlreadySelected ? 'selected' : ''}" data-niche-name="${nicheText}">${nicheText}</div>`;
                         }).join('');
-                        addEntryToHistory('generatedNicheCategories', selectedCategory); // Add category to history
-                        userData.nicheCategory = selectedCategory; // Store selected category
+                        addEntryToHistory('generatedNicheCategories', selectedCategory);
+                        userData.nicheCategory = selectedCategory;
 
                         document.querySelectorAll('#niche-generator-output .niche-card').forEach(card => {
                             card.addEventListener('click', async (event) => {
@@ -1054,24 +1224,25 @@
                                 
                                 if (isEntryInHistory('selectedNichesHistory', nicheName)) {
                                     displayMessageBox(customAlertMessageBox, `You've already selected "${nicheName}".`, '#EF4444');
-                                    // Optionally, don't re-generate keywords if already selected and just show existing ones
-                                    // For now, it will proceed to regenerate and display, but alert user.
                                 }
 
                                 document.querySelectorAll('#niche-generator-output .niche-card').forEach(c => c.classList.remove('selected'));
                                 event.currentTarget.classList.add('selected');
                                 
                                 selectedNicheDisplay.textContent = nicheName;
-                                keywordGenerationSection.classList.remove('hidden'); // Show Stage 2
-                                localStorage.setItem('currentSelectedSubNiche', nicheName); // Store selected niche
-                                userData.selectedSubNiche = nicheName; // Store selected sub-niche
-                                addEntryToHistory('selectedNichesHistory', nicheName); // Add selected niche to its history
+                                keywordGenerationSection.classList.remove('hidden');
+                                localStorage.setItem('currentSelectedSubNiche', nicheName);
+                                userData.selectedSubNiche = nicheName;
+                                addEntryToHistory('selectedNichesHistory', nicheName);
 
                                 keywordGrabberOutput.innerHTML = '';
                                 keywordGrabberError.classList.add('hidden');
                                 keywordGrabberLoading.classList.remove('hidden');
-                                userData.generatedKeywords = []; // Clear previous keywords for new sub-niche
+                                userData.generatedKeywords = [];
                                 
+                                currentlySelectedKeywordChips = [];
+                                updateBatchSendButtonVisibility();
+
                                 try {
                                     const keywordPrompt = `Generate 100 diverse, commercially viable, and specific keywords for stock content related to the niche: '${nicheName}'. Focus on terms buyers would search for on Adobe Stock. Provide only the keywords, separated by commas, with no additional text, numbering, or explanations.`;
                                     const keywordPayload = { contents: [{ role: "user", parts: [{ text: keywordPrompt }] }] };
@@ -1093,25 +1264,35 @@
                                         const text = kwResult.candidates[0].content.parts[0].text;
                                         let keywords = text.split(',').map(k => k.trim()).filter(Boolean);
                                         
-                                        const usedPromptKeywords = getHistory('usedPromptKeywords'); // Get already used keywords from prompt gen tab
+                                        const usedPromptKeywords = getHistory('usedPromptKeywords');
                                         
                                         keywordGrabberOutput.innerHTML = keywords.map(s => {
                                             const isUsed = usedPromptKeywords.includes(s.toLowerCase());
-                                            return `<div class="keyword-chip bg-white p-2 rounded-xl shadow-sm text-center ${isUsed ? 'used' : ''}" data-keyword-name="${s}">${s}</div>`; // Add 'used' class
+                                            const isSelectedForBatch = currentlySelectedKeywordChips.includes(s);
+                                            return `<div class="keyword-chip bg-white p-2 rounded-xl shadow-sm text-center ${isUsed ? 'used' : ''} ${isSelectedForBatch ? 'selected-for-batch' : ''}" data-keyword-name="${s}">${s}</div>`;
                                         }).join('');
                                         
-                                        userData.generatedKeywords = keywords; // Store generated keywords
+                                        userData.generatedKeywords = keywords;
 
                                         document.querySelectorAll('#keyword-grabber-output .keyword-chip').forEach(chip => {
                                             chip.addEventListener('click', (k_event) => {
                                                 const selectedKeyword = k_event.currentTarget.textContent;
                                                 
-                                                if (isEntryInHistory('usedPromptKeywords', selectedKeyword)) { // Check against used prompts history
+                                                const isCurrentlySelected = k_event.currentTarget.classList.contains('selected-for-batch');
+                                                if (isCurrentlySelected) {
+                                                    k_event.currentTarget.classList.remove('selected-for-batch');
+                                                    currentlySelectedKeywordChips = currentlySelectedKeywordChips.filter(kw => kw !== selectedKeyword);
+                                                } else {
+                                                    k_event.currentTarget.classList.add('selected-for-batch');
+                                                    currentlySelectedKeywordChips.push(selectedKeyword);
+                                                }
+                                                updateBatchSendButtonVisibility();
+
+                                                if (isEntryInHistory('usedPromptKeywords', selectedKeyword)) {
                                                     displayMessageBox(customAlertMessageBox, `You've already used "${selectedKeyword}" for a prompt.`, '#EF4444');
                                                 }
                                                 
                                                 promptKeywordInput.value = selectedKeyword;
-                                                navigateToStep(5); // Navigate to Prompt Generator tab
                                             });
                                         });
                                     } else {
@@ -1140,30 +1321,28 @@
             });
 
 
-            // Step 4: Get Keywords - Stage 2 (Keyword Generation)
-            const keywordGrabberOutput = document.getElementById('keyword-grabber-output');
-            const keywordGrabberLoading = document.getElementById('keyword-grabber-loading');
-            const keywordGrabberError = document.getElementById('keyword-grabber-error');
-            const clearSubNicheKeywordsBtn = document.getElementById('clear-subniche-keywords-btn');
+            // --- Event Listeners for Get Keywords Tab - Stage 2 (Keyword Generation) ---
             
             clearSubNicheKeywordsBtn.addEventListener('click', () => {
                 const currentNiche = localStorage.getItem('currentSelectedSubNiche');
                 if (currentNiche) {
-                    // Remove current niche from selectedNichesHistory
                     let allSelectedNichesHistory = getHistory('selectedNichesHistory');
                     allSelectedNichesHistory = allSelectedNichesHistory.filter(entry => entry !== currentNiche.toLowerCase());
                     saveHistory('selectedNichesHistory', allSelectedNichesHistory);
 
-                    // Also clear all usedPromptKeywords related to THIS niche if possible, or all for simplicity
-                    clearHistory('usedPromptKeywords'); // Clearing all used prompts for simplicity here
+                    clearHistory('usedPromptKeywords');
 
                     keywordGrabberOutput.innerHTML = `<p class="text-gray-500">Keywords history for '${currentNiche}' cleared.</p>`;
-                    userData.generatedKeywords = []; // Clear stored keywords for current niche
-                    userData.copiedPrompts = []; // Clear all copied prompts
+                    userData.generatedKeywords = [];
+                    userData.copiedPrompts = [];
+                    userData.batchPrompts = [];
                     
-                    // Re-render keyword chips to remove 'used' class
+                    currentlySelectedKeywordChips = [];
+                    updateBatchSendButtonVisibility();
+
                     document.querySelectorAll('#keyword-grabber-output .keyword-chip').forEach(chip => {
                         chip.classList.remove('used');
+                        chip.classList.remove('selected-for-batch');
                     });
 
                 } else {
@@ -1171,20 +1350,27 @@
                 }
             });
 
-            // Prompt Generator (Step 5)
-            const promptKeywordInput = document.getElementById('prompt-keyword-input');
-            const generatePromptsBtn = document.getElementById('generate-prompts-btn');
-            const promptsOutput = document.getElementById('prompts-output');
-            const promptsLoading = document.getElementById('prompts-loading');
-            const promptsError = document.getElementById('prompts-error');
-            const promptKeywordHistoryNote = document.getElementById('prompt-keyword-history-note');
-            const clearPromptKeywordsBtn = document.getElementById('clear-prompt-keywords-btn');
-            const promptCopyMessage = document.getElementById('prompt-copy-message');
-            const promptLengthSelect = document.getElementById('prompt-length-select'); // New element
+            // Listener for the new "Send to Batch Prompts" button
+            sendKeywordsToBatchBtn.addEventListener('click', () => {
+                if (currentlySelectedKeywordChips.length > 0) {
+                    batchKeywordsInput.value = currentlySelectedKeywordChips.join(', ');
+                    navigateToStep(5); // Navigate to the Prompt Generator tab (Step 5)
+                    currentlySelectedKeywordChips.forEach(kw => {
+                        const chip = document.querySelector(`.keyword-chip[data-keyword-name="${kw}"]`);
+                        if (chip) chip.classList.remove('selected-for-batch');
+                    });
+                    currentlySelectedKeywordChips = [];
+                    updateBatchSendButtonVisibility();
+                } else {
+                    displayMessageBox(customAlertMessageBox, 'Please select keywords first!', '#EF4444');
+                }
+            });
 
+
+            // --- Event Listeners for Prompt Generator Tab (Step 5) ---
+            
             promptKeywordInput.addEventListener('input', () => {
                 const keyword = promptKeywordInput.value.trim();
-                // Check if keyword has been used for prompts
                 if (isEntryInHistory('usedPromptKeywords', keyword)) {
                     promptKeywordInput.classList.add('prompt-keyword-input-used');
                     promptKeywordHistoryNote.classList.remove('hidden');
@@ -1195,18 +1381,18 @@
             });
 
             clearPromptKeywordsBtn.addEventListener('click', () => {
-                clearHistory('usedPromptKeywords'); // Clear all used prompt keywords
+                clearHistory('usedPromptKeywords');
                 promptKeywordHistoryNote.classList.add('hidden');
                 promptKeywordInput.classList.remove('prompt-keyword-input-used');
                 promptsOutput.innerHTML = '<p class="text-gray-500">Prompt keyword history cleared.</p>';
-                userData.copiedPrompts = []; // Clear all copied prompts on clear history
+                userData.copiedPrompts = [];
 
-                // Also update keyword chips in Get Keywords tab if visible
                 document.querySelectorAll('#keyword-grabber-output .keyword-chip').forEach(chip => {
                     chip.classList.remove('used');
                 });
             });
 
+            // Single Prompt Generation Logic
             generatePromptsBtn.addEventListener('click', async () => {
                 const keyword = promptKeywordInput.value.trim();
                 if (!keyword) {
@@ -1219,7 +1405,7 @@
                 promptsError.classList.add('hidden');
                 promptsLoading.classList.remove('hidden');
                 generatePromptsBtn.disabled = true;
-                promptKeywordHistoryNote.classList.add('hidden'); // Hide note while generating
+                promptKeywordHistoryNote.classList.add('hidden');
 
                 const selectedLength = promptLengthSelect.value;
                 let lengthConstraint = "";
@@ -1237,7 +1423,6 @@
 
                 try {
                     const prompt = `Generate 10 highly detailed, unique, and commercially viable image prompts for a stock image generation tool (like Leonardo AI or Midjourney) based on the core concept/keyword "${keyword}". ${lengthConstraint} Each prompt should be a single, cohesive paragraph that clearly defines:
-
                     1.  <b>Subject + Action + Setting:</b> What is the main subject, what are they doing, and where are they?
                     2.  <b>Specific style/details:</b> Artistic style (e.g., photorealistic, cinematic, isometric, minimalist), textures, specific objects, expressions, or visual elements.
                     3.  <b>Lighting:</b> Describe the quality, direction, and mood of the lighting.
@@ -1245,7 +1430,6 @@
                     5.  <b>Composition:</b> How is the scene framed?
                     6.  <b>Technical details:</b> Resolution, background type (e.g., "pure white background", "on transparent background"), lens effects, depth of field.
                     7.  <b>Mood/Emotion:</b> The overall feeling or message the image should convey.
-
                     Present each prompt as a numbered list item (1. [Prompt text], 2. [Prompt text], etc.). Ensure no additional conversational text beyond the prompts themselves.`;
                     
                     const payload = { contents: [{ role: "user", parts: [{ text: prompt }] }] };
@@ -1265,11 +1449,9 @@
                     const result = await response.json();
                     if (result.candidates && result.candidates[0]?.content?.parts[0]?.text) {
                         const text = result.candidates[0].content.parts[0].text;
-                        // Regex to robustly capture numbered lines, even if the number isn't at the very start
                         const promptLines = text.split('\n').filter(line => line.trim().match(/^\d+\.\s*/)).map(line => line.trim()); 
                         
                         promptsOutput.innerHTML = promptLines.map((p, index) => {
-                            // Check if this specific prompt text was already marked as used
                             const isPromptUsed = userData.copiedPrompts.some(cp => cp.text === p && cp.used);
                             return `
                                 <div class="prompt-chip-item bg-gray-50 p-3 rounded-xl border text-sm flex justify-between items-center ${isPromptUsed ? 'used' : ''}" data-prompt-index="${index}">
@@ -1279,13 +1461,11 @@
                             `;
                         }).join('');
                         
-                        addEntryToHistory('usedPromptKeywords', keyword); // Add keyword to history for prompt generation
+                        addEntryToHistory('usedPromptKeywords', keyword);
                         if (isEntryInHistory('usedPromptKeywords', keyword)) {
                             promptKeywordInput.classList.add('prompt-keyword-input-used');
                         }
 
-                        // Update userData.copiedPrompts for this generation session
-                        // This handles both new prompts and maintaining 'used' status of existing ones
                         const newPromptsData = promptLines.map(p => {
                             const existing = userData.copiedPrompts.find(cp => cp.text === p);
                             return existing ? existing : { text: p, used: false };
@@ -1301,23 +1481,19 @@
                                 const promptIndex = parseInt(parentItem.getAttribute('data-prompt-index'));
 
                                 if (parentItem) {
-                                    // Remove copied class to allow animation to replay
                                     parentItem.classList.remove('copied');
-                                    // Force reflow to restart animation if clicked quickly
                                     void parentItem.offsetWidth; 
                                 }
 
                                 await copyToClipboard(promptText, promptCopyMessage);
 
                                 if (parentItem) {
-                                    parentItem.classList.add('copied'); // Apply flash animation
-                                    // After animation, ensure it has the 'used' state
+                                    parentItem.classList.add('copied');
                                     setTimeout(() => {
-                                        parentItem.classList.add('used'); // Apply permanent dimming
-                                    }, 500); // After flash animation (0.5s)
+                                        parentItem.classList.add('used');
+                                    }, 500);
                                 }
 
-                                // Mark prompt as used in userData
                                 if (userData.copiedPrompts[promptIndex]) {
                                     userData.copiedPrompts[promptIndex].used = true;
                                 }
@@ -1336,60 +1512,115 @@
                 }
             });
 
-            // Step 6: Save Data (Now the correct Step 6)
-            const exportCollectedDataBtn = document.getElementById('export-collected-data-btn');
-            exportCollectedDataBtn.addEventListener('click', () => {
-                let csvContent = "";
+            // Batch Prompt Generation Logic
+            generateBatchPromptsBtn.addEventListener('click', async () => {
+                const batchKeywordsRaw = batchKeywordsInput.value.trim();
+                if (!batchKeywordsRaw) {
+                    batchPromptsError.textContent = 'Please enter keywords for batch generation.';
+                    batchPromptsError.classList.remove('hidden');
+                    return;
+                }
+
+                const keywords = batchKeywordsRaw.split(/[\n,]+/).map(k => k.trim()).filter(Boolean);
+
+                if (keywords.length === 0) {
+                    batchPromptsError.textContent = 'No valid keywords found for batch generation.';
+                    batchPromptsError.classList.remove('hidden');
+                    return;
+                }
+                if (keywords.length > 100) {
+                    batchPromptsError.textContent = 'Please limit keywords to 100 for batch generation.';
+                    batchPromptsError.classList.remove('hidden');
+                    return;
+                }
+
+
+                batchPromptsError.classList.add('hidden');
+                batchPromptsLoading.classList.remove('hidden');
+                generateBatchPromptsBtn.disabled = true;
                 
-                // Add Niche Category, Selected Sub-Niche, Generated Keywords
-                csvContent += `"Niche Category","${(userData.nicheCategory || 'N/A').replace(/"/g, '""')}"\n`;
-                csvContent += `"Selected Sub-Niche","${(userData.selectedSubNiche || 'N/A').replace(/"/g, '""')}"\n`;
-                csvContent += `"Generated Keywords","${userData.generatedKeywords.map(k => k.replace(/"/g, '""')).join(', ') || 'N/A'}"\n`;
-                csvContent += "\n"; // Blank line for separation
+                userData.batchPrompts = []; // Clear previous batch prompts
 
-                // Add Copied Prompts
-                csvContent += `"Prompt","Prompt Used"\n`;
-                userData.copiedPrompts.forEach(p => {
-                    const escapedPrompt = `"${p.text.replace(/"/g, '""')}"`;
-                    csvContent += `${escapedPrompt},${p.used ? 'Yes' : 'No'}\n`;
-                });
+                const selectedLength = batchPromptLengthSelect.value;
+                let lengthConstraint = "";
+                switch (selectedLength) {
+                    case 'short':
+                        lengthConstraint = "Keep each prompt concise, between 0 and 150 characters.";
+                        break;
+                    case 'medium':
+                        lengthConstraint = "Keep each prompt detailed, between 100 and 280 characters.";
+                        break;
+                    case 'long':
+                        lengthConstraint = "Provide very detailed and elaborate prompts, between 200 and 900 characters.";
+                        break;
+                }
 
-                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-                const link = document.createElement('a');
-                if (link.download !== undefined) {
-                    const url = URL.createObjectURL(blob);
-                    link.setAttribute('href', url);
-                    link.setAttribute('download', 'pixel_profits_data.csv');
-                    link.style.visibility = 'hidden';
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
+                let generatedCount = 0;
+                for (const keyword of keywords) {
+                    try {
+                        const prompt = `Generate 10 highly detailed, unique, and commercially viable image prompts for a stock image generation tool (like Leonardo AI or Midjourney) based on the core concept/keyword "${keyword}". ${lengthConstraint} Each prompt should be a single, cohesive paragraph that clearly defines:
+                        1.  <b>Subject + Action + Setting:</b> What is the main subject, what are they doing, and where are they?
+                        2.  <b>Specific style/details:</b> Artistic style (e.g., photorealistic, cinematic, isometric, minimalist), textures, specific objects, expressions, or visual elements.
+                        3.  <b>Lighting:</b> Describe the quality, direction, and mood of the lighting.
+                        4.  <b>Colors:</b> Mention the dominant color palette or desired color mood.
+                        5.  <b>Composition:</b> How is the scene framed?
+                        6.  <b>Technical details:</b> Resolution, background type (e.g., "pure white background", "on transparent background"), lens effects, depth of field.
+                        7.  <b>Mood/Emotion:</b> The overall feeling or message the image should convey.
+                        Present each prompt as a numbered list item (1. [Prompt text], 2. [Prompt text], etc.). Ensure no additional conversational text beyond the prompts themselves.`;
+                        
+                        const payload = { contents: [{ role: "user", parts: [{ text: prompt }] }] };
+                        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`;
+                        
+                        const response = await fetch(apiUrl, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                        });
+                        
+                        if (!response.ok) {
+                            const errorData = await response.json();
+                            throw new Error(`API error for keyword "${keyword}": ${errorData.error?.message || response.statusText}`);
+                        }
+
+                        const result = await response.json();
+                        if (result.candidates && result.candidates[0]?.content?.parts[0]?.text) {
+                            const text = result.candidates[0].content.parts[0].text;
+                            const generatedPrompts = text.split('\n').filter(line => line.trim().match(/^\d+\.\s*/)).map(line => ({ text: line.trim(), used: false }));
+                            userData.batchPrompts.push({ keyword: keyword, prompts: generatedPrompts });
+                            generatedCount++;
+                        } else {
+                            throw new Error(`No prompts received for keyword "${keyword}".`);
+                        }
+                    } catch (error) {
+                        console.error('Error generating batch prompts:', error);
+                        batchPromptsError.textContent = `Error processing "${keyword}": ${error.message}.`;
+                        batchPromptsError.classList.remove('hidden');
+                        break; 
+                    }
+                }
+
+                batchPromptsLoading.classList.add('hidden');
+                generateBatchPromptsBtn.disabled = false;
+                if (generatedCount > 0) {
+                    displayMessageBox(customAlertMessageBox, `Generated prompts for ${generatedCount} keyword(s). Check the Batch Prompt Generator section.`, '#10B981');
+                    renderBatchPromptsOutput(); // Render output directly in Step 5
+                } else if (!batchPromptsError.classList.contains('hidden')) {
                 } else {
-                    displayMessageBox(customAlertMessageBox, 'Your browser does not support direct CSV download. Please copy data manually from the table above.', '#EF4444');
+                    batchPromptsError.textContent = 'No prompts could be generated. Try adjusting keywords or prompt length.';
+                    batchPromptsError.classList.remove('hidden');
                 }
             });
 
+            // Clear Batch Prompts Button
+            clearBatchPromptsBtn.addEventListener('click', () => {
+                userData.batchPrompts = [];
+                renderBatchPromptsOutput();
+                displayMessageBox(customAlertMessageBox, 'Batch prompts cleared!', '#10B981');
+            });
 
-            // Step 7: Smart Tagging & Export (Now the correct Step 7)
-            const imageUploadInput = document.getElementById('image-upload-input');
-            const uploadStatus = document.getElementById('upload-status');
-            const analyzeImagesBtn = document.getElementById('analyze-images-btn');
-            const metadataLoading = document.getElementById('metadata-loading');
-            const metadataError = document.getElementById('metadata-error');
-            const imagePreviewsContainer = document.getElementById('image-previews-container');
-            const metadataResultsContainer = document.getElementById('metadata-results-container');
-            const metadataTableBody = document.getElementById('metadata-table-body');
-            const exportCsvBtn = document.getElementById('export-csv-btn');
 
-            const titleLengthSlider = document.getElementById('title-length-slider');
-            const titleLengthValue = document.getElementById('title-length-value');
-            const tagsLimitSlider = document.getElementById('tags-limit-slider');
-            const tagsLimitValue = document.getElementById('tags-limit-value');
-            const transparentBackgroundToggle = document.getElementById('transparent-background-toggle');
-
-            let uploadedFiles = []; // To store File objects
-            let generatedMetadata = []; // To store metadata for CSV export
-
+            // --- Event Listeners for Smart Tagging & Export Tab (Step 7) ---
+            
             // Update slider values
             titleLengthSlider.addEventListener('input', () => {
                 titleLengthValue.textContent = titleLengthSlider.value;
@@ -1413,7 +1644,7 @@
                         const reader = new FileReader();
                         reader.onload = (e) => {
                             const imgDiv = document.createElement('div');
-                            imgDiv.className = 'relative w-24 h-24 rounded-xl overflow-hidden bg-gray-200 flex items-center justify-center'; /* Updated rounded-xl */
+                            imgDiv.className = 'relative w-24 h-24 rounded-xl overflow-hidden bg-gray-200 flex items-center justify-center';
                             const img = document.createElement('img');
                             img.src = e.target.result;
                             img.className = 'w-full h-full object-cover';
@@ -1455,14 +1686,13 @@
                     try {
                         const base64Image = await new Promise((resolve, reject) => {
                             const reader = new FileReader();
-                            reader.onload = () => resolve(reader.result.split(',')[1]); // Get base64 part
+                            reader.onload = () => resolve(reader.result.split(',')[1]);
                             reader.onerror = error => reject(error);
                             reader.readAsDataURL(file);
                         });
 
                         const mimeType = file.type;
 
-                        // Prompt for Title
                         let titlePrompt = `Generate a concise, descriptive, and SEO-friendly title for a stock image based on its content. Keep it between ${titleLength} and ${titleLength + 20} characters.`;
                         if (addTransparentBgToTitle) {
                             titlePrompt += ` If the image appears to have a transparent background, also add "on transparent background" to the title.`;
@@ -1478,7 +1708,6 @@
                             }]
                         };
 
-                        // Prompt for Keywords
                         const keywordPrompt = `Generate ${tagsLimit} highly relevant, commercially viable, and diverse keywords for a stock image based on its content. Provide only the keywords, separated by commas, no extra text or numbering.`;
                         const keywordPayload = {
                             contents: [{
@@ -1489,41 +1718,34 @@
                             }]
                         };
 
-                        // Using gemini-1.5-flash for image analysis (vision capabilities)
                         const MODEL_NAME_FOR_VISION = "gemini-1.5-flash"; 
 
-                        // Fetch Title
                         const titleResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME_FOR_VISION}:generateContent?key=${GEMINI_API_KEY}`, {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify(titlePayload)
                         });
                         const titleResult = await titleResponse.json();
-                        // Basic error check for API response structure
                         let generatedTitle = 'Title Generation Error';
                         if (titleResult.candidates && titleResult.candidates[0]?.content?.parts[0]?.text) {
-                            generatedTitle = titleResult.candidates[0].content.parts[0].text.replace(/^["']|["']$/g, '').trim(); // Remove extra quotes
+                            generatedTitle = titleResult.candidates[0].content.parts[0].text.replace(/^["']|["']$/g, '').trim();
                         } else if (titleResult.error) {
                             generatedTitle = `Title API Error: ${titleResult.error.message}`;
                         }
 
-
-                        // Fetch Keywords
                         const keywordResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME_FOR_VISION}:generateContent?key=${GEMINI_API_KEY}`, {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify(keywordPayload)
                         });
                         const keywordResult = await keywordResponse.json();
-                        // Basic error check for API response structure
                         let generatedKeywords = 'Keywords Generation Error';
                         if (keywordResult.candidates && keywordResult.candidates[0]?.content?.parts[0]?.text) {
-                            generatedKeywords = keywordResult.candidates[0].content.parts[0].text.replace(/["']|\.+$/g, '').trim(); // Remove extra quotes/trailing dots
+                            generatedKeywords = keywordResult.candidates[0].content.parts[0].text.replace(/["']|\.+$/g, '').trim();
                             generatedKeywords = generatedKeywords.split(',').map(k => k.trim()).filter(Boolean).slice(0, tagsLimit).join(', ');
                         } else if (keywordResult.error) {
                             generatedKeywords = `Keywords API Error: ${keywordResult.error.message}`;
                         }
-
 
                         generatedMetadata.push({
                             fileName: file.name,
@@ -1533,7 +1755,7 @@
 
                         const row = metadataTableBody.insertRow();
                         row.innerHTML = `
-                            <td class="px-2 py-2 whitespace-nowrap"><img src="${URL.createObjectURL(file)}" class="h-12 w-12 object-cover rounded-xl inline-block mr-2" alt="${file.name}"> ${file.name}</td> <!-- Updated rounded-xl -->
+                            <td class="px-2 py-2 whitespace-nowrap"><img src="${URL.createObjectURL(file)}" class="h-12 w-12 object-cover rounded-xl inline-block mr-2" alt="${file.name}"> ${file.name}</td>
                             <td class="px-2 py-2">${generatedTitle}</td>
                             <td class="px-2 py-2 text-wrap">${generatedKeywords}</td>
                         `;
@@ -1548,7 +1770,7 @@
                         });
                          const row = metadataTableBody.insertRow();
                         row.innerHTML = `
-                            <td class="px-2 py-2 whitespace-nowrap"><img src="${URL.createObjectURL(file)}" class="h-12 w-12 object-cover rounded-xl inline-block mr-2" alt="${file.name}"> ${file.name}</td> <!-- Updated rounded-xl -->
+                            <td class="px-2 py-2 whitespace-nowrap"><img src="${URL.createObjectURL(file)}" class="h-12 w-12 object-cover rounded-xl inline-block mr-2" alt="${file.name}"> ${file.name}</td>
                             <td class="px-2 py-2 text-red-500">Error generating</td>
                             <td class="px-2 py-2 text-red-500">Error generating</td>
                         `;
@@ -1567,7 +1789,6 @@
             exportCsvBtn.addEventListener('click', () => {
                 let csvContent = "File Name,Title,Keywords\n";
                 generatedMetadata.forEach(row => {
-                    // Escape commas and double quotes for CSV format
                     const escapedTitle = `"${row.title.replace(/"/g, '""')}"`;
                     const escapedKeywords = `"${row.keywords.replace(/"/g, '""')}"`;
                     csvContent += `${row.fileName},${escapedTitle},${escapedKeywords}\n`;
@@ -1597,8 +1818,8 @@
                     datasets: [{
                         label: 'Potential Earnings (Illustrative)',
                         data: [25, 75, 250, 500, 1000],
-                        backgroundColor: 'rgba(139, 92, 246, 0.2)', /* Indigo-500 with opacity */
-                        borderColor: '#8B5CF6', /* Indigo-500 */
+                        backgroundColor: 'rgba(139, 92, 246, 0.2)',
+                        borderColor: '#8B5CF6',
                         tension: 0.3,
                         fill: true
                     }]
@@ -1612,7 +1833,7 @@
                             beginAtZero: true, 
                             title: { display: true, text: 'Earnings ($)', color: '#4B5563' },
                             ticks: { color: '#6B7280' },
-                            grid: { color: '#E5E7EB' } /* Lighter grid lines */
+                            grid: { color: '#E5E7EB' }
                         },
                         x: { 
                             title: { display: true, text: 'Time', color: '#4B5563' },
@@ -1629,8 +1850,8 @@
                     labels: ['Organic Photos', 'AI Images', 'Videos'],
                     datasets: [{
                         data: [50, 40, 10],
-                        backgroundColor: ['#8B5CF6', '#7C3AED', '#6D28D9'], /* Shades of Indigo */
-                        hoverOffset: 8 /* Slightly larger hover offset */
+                        backgroundColor: ['#8B5CF6', '#7C3AED', '#6D28D9'],
+                        hoverOffset: 8
                     }]
                 },
                 options: { 
