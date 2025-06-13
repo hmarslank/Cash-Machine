@@ -134,7 +134,7 @@
         .keyword-chip.selected-for-batch {
             border: 2px solid #22C55E !important; /* Thicker green border */
             box-shadow: 0 2px 8px rgba(34, 197, 94, 0.2) !important;
-            /* Do NOT set background-color or color here to let .used apply if present */
+            /* Allow .used color to persist if already used */
         }
 
 
@@ -646,7 +646,7 @@
                         <button id="generate-prompts-btn" class="w-full sm:w-auto btn-primary whitespace-nowrap">Generate 10 Prompts</button>
                     </div>
                     <p id="prompt-keyword-history-note" class="text-xs text-orange-600 mt-2 hidden text-center">Note: This keyword has been used before.</p>
-                    <button id="clear-prompt-keywords-btn" class="w-full btn-secondary-red text-sm max-w-xl mx-auto block">Clear Prompt History</button>
+                    <button id="clear-prompt-keywords-btn" class="w-full btn-secondary-red text-sm max-w_xl mx-auto block">Clear Prompt History</button>
                     
                     <div id="prompts-loading" class="hidden loading-spinner"></div>
                     <div id="prompts-error" class="hidden mt-4 text-center text-red-600 font-semibold"></div>
@@ -922,8 +922,9 @@
                 localStorage.setItem(key, JSON.stringify(history));
             };
 
-            const addEntryToHistory = (key, entry) => {
+            const addEntryToHistory = (key, entry) => { // Generic function for any history
                 let history = getHistory(key);
+                // Ensure entry is converted to lowercase for case-insensitive checks
                 const lowerCaseEntry = typeof entry === 'string' ? entry.toLowerCase() : entry; 
 
                 if (!history.includes(lowerCaseEntry)) {
@@ -932,8 +933,9 @@
                 }
             };
 
-            const isEntryInHistory = (key, entry) => {
+            const isEntryInHistory = (key, entry) => { // Generic function for any history
                 const history = getHistory(key);
+                // Ensure entry is converted to lowercase for case-insensitive checks
                 const lowerCaseEntry = typeof entry === 'string' ? entry.toLowerCase() : entry;
                 return history.includes(lowerCaseEntry);
             };
@@ -1182,7 +1184,8 @@
 
                 const hasBeenExploredCategory = isEntryInHistory('generatedNicheCategories', selectedCategory);
                 if (hasBeenExploredCategory) {
-                    displayMessageBox(customAlertMessageBox, `You've explored category "${selectedCategory}" before.`, '#EF4444');
+                    // Removed the explicit popup here as requested by user
+                    // displayMessageBox(customAlertMessageBox, `You've explored category "${selectedCategory}" before.`, '#EF4444');
                 }
 
                 try {
@@ -1217,9 +1220,8 @@
                             card.addEventListener('click', async (event) => {
                                 const nicheName = event.currentTarget.getAttribute('data-niche-name');
                                 
-                                if (isEntryInHistory('selectedNichesHistory', nicheName)) {
-                                    displayMessageBox(customAlertMessageBox, `You've already selected "${nicheName}".`, '#EF4444');
-                                }
+                                // REMOVED: displayMessageBox(customAlertMessageBox, `You've already selected "${nicheName}".`, '#EF4444');
+                                // The user explicitly requested to remove this popup.
 
                                 document.querySelectorAll('#niche-generator-output .niche-card').forEach(c => c.classList.remove('selected'));
                                 event.currentTarget.classList.add('selected');
@@ -1279,6 +1281,9 @@
                                                     k_event.currentTarget.classList.remove('selected-for-batch');
                                                     currentlySelectedKeywordChips = currentlySelectedKeywordChips.filter(kw => kw !== clickedKeyword);
                                                 } else {
+                                                    // Check if already used for prompts to prioritize visual state
+                                                    // Only add selected-for-batch if not already used, or if user wants to select even if used.
+                                                    // The prompt did not specify, so I'll allow selection even if used, but keep the red highlight.
                                                     k_event.currentTarget.classList.add('selected-for-batch');
                                                     currentlySelectedKeywordChips.push(clickedKeyword);
                                                 }
@@ -1287,7 +1292,8 @@
                                                 // This is the specific change for instant red highlighting on click if used
                                                 if (isEntryInHistory('usedPromptKeywords', clickedKeyword)) {
                                                     k_event.currentTarget.classList.add('used'); // Ensure it's red if used
-                                                    displayMessageBox(customAlertMessageBox, `You've already used "${clickedKeyword}" for a prompt.`, '#EF4444');
+                                                    // REMOVED: displayMessageBox(customAlertMessageBox, `You've already used "${clickedKeyword}" for a prompt.`, '#EF4444');
+                                                    // The user explicitly requested to remove this popup.
                                                 }
                                                 
                                                 promptKeywordInput.value = clickedKeyword; // Still update single prompt input
@@ -1328,7 +1334,7 @@
                     allSelectedNichesHistory = allSelectedNichesHistory.filter(entry => entry !== currentNiche.toLowerCase());
                     saveHistory('selectedNichesHistory', allSelectedNichesHistory);
 
-                    clearHistory('usedPromptKeywords');
+                    clearHistory('usedPromptKeywords'); // This clears the global history for prompts.
 
                     keywordGrabberOutput.innerHTML = `<p class="text-gray-500">Keywords history for '${currentNiche}' cleared.</p>`;
                     userData.generatedKeywords = [];
@@ -1379,7 +1385,7 @@
             });
 
             clearPromptKeywordsBtn.addEventListener('click', () => {
-                clearHistory('usedPromptKeywords');
+                clearHistory('usedPromptKeywords'); // Clear all used prompt keywords
                 promptKeywordHistoryNote.classList.add('hidden');
                 promptKeywordInput.classList.remove('prompt-keyword-input-used');
                 promptsOutput.innerHTML = '<p class="text-gray-500">Prompt keyword history cleared.</p>';
@@ -1600,7 +1606,8 @@
                 batchPromptsLoading.classList.add('hidden');
                 generateBatchPromptsBtn.disabled = false;
                 if (generatedCount > 0) {
-                    displayMessageBox(customAlertMessageBox, `Generated prompts for ${generatedCount} keyword(s). Check the Batch Prompt Generator section.`, '#10B981');
+                    // Removed this success popup as per user request
+                    // displayMessageBox(customAlertMessageBox, `Generated prompts for ${generatedCount} keyword(s). Check the Batch Prompt Generator section.`, '#10B981');
                     renderBatchPromptsOutput(); // Render output directly in Step 5
                 } else if (!batchPromptsError.classList.contains('hidden')) {
                 } else {
