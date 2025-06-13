@@ -347,12 +347,6 @@
             white-space: nowrap;
         }
 
-        /* Image Generation Output Grid */
-        #imagen-output-container img {
-            border: 1px solid #E5E7EB; /* Subtle border for images */
-            box-shadow: 0 4px 12px rgba(0,0,0,0.06); /* Soft shadow for images */
-        }
-
         /* Footer CTA Specifics */
         .cta-section {
             background: linear-gradient(135deg, #8B5CF6, #7C3AED); /* Stronger indigo gradient */
@@ -412,10 +406,10 @@
                 <button data-step="3" class="nav-btn">AI Tools</button>
                 <button data-step="4" class="nav-btn">Get Keywords</button> <!-- Changed from Discovery -->
                 <button data-step="5" class="nav-btn">Prompt Generator</button> <!-- Changed from AI Prompts -->
-                <button data-step="6" class="nav-btn">Save Data</button> <!-- Moved from step 7 -->
-                <button data-step="7" class="nav-btn">Smart Tagging</button> <!-- Moved from step 8 -->
-                <button data-step="8" class="nav-btn">Scale & Grow</button> <!-- Moved from step 9 -->
-                <button data-step="9" class="nav-btn">Start Now</button> <!-- Moved from step 10 -->
+                <button data-step="6" class="nav-btn">Save Data</button> <!-- Now step 6 -->
+                <button data-step="7" class="nav-btn">Smart Tagging</button> <!-- Now step 7 -->
+                <button data-step="8" class="nav-btn">Scale & Grow</button> <!-- Now step 8 -->
+                <button data-step="9" class="nav-btn">Start Now</button> <!-- Now step 9 -->
             </div>
         </div>
     </nav>
@@ -539,13 +533,13 @@
                     <!-- New visual-driven content for AI Tools -->
                     <div class="p-6 rounded-xl bg-gray-50 shadow-sm flex flex-col items-center text-center">
                         <img src="https://placehold.co/150x100/E0E7FF/5B21B6?text=AI+Efficiency" alt="AI for Efficiency" class="mb-4 rounded-lg shadow-md">
-                        <h3 class="font-bold text-xl mb-2 text-indigo-600">Boost Efficiency</h3>
-                        <p class="text-sm text-gray-700">Automate repetitive tasks and accelerate content creation.</p>
+                        <h3 class="font-bold text-xl mb-2 text-indigo-600">Rapid Creation</h3>
+                        <p class="text-sm text-gray-700">Generate dozens of images in minutes, accelerating your workflow.</p>
                     </div>
                     <div class="p-6 rounded-xl bg-gray-50 shadow-sm flex flex-col items-center text-center">
                         <img src="https://placehold.co/150x100/E0E7FF/5B21B6?text=Global+Reach" alt="AI for Global Reach" class="mb-4 rounded-lg shadow-md">
-                        <h3 class="font-bold text-xl mb-2 text-indigo-600">Expand Reach</h3>
-                        <p class="text-sm text-gray-700">Generate diverse content appealing to global markets.</p>
+                        <h3 class="font-bold text-xl mb-2 text-indigo-600">Massive Scale</h3>
+                        <p class="text-sm text-gray-700">Produce high volumes of content without models or physical locations.</p>
                     </div>
                     <div class="p-6 rounded-xl bg-gray-50 shadow-sm flex flex-col items-center text-center">
                         <img src="https://placehold.co/150x100/E0E7FF/5B21B6?text=Innovation" alt="AI for Innovation" class="mb-4 rounded-lg shadow-md">
@@ -655,71 +649,10 @@
             </div>
         </section>
 
-        <!-- Step 6: AI Image Generators Overview (New content, replaced former Step 6) -->
-        <!-- Renamed to Generators -->
+        <!-- Step 6: Save Data (Moved from step 7) -->
         <section id="step-content-6" class="step-content fade-in">
             <div class="card-panel">
-                <h2 class="text-3xl md:text-4xl font-bold mb-6 text-center text-gray-800">6. AI Image Generators Overview</h2>
-                <p class="max-w-3xl mx-auto text-gray-600 text-lg mb-8 text-center">Explore popular AI image generation tools. Each offers unique strengths for creating stock visuals.</p>
-                
-                <div class="space-y-4">
-                    <details class="rounded-xl overflow-hidden" open>
-                        <summary>Leonardo AI Walkthrough</summary>
-                        <div class="details-content">
-                            <p class="text-sm text-gray-700 mb-3">A user-friendly platform known for photorealistic and stylized outputs:</p>
-                            <ol class="list-decimal list-inside space-y-4 text-base text-gray-700">
-                                <li><b>Access:</b> Go to <a href="https://leonardo.ai" target="_blank" class="font-semibold text-indigo-600 hover:underline">leonardo.ai</a>, log in, go to "AI Image Generation."</li>
-                                <li><b>Choose Model:</b> Select an AI model (e.g., "Leonardo Diffusion").</li>
-                                <li><b>Input Prompt:</b> Paste a prompt from Step 5.</li>
-                                <li><b>Negative Prompts:</b> Crucial for stock! Add terms like: <code class="bg-gray-200 p-1 rounded-xl text-xs text-gray-700">ugly, deformed, blurry, watermark, text</code>.</li>
-                                <li><b>Adjust Settings:</b>
-                                    <ul class="list-disc list-inside ml-4 mt-2 text-sm text-gray-600">
-                                        <li><b>Aspect Ratio:</b> Aim for 3:2, 4:3, or 16:9.</li>
-                                        <li><b>Image Count:</b> 4-8 per prompt.</li>
-                                        <li><b>Tiling:</b> Keep OFF.</li>
-                                    </ul>
-                                </li>
-                                <li><b>Generate!</b> Click.</li>
-                                <li><b>Review & Refine:</b> Examine the generated images. Download the best ones. If they're not quite right, tweak your prompt or negative prompt and re-generate.</li>
-                            </ol>
-                        </div>
-                    </details>
-
-                    <details class="rounded-xl overflow-hidden">
-                        <summary>Midjourney Overview</summary>
-                        <div class="details-content">
-                            <p class="text-sm text-gray-700 mb-3">Known for its highly artistic and high-quality outputs, accessible via Discord:</p>
-                            <ul>
-                                <li><b>Access:</b> Join the Midjourney Discord server. Use the <code>/imagine</code> command in a bot channel.</li>
-                                <li><b>Prompting:</b> Input your desired image prompt. Midjourney excels with descriptive, evocative language.</li>
-                                <li><b>Stylization:</b> Offers various style parameters (<code>--s</code>, <code>--stylize</code>) to control artistic influence.</li>
-                                <li><b>Variations:</b> Generate multiple variations of an image and upscale your favorites.</li>
-                                <li><b>Niche Suitability:</b> Excellent for conceptual, artistic, and visually striking images. Less suited for hyper-realistic people/products unless refined.</li>
-                            </ul>
-                        </div>
-                    </details>
-
-                    <details class="rounded-xl overflow-hidden">
-                        <summary>Ideogram Overview</summary>
-                        <div class="details-content">
-                            <p class="text-sm text-gray-700 mb-3">A powerful tool, particularly strong with typography and consistent character generation:</p>
-                            <ul>
-                                <li><b>Access:</b> Visit <a href="https://ideogram.ai" target="_blank" class="font-semibold text-indigo-600 hover:underline">ideogram.ai</a>.</li>
-                                <li><b>Text Rendering:</b> Unique capability to accurately render text within images, making it valuable for designs requiring specific words or phrases.</li>
-                                <li><b>Styling Presets:</b> Offers a wide range of artistic styles and photographic modes to apply to your prompts.</li>
-                                <li><b>Prompt Remixing:</b> Experiment with different variations and combine elements.</li>
-                                <li><b>Niche Suitability:</b> Ideal for images with text, logos, or consistent character designs across a series.</li>
-                            </ul>
-                        </div>
-                    </details>
-                </div>
-            </div>
-        </section>
-
-        <!-- Step 7: Save Data (New Tab) -->
-        <section id="step-content-7" class="step-content fade-in">
-            <div class="card-panel">
-                <h2 class="text-3xl md:text-4xl font-bold mb-6 text-center text-gray-800">7. Save & Export Your Data</h2>
+                <h2 class="text-3xl md:text-4xl font-bold mb-6 text-center text-gray-800">6. Save & Export Your Data</h2>
                 <p class="max-w-3xl mx-auto text-gray-600 text-lg mb-8 text-center">Track your discovered niches, keywords, and copied prompts. Export your data to a CSV file for analysis or import into a Google Sheet.</p>
                 
                 <div class="bg-gray-50 p-6 rounded-xl border shadow-sm">
@@ -736,10 +669,10 @@
             </div>
         </section>
 
-        <!-- Step 8: Smart Tagging & Export -->
-        <section id="step-content-8" class="step-content fade-in">
+        <!-- Step 7: Smart Tagging & Export (Moved from step 8) -->
+        <section id="step-content-7" class="step-content fade-in">
             <div class="card-panel">
-                <h2 class="text-3xl md:text-4xl font-bold mb-6 text-center text-gray-800">8. Smart Tagging & Export</h2>
+                <h2 class="text-3xl md:text-4xl font-bold mb-6 text-center text-gray-800">7. Smart Tagging & Export</h2>
                 <p class="max-w-3xl mx-auto text-gray-600 text-lg mb-8 text-center">Boost efficiency with AI-powered metadata. Upload images in batch, let Gemini analyze, and export titles & tags ready for Adobe Stock.</p>
                 
                 <div class="bg-gray-50 p-6 rounded-xl border shadow-sm mb-6">
@@ -797,10 +730,10 @@
             </div>
         </section>
 
-            <!-- Step 9: Analyze & Scale -->
-            <section id="step-content-9" class="step-content fade-in">
+            <!-- Step 8: Analyze & Scale -->
+            <section id="step-content-8" class="step-content fade-in">
                 <div class="card-panel">
-                    <h2 class="text-3xl md:text-4xl font-bold mb-6 text-center text-gray-800">9. Analyze, Adapt & Scale</h2>
+                    <h2 class="text-3xl md:text-4xl font-bold mb-6 text-center text-gray-800">8. Analyze, Adapt & Scale</h2>
                     <p class="max-w-3xl mx-auto text-gray-600 text-lg mb-8 text-center">Monitor performance, learn from data, and strategically scale your portfolio for long-term income growth. Optimize your profit machine!</p>
                     <div class="grid md:grid-cols-2 gap-8">
                         <div class="bg-gray-50 p-6 rounded-xl shadow-sm">
@@ -840,8 +773,8 @@
                 </div>
             </section>
 
-            <!-- Step 10: Final CTA -->
-            <section id="step-content-10" class="step-content fade-in">
+            <!-- Step 9: Final CTA -->
+            <section id="step-content-9" class="step-content fade-in">
                 <div class="cta-section text-white p-8 md:p-12 rounded-xl shadow-lg text-center">
                     <h2 class="text-3xl md:text-4xl font-black mb-4">Your Money Move. Today.</h2>
                     <p class="text-lg text-indigo-100 max-w-2xl mx-auto mb-8">You have the blueprint to monetize stunning visuals on Adobe Stock, with AI power. Stop waiting! Build your flexible income stream now.</p>
@@ -1403,7 +1336,7 @@
                 }
             });
 
-            // Step 7: Save Data Tab
+            // Step 6: Save Data (Now the correct Step 6)
             const exportCollectedDataBtn = document.getElementById('export-collected-data-btn');
             exportCollectedDataBtn.addEventListener('click', () => {
                 let csvContent = "";
@@ -1437,7 +1370,7 @@
             });
 
 
-            // Step 8: Smart Tagging & Export
+            // Step 7: Smart Tagging & Export (Now the correct Step 7)
             const imageUploadInput = document.getElementById('image-upload-input');
             const uploadStatus = document.getElementById('upload-status');
             const analyzeImagesBtn = document.getElementById('analyze-images-btn');
