@@ -623,6 +623,24 @@
                     <!-- Button to send selected keywords to batch generator -->
                     <button id="send-keywords-to-batch-btn" class="w-full btn-primary mt-6 hidden">Send Selected to Batch Prompts</button>
 
+                    <!-- Keyword search and CSV upload features -->
+                    <div class="mt-8 pt-4 border-t border-gray-200">
+                        <h4 class="font-bold text-lg mb-3 text-indigo-600">Search & Upload Keywords</h4>
+                        <div class="flex flex-col sm:flex-row gap-3 mb-4">
+                            <input type="text" id="keyword-search-input" placeholder="Search keywords..." class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-indigo-600 focus:border-indigo-600">
+                            <button id="search-keywords-btn" class="w-full sm:w-auto btn-primary">Search</button>
+                        </div>
+                        <p class="text-sm text-gray-700 mb-2">Or upload a CSV file to check for used keywords:</p>
+                        <div class="flex flex-col sm:flex-row items-center gap-3">
+                            <input type="file" id="csv-upload-input" accept=".csv" class="w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                            <button id="analyze-csv-btn" class="w-full sm:w-auto btn-primary">Analyze CSV</button>
+                        </div>
+                        <div id="csv-analysis-loading" class="hidden loading-spinner"></div>
+                        <div id="csv-analysis-error" class="hidden mt-4 text-center text-red-600 font-semibold"></div>
+                        <div id="csv-analysis-output" class="mt-4 p-3 bg-white rounded-xl border max-h-48 overflow-y-auto text-sm text-gray-700">
+                            <p class="text-gray-500">CSV analysis results will appear here.</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -660,7 +678,7 @@
                 <div class="bg-gray-50 p-6 rounded-xl border shadow-sm mt-10">
                     <h3 class="font-bold text-xl mb-4 text-center text-indigo-600">Batch Prompt Generator:</h3>
                     <p class="text-sm text-center text-gray-700 mb-4">Enter 1 to 100 keywords (one per line or comma-separated). Generate 10 prompts per keyword, then view them below.</p>
-                    <div class="flex flex-col gap-4 max-w_xl mx-auto mb-4">
+                    <div class="flex flex-col gap-4 max-w-xl mx-auto mb-4">
                         <textarea id="batch-keywords-input" rows="5" placeholder="Enter keywords (e.g., &#10;keyword1, keyword2 &#10;keyword3)" class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-indigo-600 focus:border-indigo-600 resize-y"></textarea>
                         <select id="batch-prompt-length-select" class="p-2 border border-gray-300 rounded-xl focus:ring-indigo-600 focus:border-indigo-600 w-full">
                             <option value="medium">Medium Prompts</option>
@@ -751,7 +769,7 @@
                                         <th class="px-2 py-2 text-left text-gray-600 font-semibold">Image</th>
                                                                                 <th class="px-2 py-2 text-left text-gray-600 font-semibold">Title</th>
                                         <th class="px-2 py-2 text-left text-gray-600 font-semibold">Keywords</th>
-                                    </tr>
+                                                                            </tr>
                                 </thead>
                                 <tbody id="metadata-table-body" class="divide-y divide-gray-200">
                                     <!-- Metadata rows will be injected here -->
@@ -851,6 +869,13 @@
             const keywordGrabberError = document.getElementById('keyword-grabber-error');
             const clearSubNicheKeywordsBtn = document.getElementById('clear-subniche-keywords-btn');
             const sendKeywordsToBatchBtn = document.getElementById('send-keywords-to-batch-btn'); 
+            const keywordSearchInput = document.getElementById('keyword-search-input'); // New search input
+            const analyzeCsvBtn = document.getElementById('analyze-csv-btn'); // New CSV button
+            const csvUploadInput = document.getElementById('csv-upload-input'); // New CSV input
+            const csvAnalysisOutput = document.getElementById('csv-analysis-output'); // New CSV output div
+            const csvAnalysisLoading = document.getElementById('csv-analysis-loading'); // New CSV loading spinner
+            const csvAnalysisError = document.getElementById('csv-analysis-error'); // New CSV error div
+
 
             // Prompt Generator Tab Elements
             const promptKeywordInput = document.getElementById('prompt-keyword-input');
@@ -977,10 +1002,10 @@
                 setTimeout(() => {
                     element.classList.remove('slideInUp');
                     element.classList.add('fadeOut');
-                }, 4000);
+                }, 4000); // Popup disappears in 4 seconds
             };
 
-            // Render User Data in Save Data Tab
+            // Function to render user data in the Save Data tab
             const renderUserData = () => {
                 let html = '';
 
@@ -1046,7 +1071,7 @@
                 } else {
                     html = '<p class="text-gray-500 text-center">No data collected yet. Start exploring niches and copying prompts!</p>';
                 }
-                document.getElementById('collected-data-output').innerHTML = html; // Corrected to use ID
+                document.getElementById('collected-data-output').innerHTML = html; 
             };
 
             // Render Batch Prompts Output (within Prompt Generator tab)
@@ -1152,32 +1177,22 @@
             };
 
             clearNicheGeneratorHistoryBtn.addEventListener('click', () => {
-                // Clear the relevant histories in localStorage
                 clearHistory('generatedNicheCategories');
                 clearHistory('selectedNichesHistory');
                 clearHistory('usedPromptKeywords'); // Clears the keywords used for prompt generation
 
-                // Clear internal userData state
                 userData.nicheCategory = '';
                 userData.selectedSubNiche = '';
                 userData.generatedKeywords = [];
                 userData.copiedPrompts = [];
                 userData.batchPrompts = [];
 
-                // Clear displayed elements
+                currentlySelectedKeywordChips = [];
+                updateBatchSendButtonVisibility();
+                
                 nicheGeneratorOutput.innerHTML = '<p class="text-gray-500">Generated niche category history cleared. New ideas will appear next time.</p>';
                 keywordGenerationSection.classList.add('hidden');
                 document.getElementById('keyword-grabber-output').innerHTML = ''; // Clear keyword chips display
-
-                // Reset batch selection state
-                currentlySelectedKeywordChips = [];
-                updateBatchSendButtonVisibility();
-
-                // Ensure no 'used' class remains on keyword chips if they were previously red
-                document.querySelectorAll('#keyword-grabber-output .keyword-chip').forEach(chip => {
-                    chip.classList.remove('used');
-                    chip.classList.remove('selected-for-batch');
-                });
             });
 
             generateNichesBtn.addEventListener('click', async () => {
@@ -1239,7 +1254,7 @@
                                 keywordGrabberLoading.classList.remove('hidden');
                                 userData.generatedKeywords = [];
                                 
-                                currentlySelectedKeywordChips = []; // Clear batch selection
+                                currentlySelectedKeywordChips = [];
                                 updateBatchSendButtonVisibility();
 
                                 try {
@@ -1267,8 +1282,7 @@
                                         
                                         keywordGrabberOutput.innerHTML = keywords.map(s => {
                                             const isUsed = usedPromptKeywords.includes(s.toLowerCase());
-                                            const isSelectedForBatch = currentlySelectedKeywordChips.includes(s); // Check if already selected for batch
-                                            // Apply 'used' class immediately if in history upon rendering
+                                            const isSelectedForBatch = currentlySelectedKeywordChips.includes(s);
                                             return `<div class="keyword-chip bg-white p-2 rounded-xl shadow-sm text-center ${isUsed ? 'used' : ''} ${isSelectedForBatch ? 'selected-for-batch' : ''}" data-keyword-name="${s}">${s}</div>`;
                                         }).join('');
                                         
@@ -1289,9 +1303,10 @@
                                                 }
                                                 updateBatchSendButtonVisibility();
 
-                                                // This is the specific change for instant red highlighting on click if used
-                                                // The 'used' class is already applied on render if it's in history.
-                                                // No explicit popup for 'already used' keyword here, just the visual cue.
+                                                // This ensures the 'used' class is applied if the keyword has been used for prompts
+                                                if (isEntryInHistory('usedPromptKeywords', clickedKeyword)) {
+                                                    k_event.currentTarget.classList.add('used'); 
+                                                }
                                                 
                                                 promptKeywordInput.value = clickedKeyword; // Still update single prompt input
                                             });
@@ -1331,9 +1346,8 @@
                     allSelectedNichesHistory = allSelectedNichesHistory.filter(entry => entry !== currentNiche.toLowerCase());
                     saveHistory('selectedNichesHistory', allSelectedNichesHistory);
 
-                    // Note: Clearing usedPromptKeywords is done by clearPromptKeywordsBtn (in Step 5) or clearNicheGeneratorHistoryBtn
-                    // This button only clears selection and the current niche context for Get Keywords.
-                    
+                    // clearHistory('usedPromptKeywords'); // Do NOT clear global usedPromptKeywords here as it affects all niches
+
                     keywordGrabberOutput.innerHTML = `<p class="text-gray-500">Keywords history for '${currentNiche}' cleared.</p>`;
                     userData.generatedKeywords = [];
                     // userData.copiedPrompts = []; // Do NOT clear here, as they are global
@@ -1343,10 +1357,9 @@
                     updateBatchSendButtonVisibility();
 
                     // Re-render keyword chips to ensure 'used' state is correctly reflected if history cleared elsewhere
-                    // Or, simpler, just remove selected-for-batch
                     document.querySelectorAll('#keyword-grabber-output .keyword-chip').forEach(chip => {
                         chip.classList.remove('selected-for-batch');
-                        // No change to 'used' class here, as its state is global/persistent
+                        // Don't remove 'used' class from chips unless specifically clearing usedPromptKeywords history
                     });
 
                 } else {
@@ -1368,6 +1381,78 @@
                 } else {
                     displayMessageBox(customAlertMessageBox, 'Please select keywords first!', '#EF4444');
                 }
+            });
+
+            // Keyword Search Input Listener
+            keywordSearchInput.addEventListener('input', () => {
+                const searchTerm = keywordSearchInput.value.trim().toLowerCase();
+                const allKeywordChips = document.querySelectorAll('#keyword-grabber-output .keyword-chip');
+                
+                allKeywordChips.forEach(chip => {
+                    const keywordText = chip.textContent.toLowerCase();
+                    if (keywordText.includes(searchTerm)) {
+                        chip.style.display = 'block'; // Show if matches
+                    } else {
+                        chip.style.display = 'none'; // Hide if doesn't match
+                    }
+                });
+            });
+
+            // Analyze CSV Button Listener
+            analyzeCsvBtn.addEventListener('click', () => {
+                csvAnalysisOutput.innerHTML = ''; // Clear previous results
+                csvAnalysisError.classList.add('hidden');
+                
+                const files = csvUploadInput.files;
+                if (files.length === 0) {
+                    csvAnalysisError.textContent = 'Please select a CSV file to upload.';
+                    csvAnalysisError.classList.remove('hidden');
+                    return;
+                }
+
+                const file = files[0];
+                const reader = new FileReader();
+
+                csvAnalysisLoading.classList.remove('hidden');
+
+                reader.onload = (e) => {
+                    try {
+                        const csvText = e.target.result;
+                        // Simple CSV parsing: assume keywords are comma-separated or newline-separated
+                        // and take first column if it's structured. For simplicity, splitting by common delimiters.
+                        const csvKeywords = csvText.split(/[\n,;]+/).map(k => k.trim()).filter(Boolean);
+
+                        if (csvKeywords.length === 0) {
+                            csvAnalysisOutput.innerHTML = '<p class="text-gray-500">No keywords found in CSV.</p>';
+                            return;
+                        }
+
+                        let resultsHtml = '<h4 class="font-semibold text-base mb-2">CSV Keyword Status:</h4><ul>';
+                        const usedPromptKeywords = getHistory('usedPromptKeywords'); // Get current used keywords history
+
+                        csvKeywords.forEach(csvKw => {
+                            const isUsed = usedPromptKeywords.includes(csvKw.toLowerCase());
+                            resultsHtml += `<li>${csvKw} - <b>${isUsed ? '<span class="text-red-600">USED</span>' : '<span class="text-emerald-600">NEW</span>'}</b></li>`;
+                        });
+                        resultsHtml += '</ul>';
+                        csvAnalysisOutput.innerHTML = resultsHtml;
+
+                    } catch (error) {
+                        console.error('Error processing CSV:', error);
+                        csvAnalysisError.textContent = `Error reading CSV: ${error.message}. Please ensure it's a valid CSV.`;
+                        csvAnalysisError.classList.remove('hidden');
+                    } finally {
+                        csvAnalysisLoading.classList.add('hidden');
+                    }
+                };
+
+                reader.onerror = () => {
+                    csvAnalysisLoading.classList.add('hidden');
+                    csvAnalysisError.textContent = 'Failed to read file. Please try again.';
+                    csvAnalysisError.classList.remove('hidden');
+                };
+
+                reader.readAsText(file);
             });
 
 
@@ -1615,16 +1700,18 @@
                 batchPromptsLoading.classList.add('hidden');
                 generateBatchPromptsBtn.disabled = false;
                 if (generatedCount > 0) {
+                    // Removed this success popup as per user request
+                    // displayMessageBox(customAlertMessageBox, `Generated prompts for ${generatedCount} keyword(s). Check the Batch Prompt Generator section.`, '#10B981');
                     renderBatchPromptsOutput(); // Render output directly in Step 5
                     // After generation, update keyword chips in Get Keywords tab to reflect red state
                     document.querySelectorAll('#keyword-grabber-output .keyword-chip').forEach(chip => {
                         const kwText = chip.textContent;
                         if (isEntryInHistory('usedPromptKeywords', kwText)) {
                             chip.classList.add('used');
-                            chip.classList.remove('selected-for-batch'); // Clear batch selection
+                            chip.classList.remove('selected-for-batch'); // Clear batch selection visual
                         }
                     });
-                    currentlySelectedKeywordChips = []; // Clear selected batch keywords
+                    currentlySelectedKeywordChips = []; // Clear selected batch keywords array
                     updateBatchSendButtonVisibility(); // Hide batch send button
                 } else if (!batchPromptsError.classList.contains('hidden')) {
                 } else {
