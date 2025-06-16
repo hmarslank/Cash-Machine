@@ -11,14 +11,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     
     <!-- New Palette (Inspired by Imagino):
-         Primary Background: #F8F9FA (Very light gray)
-         Secondary Backgrounds/Cards: #FFFFFF (White)
-         Accent Color (Primary): #8B5CF6 (Indigo-500)
-         Accent Color (Hover/Active/Darker): #7C3AED (Indigo-600)
-         Light Accent: #E0E7FF (Indigo-100)
-         Text: #333333 (Dark Gray), #4B5563 (Medium Gray), #6B7280 (Light Gray)
-         Success: #10B981 (Emerald-500)
-         Error: #EF4444 (Red-500)
+          Primary Background: #F8F9FA (Very light gray)
+          Secondary Backgrounds/Cards: #FFFFFF (White)
+          Accent Color (Primary): #8B5CF6 (Indigo-500)
+          Accent Color (Hover/Active/Darker): #7C3AED (Indigo-600)
+          Light Accent: #E0E7FF (Indigo-100)
+          Text: #333333 (Dark Gray), #4B5563 (Medium Gray), #6B7280 (Light Gray)
+          Success: #10B981 (Emerald-500)
+          Error: #EF4444 (Red-500)
     -->
     <style>
         /* Base styles for modern, sleek look */
@@ -392,6 +392,19 @@
         #user-data-table tbody tr:last-child td {
             border-bottom: none;
         }
+        /* Adaptive input width */
+        #prompt-keyword-input {
+            min-width: 150px; /* Minimum width */
+            flex-grow: 0; /* Changed: Do not grow to fill all remaining space */
+            flex-shrink: 1; /* Added: Allow it to shrink if necessary */
+            flex-basis: auto; /* Added: Base size determined by content */
+            width: auto; /* Ensure it starts with an auto width */
+        }
+        @media (min-width: 640px) { /* Tailwind's sm breakpoint */
+            #prompt-keyword-input {
+                /* Removed width: 100%; to allow flex properties to control width based on content */
+            }
+        }
     </style>
 </head>
 <body class="antialiased">
@@ -441,7 +454,7 @@
                     </div>
                 </div>
                 <div class="mt-10">
-                     <img src="https://placehold.co/1000x400/E0E7FF/5B21B6?text=Creative+AI+Concepts" alt="Abstract AI creative process" class="w-full h-auto rounded-xl shadow-lg">
+                    <img src="https://placehold.co/1000x400/E0E7FF/5B21B6?text=Creative+AI+Concepts" alt="Abstract AI creative process" class="w-full h-auto rounded-xl shadow-lg">
                 </div>
             </div>
         </section>
@@ -463,7 +476,7 @@
                     </div>
                     <div class="bg-gray-50 p-6 rounded-xl shadow-sm">
                         <h3 class="font-bold text-xl mb-4 text-indigo-600">Quick Setup</h3>
-                           <ol class="list-decimal list-inside space-y-3 text-base text-gray-700">
+                            <ol class="list-decimal list-inside space-y-3 text-base text-gray-700">
                                 <li><b>Sign Up:</b> Visit <a href="https://contributor.stock.adobe.com/en?isa0=1" target="_blank" class="font-semibold text-indigo-600 hover:underline">Adobe Stock Contributor</a>.</li>
                                 <li><b>Verify:</b> Complete ID & tax info for payouts.</li>
                                 <li><b>Go Live:</b> Account active! Adobe handles sales.</li>
@@ -488,14 +501,13 @@
                             <ul>
                                 <li>Authentic Lifestyle: Real, unposed human moments, diverse groups, remote work, mental wellness.</li>
                                 <li>Modern Tech Use: People interacting with devices, clean interfaces, innovative tech concepts.</li>
-                                <li>Diversity & Inclusion: Genuinely representing various ages, ethnicities, body types, and abilities.</li>
-                                <li>Conceptual Imagery: Visually representing abstract ideas like "growth," "connection," "innovation."</li>
                                 <li>Vertical Video: Short, engaging, and well-lit clips optimized for social media stories and reels.</li>
                                 <li>Sustainable Living: Eco-conscious practices, recycling, urban gardening, renewable energy.</li>
                                 <li>Remote Work Productivity: Beyond desk setups – work from cafes, parks, travel.</li>
                                 <li>Authentic Mental Wellness: Self-care, mindfulness, digital detox.</li>
                                 <li>Generational Collaboration: Multiple generations interacting naturally in various settings.</li>
                                 <li>Digital Nomads/Van Life: Freedom, minimalist lifestyle, connectivity on the go.</li>
+                                <li>Sustainable Living: Eco-conscious practices, recycling, urban gardening, renewable energy.</li>
                             </ul>
                         </div>
                     </details>
@@ -553,7 +565,7 @@
                         <p class="text-sm text-gray-700">Explore new creative concepts and visual styles rapidly.</p>
                     </div>
                     <div class="md:col-span-3 mt-10">
-                         <img src="https://placehold.co/1000x400/E0E7FF/5B21B6?text=Unlock+AI+Potential" alt="AI tools overview" class="w-full h-auto rounded-xl shadow-lg">
+                           <img src="https://placehold.co/1000x400/E0E7FF/5B21B6?text=Unlock+AI+Potential" alt="AI tools overview" class="w-full h-auto rounded-xl shadow-lg">
                     </div>
                 </div>
                 <p class="mt-8 p-4 bg-emerald-50 rounded-lg border border-emerald-200 font-bold text-emerald-800 text-sm">Key: Image quality depends on your prompt. Learn to craft perfect prompts here!</p>
@@ -573,26 +585,49 @@
                     <div class="max-w-md mx-auto space-y-3">
                         <select id="niche-category-select" class="w-full p-2 border border-gray-300 rounded-xl focus:ring-indigo-600 focus:border-indigo-600">
                             <option value="">-- Select a Niche Category --</option>
-                            <option value="Emerging Technologies">Emerging Technologies</option>
-                            <option value="Subculture & Niche Lifestyles">Subculture & Niche Lifestyles</option>
-                            <option value="Future of Work & Education">Future of Work & Education</option>
-                            <option value="Abstract & Conceptual Visuals">Abstract & Conceptual Visuals</option>
-                            <option value="Sustainable & Eco-Conscious Living">Sustainable & Eco-Conscious Living</option>
-                            <option value="Authentic Diversity & Inclusivity">Authentic Diversity & Inclusivity</option>
-                            <option value="Micro-moments & Everyday Life">Micro-moments & Everyday Life</option>
-                            <option value="Global Cultural Celebrations (Untraditional)">Global Cultural Celebrations (Untraditional)</option>
-                            <option value="Health & Wellness Beyond Fitness">Health & Wellness Beyond Fitness</option>
-                            <option value="AI & Robotics in Daily Life">AI & Robotics in Daily Life</s-option>
-                            <option value="Urban Exploration & Architecture Details">Urban Exploration & Architecture Details</option>
-                            <option value="Mindful Living & Digital Detox">Mindful Living & Digital Detox</m-step>
-                            <option value="Sensory Experiences (Texture, Sound Vis.)">Sensory Experiences (Texture, Sound Vis.)</option>
-                            <option value="Retro Futurism & Nostalgia">Retro Futurism & Nostalgia</option>
-                            <option value="Financial Literacy & Investing (Visualized)">Financial Literacy & Investing (Visualized)</option>
-                            <option value="Community Building & Local Events">Community Building & Local Events</option>
-                            <option value="Home Automation & Smart Living">Home Automation & Smart Living</option>
-                            <option value="Artisanal Crafts & Handmade Goods">Artisanal Crafts & Handmade Goods</option>
-                            <option value="Space Exploration & Astronomy (Conceptual)">Space Exploration & Astronomy (Conceptual)</option>
-                            <option value="Generational Dynamics (Specific Interactions)">Generational Dynamics (Specific Interactions)</option>
+                            <option value="Animals">Animals</option>
+                            <option value="Buildings and Architecture">Buildings and Architecture</option>
+                            <option value="Business">Business</option>
+                            <option value="Drinks">Drinks</option>
+                            <option value="The Environment">The Environment</option>
+                            <option value="States of Mind">States of Mind</option>
+                            <option value="Foods">Foods</option>
+                            <option value="Graphic Resources">Graphic Resources</option>
+                            <option value="Hobbies and Leisure">Hobbies and Leisure</option>
+                            <option value="Industry">Industry</option>
+                            <option value="Landscapes">Landscapes</option>
+                            <option value="Lifestyle">Lifestyle</option>
+                            <option value="People">People</option>
+                            <option value="Plants and Flowers" selected>Plants and Flowers</option>
+                            <option value="Culture and Religion">Culture and Religion</option>
+                            <option value="Science">Science</option>
+                            <option value="Social Issues">Social Issues</tex>-
+                            <option value="Sports">Sports</option>
+                            <option value="Technology">Technology</option>
+                            <option value="Transport">Transport</option>
+                            <option value="Travel">Travel</option>
+                            <option value="Vegetables">Vegetables</option>
+                            <option value="Organic Life">Organic Life</option>
+                            <option value="Emerging Tech">Emerging Tech</option>
+                            <option value="Niche Lifestyles">Niche Lifestyles</option>
+                            <option value="Future Work & Education">Future Work & Education</option>
+                            <option value="Abstract Concepts">Abstract Concepts</option>
+                            <option value="Sustainable Living">Sustainable Living</option>
+                            <option value="Diversity & Inclusion">Diversity & Inclusion</option>
+                            <option value="Everyday Life">Everyday Life</option>
+                            <option value="Global Cultures">Global Cultures</option>
+                            <option value="Health & Wellness">Health & Wellness</option>
+                            <option value="AI & Robotics">AI & Robotics</option>
+                            <option value="Urban Details">Urban Details</option>
+                            <option value="Mindful Living">Mindful Living</option>
+                            <option value="Sensory Experiences">Sensory Experiences</option>
+                            <option value="Retro Futurism">Retro Futurism</option>
+                            <option value="Finance Visuals">Finance Visuals</option>
+                            <option value="Community Events">Community Events</option>
+                            <option value="Smart Home">Smart Home</option>
+                            <option value="Artisan Goods">Artisan Goods</option>
+                            <option value="Space Concepts">Space Concepts</option>
+                            <option value="Generational Dynamics">Generational Dynamics</option>
                         </select>
                         <button id="generate-niches-btn" class="w-full btn-primary">Generate Niches</button>
                         <button id="clear-niche-generator-history-btn" class="w-full btn-secondary-red text-sm">Clear Niche History</button>
@@ -625,9 +660,9 @@
 
                     <!-- Keyword search and CSV upload features -->
                     <div class="mt-8 pt-4 border-t border-gray-200">
-                        <h4 class="font-bold text-lg mb-3 text-indigo-600">Search & Upload Keywords</h4>
+                        <h4 class="font-bold text-lg mb-3 text-indigo-600">Search & Analyze Keywords</h4>
                         <div class="flex flex-col sm:flex-row gap-3 mb-4">
-                            <input type="text" id="keyword-search-input" placeholder="Search keywords..." class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-indigo-600 focus:border-indigo-600">
+                            <input type="text" id="keyword-search-input" placeholder="Search displayed keywords..." class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-indigo-600 focus:border-indigo-600">
                             <button id="search-keywords-btn" class="w-full sm:w-auto btn-primary">Search</button>
                         </div>
                         <p class="text-sm text-gray-700 mb-2">Or upload a CSV file to check for used keywords:</p>
@@ -678,8 +713,10 @@
                 <div class="bg-gray-50 p-6 rounded-xl border shadow-sm mt-10">
                     <h3 class="font-bold text-xl mb-4 text-center text-indigo-600">Batch Prompt Generator:</h3>
                     <p class="text-sm text-center text-gray-700 mb-4">Enter 1 to 100 keywords (one per line or comma-separated). Generate 10 prompts per keyword, then view them below.</p>
-                    <div class="flex flex-col gap-4 max-w-xl mx-auto mb-4">
-                        <textarea id="batch-keywords-input" rows="5" placeholder="Enter keywords (e.g., &#10;keyword1, keyword2 &#10;keyword3)" class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-indigo-600 focus:border-indigo-600 resize-y"></textarea>
+                    <div class="flex flex-col gap-4 max-w_xl mx-auto mb-4">
+                        <textarea id="batch-keywords-input" rows="5" placeholder="Enter keywords (e.g., 
+keyword1, keyword2 
+keyword3)" class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-indigo-600 focus:border-indigo-600 resize-y"></textarea>
                         <select id="batch-prompt-length-select" class="p-2 border border-gray-300 rounded-xl focus:ring-indigo-600 focus:border-indigo-600 w-full">
                             <option value="medium">Medium Prompts</option>
                             <option value="short">Short Prompts</option>
@@ -767,9 +804,9 @@
                                 <thead class="bg-gray-50 sticky top-0">
                                     <tr>
                                         <th class="px-2 py-2 text-left text-gray-600 font-semibold">Image</th>
-                                                                                <th class="px-2 py-2 text-left text-gray-600 font-semibold">Title</th>
+                                                                            <th class="px-2 py-2 text-left text-gray-600 font-semibold">Title</th>
                                         <th class="px-2 py-2 text-left text-gray-600 font-semibold">Keywords</th>
-                                                                            </tr>
+                                                                        </tr>
                                 </thead>
                                 <tbody id="metadata-table-body" class="divide-y divide-gray-200">
                                     <!-- Metadata rows will be injected here -->
@@ -870,8 +907,9 @@
             const clearSubNicheKeywordsBtn = document.getElementById('clear-subniche-keywords-btn');
             const sendKeywordsToBatchBtn = document.getElementById('send-keywords-to-batch-btn'); 
             const keywordSearchInput = document.getElementById('keyword-search-input'); // New search input
-            const analyzeCsvBtn = document.getElementById('analyze-csv-btn'); // New CSV button
+            const searchKeywordsBtn = document.getElementById('search-keywords-btn'); // Search button
             const csvUploadInput = document.getElementById('csv-upload-input'); // New CSV input
+            const analyzeCsvBtn = document.getElementById('analyze-csv-btn'); // New CSV button
             const csvAnalysisOutput = document.getElementById('csv-analysis-output'); // New CSV output div
             const csvAnalysisLoading = document.getElementById('csv-analysis-loading'); // New CSV loading spinner
             const csvAnalysisError = document.getElementById('csv-analysis-error'); // New CSV error div
@@ -922,7 +960,7 @@
             let userData = {
                 nicheCategory: '',
                 selectedSubNiche: '',
-                generatedKeywords: [],
+                generatedKeywords: [], // Keywords generated for the current niche
                 copiedPrompts: [], // For single prompt gen: { text: "...", used: true/false }
                 batchPrompts: [] // For batch gen: { keyword: "...", prompts: [{ text: "...", used: true/false }] }
             };
@@ -983,7 +1021,7 @@
                     textarea.select();
                     try {
                         document.execCommand('copy');
-                        displayMessageBox(messageBoxElement, 'Prompt copied!', '#10B981');
+                        displayMessageBox(messageBoxElement, 'Failed to copy. Copy manually.', '#EF4444');
                     } catch (execErr) {
                         displayMessageBox(messageBoxElement, 'Failed to copy. Copy manually.', '#EF4444');
                     } finally {
@@ -1005,19 +1043,30 @@
                 }, 4000); // Popup disappears in 4 seconds
             };
 
-            // Function to render user data in the Save Data tab
+            // Render User Data in Save Data Tab
             const renderUserData = () => {
                 let html = '';
 
-                if (userData.nicheCategory || userData.selectedSubNiche || userData.generatedKeywords.length > 0 || userData.copiedPrompts.length > 0 || userData.batchPrompts.length > 0) {
+                // Get only unique keywords that have been USED for prompt generation
+                const usedKeywordsForDisplay = Array.from(new Set(getHistory('usedPromptKeywords'))).filter(Boolean); // Filter empty strings
+
+                if (usedKeywordsForDisplay.length > 0 || userData.copiedPrompts.length > 0 || userData.batchPrompts.length > 0) {
                     html += `
                         <div class="mb-4">
-                            <h4 class="font-semibold text-lg text-gray-700 mb-2">Current Session Data:</h4>
-                            <p class="text-gray-600 text-sm mb-1"><strong>Niche Category:</strong> ${userData.nicheCategory || 'N/A'}</p>
+                            <h4 class="font-semibold text-lg text-gray-700 mb-2">Session Summary:</h4>
+                            <p class="text-gray-600 text-sm mb-1"><strong>Selected Niche Category:</strong> ${userData.nicheCategory || 'N/A'}</p>
                             <p class="text-gray-600 text-sm mb-1"><strong>Selected Sub-Niche:</strong> ${userData.selectedSubNiche || 'N/A'}</p>
-                            <p class="text-gray-600 text-sm mb-1"><strong>Generated Keywords:</strong> ${userData.generatedKeywords.join(', ') || 'N/A'}</p>
                         </div>
                     `;
+                    
+                    if (usedKeywordsForDisplay.length > 0) {
+                        html += `
+                            <h4 class="font-semibold text-lg text-gray-700 mb-2">Keywords Used for Prompts:</h4>
+                            <div class="bg-white p-4 rounded-xl border max-h-64 overflow-y-auto mb-4">
+                                <p class="text-gray-700">${usedKeywordsForDisplay.join(', ')}</p>
+                            </div>
+                        `;
+                    }
 
                     if (userData.copiedPrompts.length > 0) {
                         html += `
@@ -1034,10 +1083,10 @@
                         `;
                         userData.copiedPrompts.forEach(p => {
                             html += `
-                                <tr>
-                                    <td class="text-gray-700">${p.text}</td>
-                                    <td class="text-center">${p.used ? '<span class="text-emerald-600">&#10003;</span>' : '<span class="text-red-600">&#x2717;</span>'}</td>
-                                </tr>
+                                        <tr>
+                                            <td class="text-gray-700">${p.text}</td>
+                                            <td class="text-center">${p.used ? '<span class="text-emerald-600">&#10003;</span>' : '<span class="text-red-600">&#x2717;</span>'}</td>
+                                        </tr>
                             `;
                         });
                         html += `
@@ -1057,10 +1106,10 @@
                             html += `<table class="min-w-full text-sm mb-3"><thead><tr><th>Prompt</th><th>Used</th></tr></thead><tbody>`;
                             batchEntry.prompts.forEach(p => {
                                 html += `
-                                    <tr>
-                                        <td class="text-gray-700">${p.text}</td>
-                                        <td class="text-center">${p.used ? '<span class="text-emerald-600">&#10003;</span>' : '<span class="text-red-600">&#x2717;</span>'}</td>
-                                    </tr>
+                                        <tr>
+                                            <td class="text-gray-700">${p.text}</td>
+                                            <td class="text-center">${p.used ? '<span class="text-emerald-600">&#10003;</span>' : '<span class="text-red-600">&#x2717;</span>'}</td>
+                                        </tr>
                                 `;
                             });
                             html += `</tbody></table>`;
@@ -1089,10 +1138,10 @@
                         batchEntry.prompts.forEach((p, promptIndex) => {
                             const isPromptUsed = p.used;
                             html += `
-                                    <div class="prompt-chip-item bg-gray-50 p-3 rounded-xl border text-sm flex justify-between items-center ${isPromptUsed ? 'used' : ''}" data-batch-index="${batchIndex}" data-prompt-index="${promptIndex}">
-                                        <span class="flex-grow mr-2">${p.text}</span>
-                                        <button class="copy-prompt-btn bg-indigo-500 text-white text-xs font-semibold px-3 py-1 rounded-md hover:bg-indigo-600 transition">Copy</button>
-                                    </div>
+                                        <div class="prompt-chip-item bg-gray-50 p-3 rounded-xl border text-sm flex justify-between items-center ${isPromptUsed ? 'used' : ''}" data-batch-index="${batchIndex}" data-prompt-index="${promptIndex}">
+                                            <span class="flex-grow mr-2">${p.text}</span>
+                                            <button class="copy-prompt-btn bg-indigo-500 text-white text-xs font-semibold px-3 py-1 rounded-md hover:bg-indigo-600 transition">Copy</button>
+                                        </div>
                             `;
                         });
                         html += `
@@ -1177,22 +1226,27 @@
             };
 
             clearNicheGeneratorHistoryBtn.addEventListener('click', () => {
+                // Clear the relevant histories in localStorage
                 clearHistory('generatedNicheCategories');
                 clearHistory('selectedNichesHistory');
                 clearHistory('usedPromptKeywords'); // Clears the keywords used for prompt generation
 
+                // Clear userData state (only affects current session's "Save Data" view, not localStorage itself)
                 userData.nicheCategory = '';
                 userData.selectedSubNiche = '';
                 userData.generatedKeywords = [];
                 userData.copiedPrompts = [];
                 userData.batchPrompts = [];
 
+                // Reset currently selected keywords for batch transfer
                 currentlySelectedKeywordChips = [];
                 updateBatchSendButtonVisibility();
                 
+                // Clear displayed niche/keyword outputs
                 nicheGeneratorOutput.innerHTML = '<p class="text-gray-500">Generated niche category history cleared. New ideas will appear next time.</p>';
                 keywordGenerationSection.classList.add('hidden');
-                document.getElementById('keyword-grabber-output').innerHTML = ''; // Clear keyword chips display
+                keywordGrabberOutput.innerHTML = ''; // Clear keyword chips display
+                csvAnalysisOutput.innerHTML = '<p class="text-gray-500">CSV analysis results will appear here.</p>'; // Clear CSV analysis output
             });
 
             generateNichesBtn.addEventListener('click', async () => {
@@ -1249,12 +1303,12 @@
                                 userData.selectedSubNiche = nicheName;
                                 addEntryToHistory('selectedNichesHistory', nicheName); // Mark niche as selected in history
 
-                                keywordGrabberOutput.innerHTML = '';
+                                keywordGrabberOutput.innerHTML = ''; // Clear previous keywords before populating
                                 keywordGrabberError.classList.add('hidden');
                                 keywordGrabberLoading.classList.remove('hidden');
-                                userData.generatedKeywords = [];
+                                userData.generatedKeywords = []; // Clear current session's generated keywords
                                 
-                                currentlySelectedKeywordChips = [];
+                                currentlySelectedKeywordChips = []; // Clear batch selection
                                 updateBatchSendButtonVisibility();
 
                                 try {
@@ -1283,7 +1337,7 @@
                                         keywordGrabberOutput.innerHTML = keywords.map(s => {
                                             const isUsed = usedPromptKeywords.includes(s.toLowerCase());
                                             const isSelectedForBatch = currentlySelectedKeywordChips.includes(s);
-                                            return `<div class="keyword-chip bg-white p-2 rounded-xl shadow-sm text-center ${isUsed ? 'used' : ''} ${isSelectedForBatch ? 'selected-for-batch' : ''}" data-keyword-name="${s}">${s}</div>`;
+                                            return `<div class="keyword-chip bg-white p-3 rounded-xl shadow-sm text-base text-center ${isUsed ? 'used' : ''} ${isSelectedForBatch ? 'selected-for-batch' : ''}" data-keyword-name="${s}">${s}</div>`;
                                         }).join('');
                                         
                                         userData.generatedKeywords = keywords;
@@ -1356,7 +1410,6 @@
                     currentlySelectedKeywordChips = [];
                     updateBatchSendButtonVisibility();
 
-                    // Re-render keyword chips to ensure 'used' state is correctly reflected if history cleared elsewhere
                     document.querySelectorAll('#keyword-grabber-output .keyword-chip').forEach(chip => {
                         chip.classList.remove('selected-for-batch');
                         // Don't remove 'used' class from chips unless specifically clearing usedPromptKeywords history
@@ -1372,12 +1425,12 @@
                 if (currentlySelectedKeywordChips.length > 0) {
                     batchKeywordsInput.value = currentlySelectedKeywordChips.join(', ');
                     navigateToStep(5); // Navigate to the Prompt Generator tab (Step 5)
-                    // Clear green selection after sending to batch
-                    document.querySelectorAll('#keyword-grabber-output .keyword-chip.selected-for-batch').forEach(chip => {
-                        chip.classList.remove('selected-for-batch');
+                    currentlySelectedKeywordChips.forEach(kw => {
+                        const chip = document.querySelector(`.keyword-chip[data-keyword-name="${kw}"]`);
+                        if (chip) chip.classList.remove('selected-for-batch');
                     });
-                    currentlySelectedKeywordChips = []; // Clear selected keywords array
-                    updateBatchSendButtonVisibility(); // Hide button
+                    currentlySelectedKeywordChips = [];
+                    updateBatchSendButtonVisibility();
                 } else {
                     displayMessageBox(customAlertMessageBox, 'Please select keywords first!', '#EF4444');
                 }
@@ -1514,7 +1567,7 @@
 
                 try {
                     const prompt = `Generate 10 highly detailed, unique, and commercially viable image prompts for a stock image generation tool (like Leonardo AI or Midjourney) based on the core concept/keyword "${keyword}". ${lengthConstraint} Each prompt should be a single, cohesive paragraph that clearly defines:
-                    1.  <b>Subject + Action + Setting:</b> What is the main subject, what are they doing, and where are they?
+                    1.  <b>Subject + Action + Setting:</b> What is the main subject, what are they doing and where are they?
                     2.  <b>Specific style/details:</b> Artistic style (e.g., photorealistic, cinematic, isometric, minimalist), textures, specific objects, expressions, or visual elements.
                     3.  <b>Lighting:</b> Describe the quality, direction, and mood of the lighting.
                     4.  <b>Colors:</b> Mention the dominant color palette or desired color mood.
@@ -1552,10 +1605,10 @@
                             `;
                         }).join('');
                         
-                        addEntryToHistory('usedPromptKeywords', keyword); // This keyword is now used for prompt generation
+                        addEntryToHistory('usedPromptKeywords', keyword); // Mark this keyword as used for prompt generation
                         if (isEntryInHistory('usedPromptKeywords', keyword)) {
                             promptKeywordInput.classList.add('prompt-keyword-input-used');
-                            // Also ensure any keyword chips in Get Keywords tab that match this are updated
+                            // Update keyword chips in Get Keywords tab to reflect red 'used' state
                             document.querySelectorAll(`#keyword-grabber-output .keyword-chip[data-keyword-name="${keyword}"]`).forEach(chip => {
                                 chip.classList.add('used');
                             });
@@ -1684,8 +1737,7 @@
                             userData.batchPrompts.push({ keyword: keyword, prompts: generatedPrompts });
                             generatedCount++;
 
-                            // Mark each keyword as used in global history
-                            addEntryToHistory('usedPromptKeywords', keyword);
+                            addEntryToHistory('usedPromptKeywords', keyword); // Mark this keyword as used for prompt generation
                         } else {
                             throw new Error(`No prompts received for keyword "${keyword}".`);
                         }
@@ -1700,10 +1752,8 @@
                 batchPromptsLoading.classList.add('hidden');
                 generateBatchPromptsBtn.disabled = false;
                 if (generatedCount > 0) {
-                    // Removed this success popup as per user request
-                    // displayMessageBox(customAlertMessageBox, `Generated prompts for ${generatedCount} keyword(s). Check the Batch Prompt Generator section.`, '#10B981');
                     renderBatchPromptsOutput(); // Render output directly in Step 5
-                    // After generation, update keyword chips in Get Keywords tab to reflect red state
+                    // After generation, update keyword chips in Get Keywords tab to reflect red 'used' state
                     document.querySelectorAll('#keyword-grabber-output .keyword-chip').forEach(chip => {
                         const kwText = chip.textContent;
                         if (isEntryInHistory('usedPromptKeywords', kwText)) {
@@ -1877,7 +1927,7 @@
                             title: 'Error generating',
                             keywords: 'Error generating'
                         });
-                         const row = metadataTableBody.insertRow();
+                           const row = metadataTableBody.insertRow();
                         row.innerHTML = `
                             <td class="px-2 py-2 whitespace-nowrap"><img src="${URL.createObjectURL(file)}" class="h-12 w-12 object-cover rounded-xl inline-block mr-2" alt="${file.name}"> ${file.name}</td>
                             <td class="px-2 py-2 text-red-500">Error generating</td>
