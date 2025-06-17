@@ -1594,16 +1594,8 @@ keyword3)" class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-
                         break;
                 }
 
-                // Construct the base prompt
-                let basePrompt = `Generate 10 highly detailed, unique, and commercially viable image prompts for a stock image generation tool (like Leonardo AI or Midjourney) based on the core concept/keyword "${keyword}". ${lengthConstraint} Each prompt should be a single, cohesive paragraph that clearly defines:
-                    1.  <b>Subject + Action + Setting:</b> What is the main subject, what are they doing and where are they?
-                    2.  <b>Specific style/details:</b> Artistic style (e.g., photorealistic, cinematic, isometric, minimalist), textures, specific objects, expressions, or visual elements.
-                    3.  <b>Lighting:</b> Describe the quality, direction, and mood of the lighting.
-                    4.  <b>Colors:</b> Mention the dominant color palette or desired color mood.
-                    5.  <b>Composition:</b> How is the scene framed?
-                    6.  <b>Technical details:</b> Resolution, background type (e.g., "pure white background", "on transparent background"), lens effects, depth of field.
-                    7.  <b>Mood/Emotion:</b> The overall feeling or message the image should convey.
-                    Present each prompt as a numbered list item (1. [Prompt text], 2. [Prompt text], etc.). Ensure no additional conversational text beyond the prompts themselves.`;
+                // Construct the base prompt without explicit pattern instructions in the output
+                let basePrompt = `Generate 10 highly detailed, unique, and commercially viable image prompts for a stock image generation tool (like Leonardo AI or Midjourney) based on the core concept/keyword "${keyword}". ${lengthConstraint} Each prompt should clearly define the subject, action, setting, specific style/details (e.g., artistic style, textures, specific objects, expressions, or visual elements), lighting (quality, direction, mood), colors (dominant palette or desired mood), composition (how the scene is framed), technical details (resolution, background type, lens effects, depth of field), and mood/emotion (overall feeling or message). Present each prompt as a numbered list item (1. [Prompt text], 2. [Prompt text], etc.). Ensure no additional conversational text beyond the prompts themselves.`;
                 
                 // Apply custom text
                 if (customText) {
@@ -1632,7 +1624,7 @@ keyword3)" class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-
                     const result = await response.json();
                     if (result.candidates && result.candidates[0]?.content?.parts[0]?.text) {
                         const text = result.candidates[0].content.parts[0].text;
-                        const promptLines = text.split('\n').filter(line => line.trim().match(/^\d+\.\s*/)).map(line => line.trim()); 
+                        const promptLines = text.split('\n').filter(line => line.trim().match(/^\d+\.\s*/)).map(line => line.replace(/^\d+\.\s*/, '').trim()); // Remove numbering from output
                         
                         promptsOutput.innerHTML = promptLines.map((p, index) => {
                             const isPromptUsed = userData.copiedPrompts.some(cp => cp.text === p && cp.used);
@@ -1748,26 +1740,18 @@ keyword3)" class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-
                 let generatedCount = 0;
                 for (const keyword of keywords) {
                     try {
-                        let currentPrompt = `Generate 10 highly detailed, unique, and commercially viable image prompts for a stock image generation tool (like Leonardo AI or Midjourney) based on the core concept/keyword "${keyword}". ${lengthConstraint} Each prompt should be a single, cohesive paragraph that clearly defines:
-                        1.  <b>Subject + Action + Setting:</b> What is the main subject, what are they doing, and where are they?
-                        2.  <b>Specific style/details:</b> Artistic style (e.g., photorealistic, cinematic, isometric, minimalist), textures, specific objects, expressions, or visual elements.
-                        3.  <b>Lighting:</b> Describe the quality, direction, and mood of the lighting.
-                        4.  <b>Colors:</b> Mention the dominant color palette or desired color mood.
-                        5.  <b>Composition:</b> How is the scene framed?
-                        6.  <b>Technical details:</b> Resolution, background type (e.g., "pure white background", "on transparent background"), lens effects, depth of field.
-                        7.  <b>Mood/Emotion:</b> The overall feeling or message the image should convey.
-                        Present each prompt as a numbered list item (1. [Prompt text], 2. [Prompt text], etc.). Ensure no additional conversational text beyond the prompts themselves.`;
+                        let currentPromptTemplate = `Generate 10 highly detailed, unique, and commercially viable image prompts for a stock image generation tool (like Leonardo AI or Midjourney) based on the core concept/keyword "${keyword}". ${lengthConstraint} Each prompt should clearly define the subject, action, setting, specific style/details (e.g., artistic style, textures, specific objects, expressions, or visual elements), lighting (quality, direction, mood), colors (dominant palette or desired mood), composition (how the scene is framed), technical details (resolution, background type, lens effects, depth of field), and mood/emotion (overall feeling or message). Present each prompt as a numbered list item (1. [Prompt text], 2. [Prompt text], etc.). Ensure no additional conversational text beyond the prompts themselves.`;
                         
-                        // Apply custom text to each generated prompt
+                        // Apply custom text to the prompt template
                         if (customText) {
                             if (customPosition === 'beginning') {
-                                currentPrompt = `${customText} ${currentPrompt}`;
+                                currentPromptTemplate = `${customText} ${currentPromptTemplate}`;
                             } else { // 'end'
-                                currentPrompt = `${currentPrompt} ${customText}`;
+                                currentPromptTemplate = `${currentPromptTemplate} ${customText}`;
                             }
                         }
 
-                        const payload = { contents: [{ role: "user", parts: [{ text: currentPrompt }] }] };
+                        const payload = { contents: [{ role: "user", parts: [{ text: currentPromptTemplate }] }] };
                         const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`;
                         
                         const response = await fetch(apiUrl, {
@@ -1784,7 +1768,7 @@ keyword3)" class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-
                         const result = await response.json();
                         if (result.candidates && result.candidates[0]?.content?.parts[0]?.text) {
                             const text = result.candidates[0].content.parts[0].text;
-                            const generatedPrompts = text.split('\n').filter(line => line.trim().match(/^\d+\.\s*/)).map(line => ({ text: line.trim(), used: false }));
+                            const generatedPrompts = text.split('\n').filter(line => line.trim().match(/^\d+\.\s*/)).map(line => ({ text: line.replace(/^\d+\.\s*/, '').trim(), used: false })); // Remove numbering and trim
                             userData.batchPrompts.push({ keyword: keyword, prompts: generatedPrompts });
                             generatedCount++;
 
